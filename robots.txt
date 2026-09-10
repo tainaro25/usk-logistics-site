@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://your-domain.kz/sitemap.xml
+Sitemap: https://usklogistics.kz/sitemap.xml
