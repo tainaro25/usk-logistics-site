@@ -163,6 +163,12 @@ img {
   color: var(--text);
 }
 
+.lang-btn.lang-link {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;

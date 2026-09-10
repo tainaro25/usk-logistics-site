@@ -71,7 +71,8 @@ document.addEventListener("DOMContentLoaded", () => {
       volumeResultBox.hidden = false;
       volumeAlert.hidden = true;
       const volumeWeight = (w * l * h) / US_VOLUME_DIVISOR;
-      volumeResultValue.textContent = volumeWeight.toFixed(2) + " " + "кг";
+      const kgLabel = document.documentElement.lang === "en" ? "kg" : "кг";
+      volumeResultValue.textContent = volumeWeight.toFixed(2) + " " + kgLabel;
     };
 
     [dimWidth, dimLength, dimHeight].forEach((el) => {

@@ -300,12 +300,18 @@
   }
 
   document.addEventListener("DOMContentLoaded", function () {
+    var urlLang = null;
+    try {
+      urlLang = new URLSearchParams(location.search).get("lang");
+    } catch (e) {}
+
     var saved = null;
     try {
       saved = localStorage.getItem("usk_lang");
     } catch (e) {}
 
-    apply(saved === "kk" ? "kk" : "ru");
+    var initial = (urlLang === "kk" || urlLang === "ru") ? urlLang : (saved === "kk" ? "kk" : "ru");
+    apply(initial);
 
     document.querySelectorAll(".lang-btn").forEach(function (btn) {
       btn.addEventListener("click", function () {
