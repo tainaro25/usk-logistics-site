@@ -1,5 +1,5 @@
 <?php
-session_start();
+require __DIR__ . '/../session-init.php';
 header('Content-Type: application/json; charset=utf-8');
 
 if (empty($_SESSION['user_id'])) {
