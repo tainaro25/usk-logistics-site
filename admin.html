@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Админ-панель — USK Logistics</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css?v=6">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a href="index.html" class="logo">USK <span>Logistics</span></a>
+    <nav class="nav">
+      <a href="index.html">Главная</a>
+    </nav>
+    <div class="header-cta">
+      <a href="account-dashboard.html" class="btn btn-outline btn-sm">Личный кабинет</a>
+    </div>
+    <button class="menu-toggle" aria-label="Меню">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section style="padding: 40px 0 80px;">
+    <div class="wrap">
+      <p id="access-message" style="color: var(--muted);">Проверка доступа...</p>
+
+      <div class="account-layout" id="admin-layout" hidden>
+        <aside class="account-sidebar">
+          <nav class="account-nav">
+            <a href="#" class="tab-link active" data-tab="orders">📦 Все заказы</a>
+            <a href="#" class="tab-link" data-tab="create">➕ Создать заказ</a>
+            <a href="#" class="tab-link" data-tab="requests">🕘 Заявки</a>
+          </nav>
+        </aside>
+
+        <div class="account-panel">
+          <div class="tab-content" id="tab-orders">
+            <h1>Все заказы</h1>
+            <div id="admin-orders-list"></div>
+          </div>
+
+          <div class="tab-content" id="tab-create" hidden>
+            <h1>Создать заказ</h1>
+            <div class="calc-input-row">
+              <label for="new-order-user">Клиент</label>
+              <select id="new-order-user"></select>
+            </div>
+            <div class="calc-input-row">
+              <label for="new-order-track">Трек-номер</label>
+              <input type="text" id="new-order-track" placeholder="Например, USK-10005">
+            </div>
+            <div class="calc-input-row">
+              <label for="new-order-desc">Товар</label>
+              <input type="text" id="new-order-desc" placeholder="Например, Кроссовки Nike Air Max">
+            </div>
+            <div class="profile-form-row">
+              <div class="calc-input-row">
+                <label for="new-order-origin">Откуда</label>
+                <select id="new-order-origin">
+                  <option value="США">США</option>
+                  <option value="Европа">Европа</option>
+                  <option value="Китай">Китай</option>
+                  <option value="Китай Экспресс">Китай Экспресс</option>
+                </select>
+              </div>
+              <div class="calc-input-row">
+                <label for="new-order-status">Статус</label>
+                <select id="new-order-status">
+                  <option value="на рассмотрении">на рассмотрении</option>
+                  <option value="выкуплен">выкуплен</option>
+                  <option value="на складе">на складе</option>
+                  <option value="в пути">в пути</option>
+                  <option value="доставлено">доставлено</option>
+                </select>
+              </div>
+            </div>
+            <p id="create-message" style="font-size: 14px; margin: 0 0 16px; display: none;"></p>
+            <button type="button" class="btn btn-primary" id="create-order-btn">Создать заказ</button>
+          </div>
+
+          <div class="tab-content" id="tab-requests" hidden>
+            <h1>Заявки клиентов</h1>
+            <div id="admin-requests-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="logo">USK <span>Logistics</span></div>
+    <div class="copyright">© 2026 USK Logistics. Внутренняя панель.</div>
+  </div>
+</footer>
+
+<script>
+  var ORDER_STATUSES = ["на рассмотрении", "выкуплен", "на складе", "в пути", "доставлено"];
+  var BUYOUT_STATUSES = ["новая", "в обработке", "одобрена", "отклонена"];
+
+  var statusClass = {
+    "на рассмотрении": "status-transit",
+    "выкуплен": "status-transit",
+    "на складе": "status-warehouse",
+    "в пути": "status-transit",
+    "доставлено": "status-delivered",
+    "в обработке": "status-transit",
+    "одобрена": "status-warehouse",
+    "отклонена": "status-delivered",
+    "новая": "status-transit"
+  };
+
+  function formatDate(isoString) {
+    var d = new Date(isoString.replace(" ", "T"));
+    return d.toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
+  }
+
+  function selectOptions(list, selected) {
+    return list.map(function (s) {
+      return '<option value="' + s + '"' + (s === selected ? " selected" : "") + '>' + s + "</option>";
+    }).join("");
+  }
+
+  document.querySelectorAll(".tab-link").forEach(function (link) {
+    link.addEventListener("click", function (e) {
+      e.preventDefault();
+      document.querySelectorAll(".tab-link").forEach(function (l) { l.classList.remove("active"); });
+      link.classList.add("active");
+      var target = link.dataset.tab;
+      document.querySelectorAll(".tab-content").forEach(function (p) {
+        p.hidden = p.id !== "tab-" + target;
+      });
+    });
+  });
+
+  document.querySelector(".menu-toggle").addEventListener("click", function () {
+    document.body.classList.toggle("nav-open");
+  });
+
+  function loadOrders() {
+    fetch("api/admin-orders.php")
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.ok) return;
+        var box = document.getElementById("admin-orders-list");
+        if (!data.orders.length) {
+          box.innerHTML = '<p style="color: var(--muted); font-size: 14px;">Заказов пока нет.</p>';
+          return;
+        }
+        box.innerHTML = data.orders.map(function (o) {
+          return '' +
+            '<div class="order-card">' +
+              '<div class="order-card-header">' +
+                '<h3>Заказ №' + o.id + (o.description ? " · " + o.description : "") + '</h3>' +
+                '<span class="status-badge ' + (statusClass[o.status] || "status-transit") + '">' + o.status + '</span>' +
+              '</div>' +
+              '<div class="order-card-details">' +
+                '<div class="detail-item"><span class="detail-label">Трек-номер</span><span class="detail-value">' + o.track_number + '</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Клиент</span><span class="detail-value">' + o.user_name + ' (' + o.user_email + ')</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Откуда</span><span class="detail-value">' + (o.origin || "—") + '</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Дата</span><span class="detail-value">' + formatDate(o.created_at) + '</span></div>' +
+              '</div>' +
+              '<div class="calc-input-row" style="margin: 16px 0 0;">' +
+                '<label>Сменить статус</label>' +
+                '<div style="display:flex; gap:10px;">' +
+                  '<select class="order-status-select" data-order-id="' + o.id + '" style="flex:1; padding:10px 12px; border-radius:10px; border:1px solid var(--border);">' + selectOptions(ORDER_STATUSES, o.status) + '</select>' +
+                  '<button type="button" class="btn btn-outline btn-sm save-order-status" data-order-id="' + o.id + '">Сохранить</button>' +
+                '</div>' +
+              '</div>' +
+            '</div>';
+        }).join("");
+
+        box.querySelectorAll(".save-order-status").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var orderId = btn.dataset.orderId;
+            var select = box.querySelector('.order-status-select[data-order-id="' + orderId + '"]');
+            btn.disabled = true;
+            btn.textContent = "...";
+            var formData = new FormData();
+            formData.append("order_id", orderId);
+            formData.append("status", select.value);
+            fetch("api/admin-update-order.php", { method: "POST", body: formData })
+              .then(function (r) { return r.json(); })
+              .then(function (data) {
+                btn.textContent = data.ok ? "Сохранено" : "Ошибка";
+                if (data.ok) loadOrders();
+              })
+              .finally(function () {
+                setTimeout(function () { btn.disabled = false; btn.textContent = "Сохранить"; }, 1200);
+              });
+          });
+        });
+      });
+  }
+
+  function loadUsersIntoSelect() {
+    fetch("api/admin-users.php")
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.ok) return;
+        var select = document.getElementById("new-order-user");
+        select.innerHTML = data.users.map(function (u) {
+          return '<option value="' + u.id + '">' + u.name + ' (' + u.email + ')</option>';
+        }).join("");
+      });
+  }
+
+  function loadBuyouts() {
+    fetch("api/admin-buyouts.php")
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.ok) return;
+        var box = document.getElementById("admin-requests-list");
+        if (!data.buyouts.length) {
+          box.innerHTML = '<p style="color: var(--muted); font-size: 14px;">Заявок пока нет.</p>';
+          return;
+        }
+        box.innerHTML = data.buyouts.map(function (b) {
+          return '' +
+            '<div class="order-card">' +
+              '<div class="order-card-header">' +
+                '<h3>' + b.name + '</h3>' +
+                '<span class="status-badge ' + (statusClass[b.status] || "status-transit") + '">' + b.status + '</span>' +
+              '</div>' +
+              '<div class="order-card-details">' +
+                '<div class="detail-item"><span class="detail-label">Телефон</span><span class="detail-value">' + b.phone + '</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Ссылка на товар</span><span class="detail-value">' + (b.product_link || "—") + '</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Аккаунт</span><span class="detail-value">' + (b.user_email || "гость (без аккаунта)") + '</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Дата</span><span class="detail-value">' + formatDate(b.created_at) + '</span></div>' +
+              '</div>' +
+              '<div class="calc-input-row" style="margin: 16px 0 0;">' +
+                '<label>Сменить статус</label>' +
+                '<div style="display:flex; gap:10px;">' +
+                  '<select class="buyout-status-select" data-buyout-id="' + b.id + '" style="flex:1; padding:10px 12px; border-radius:10px; border:1px solid var(--border);">' + selectOptions(BUYOUT_STATUSES, b.status) + '</select>' +
+                  '<button type="button" class="btn btn-outline btn-sm save-buyout-status" data-buyout-id="' + b.id + '">Сохранить</button>' +
+                '</div>' +
+              '</div>' +
+            '</div>';
+        }).join("");
+
+        box.querySelectorAll(".save-buyout-status").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var buyoutId = btn.dataset.buyoutId;
+            var select = box.querySelector('.buyout-status-select[data-buyout-id="' + buyoutId + '"]');
+            btn.disabled = true;
+            btn.textContent = "...";
+            var formData = new FormData();
+            formData.append("buyout_id", buyoutId);
+            formData.append("status", select.value);
+            fetch("api/admin-update-buyout.php", { method: "POST", body: formData })
+              .then(function (r) { return r.json(); })
+              .then(function (data) {
+                btn.textContent = data.ok ? "Сохранено" : "Ошибка";
+              })
+              .finally(function () {
+                setTimeout(function () { btn.disabled = false; btn.textContent = "Сохранить"; }, 1200);
+              });
+          });
+        });
+      });
+  }
+
+  document.getElementById("create-order-btn").addEventListener("click", function () {
+    var btn = this;
+    var msg = document.getElementById("create-message");
+    var userId = document.getElementById("new-order-user").value;
+    var track = document.getElementById("new-order-track").value.trim();
+    var desc = document.getElementById("new-order-desc").value.trim();
+    var origin = document.getElementById("new-order-origin").value;
+    var status = document.getElementById("new-order-status").value;
+
+    if (!userId || !track) {
+      msg.style.color = "#dc2626";
+      msg.textContent = "Выберите клиента и укажите трек-номер.";
+      msg.style.display = "block";
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Создание...";
+
+    var formData = new FormData();
+    formData.append("user_id", userId);
+    formData.append("track_number", track);
+    formData.append("description", desc);
+    formData.append("origin", origin);
+    formData.append("status", status);
+
+    fetch("api/admin-create-order.php", { method: "POST", body: formData })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.ok) {
+          msg.style.color = "#16a34a";
+          msg.textContent = "Заказ создан.";
+          document.getElementById("new-order-track").value = "";
+          document.getElementById("new-order-desc").value = "";
+          loadOrders();
+        } else if (data.error === "track_number_taken") {
+          msg.style.color = "#dc2626";
+          msg.textContent = "Такой трек-номер уже используется.";
+        } else {
+          msg.style.color = "#dc2626";
+          msg.textContent = "Не получилось создать заказ.";
+        }
+        msg.style.display = "block";
+      })
+      .finally(function () {
+        btn.disabled = false;
+        btn.textContent = "Создать заказ";
+      });
+  });
+
+  fetch("api/admin-check.php")
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (!data.ok) {
+        document.getElementById("access-message").textContent = "Доступ только для администраторов.";
+        return;
+      }
+      document.getElementById("access-message").hidden = true;
+      document.getElementById("admin-layout").hidden = false;
+      loadOrders();
+      loadUsersIntoSelect();
+      loadBuyouts();
+    })
+    .catch(function () {
+      document.getElementById("access-message").textContent = "Не удалось связаться с сервером.";
+    });
+</script>
+</body>
+</html>

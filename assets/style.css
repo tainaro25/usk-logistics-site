@@ -1187,6 +1187,10 @@ table.price-table tr:last-child td {
   align-items: start;
 }
 
+.account-layout[hidden] {
+  display: none;
+}
+
 .account-sidebar {
   background: #fff;
   border: 1px solid var(--border);
