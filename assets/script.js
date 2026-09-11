@@ -119,4 +119,77 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     revealEls.forEach((el) => observer.observe(el));
   }
+
+  const modalOverlay = document.getElementById("request-modal-overlay");
+  if (modalOverlay) {
+    const openBtns = document.querySelectorAll("[data-open-request-modal]");
+    const closeBtn = document.getElementById("request-modal-close");
+    const submitBtn = document.getElementById("modal-submit");
+    const intro = document.getElementById("modal-intro");
+    const success = document.getElementById("modal-success");
+    const nameInput = document.getElementById("modal-name");
+    const linkInput = document.getElementById("modal-link");
+    const phoneInput = document.getElementById("modal-phone");
+
+    const openModal = (e) => {
+      if (e) e.preventDefault();
+      modalOverlay.hidden = false;
+      document.body.classList.add("modal-open");
+    };
+
+    const closeModal = () => {
+      modalOverlay.hidden = true;
+      document.body.classList.remove("modal-open");
+    };
+
+    openBtns.forEach((btn) => btn.addEventListener("click", openModal));
+    if (closeBtn) closeBtn.addEventListener("click", closeModal);
+
+    modalOverlay.addEventListener("click", (e) => {
+      if (e.target === modalOverlay) closeModal();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !modalOverlay.hidden) closeModal();
+    });
+
+    if (submitBtn) {
+      submitBtn.addEventListener("click", () => {
+        const name = nameInput.value.trim();
+        const link = linkInput.value.trim();
+        const phone = phoneInput.value.trim();
+
+        if (!name || phone.replace(/\D/g, "").length < 10) {
+          alert("Заполните, пожалуйста, имя и телефон полностью.");
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Отправка...";
+
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("link", link);
+        formData.append("phone", phone);
+
+        fetch("/send-request.php", { method: "POST", body: formData })
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.ok) {
+              intro.hidden = true;
+              success.hidden = false;
+            } else {
+              alert("Не получилось отправить заявку. Попробуйте написать нам в WhatsApp или Telegram.");
+            }
+          })
+          .catch(() => {
+            alert("Не получилось отправить заявку. Попробуйте написать нам в WhatsApp или Telegram.");
+          })
+          .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Отправить заявку";
+          });
+      });
+    }
+  }
 });

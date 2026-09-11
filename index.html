@@ -80,6 +80,7 @@
       <a href="en/index.html" class="lang-btn lang-link">ENG</a>
     </div>
     <div class="header-cta">
+      <button type="button" class="btn btn-primary btn-sm" data-open-request-modal>Оставить заявку</button>
       <a href="contact.html" class="btn btn-outline btn-sm" data-i18n="nav_contact">Связаться</a>
     </div>
     <button class="menu-toggle" aria-label="Меню" data-i18n-aria="menu_aria">
@@ -289,35 +290,11 @@
 
   <section class="alt">
     <div class="wrap">
-      <div class="cta-band reveal" id="order-cta">
-        <div id="order-cta-intro">
-          <h2 data-i18n="home_cta_h2">Готовы сделать заказ?</h2>
-          <p data-i18n="home_cta_p">Оставьте заявку — менеджер свяжется и поможет оформить выкуп.</p>
-          <div class="hero-actions">
-            <button type="button" class="btn btn-primary" id="order-cta-open">Оставить заявку</button>
-          </div>
-        </div>
-
-        <div id="order-cta-form" hidden style="max-width: 420px; margin: 0 auto; text-align: left;">
-          <div class="calc-input-row">
-            <label for="cta-name">Имя</label>
-            <input type="text" id="cta-name" placeholder="Как к вам обращаться">
-          </div>
-          <div class="calc-input-row">
-            <label for="cta-link">Ссылка на товар</label>
-            <input type="text" id="cta-link" placeholder="https://...">
-          </div>
-          <div class="calc-input-row">
-            <label for="cta-phone">Номер телефона</label>
-            <input type="text" id="cta-phone" value="+7 ">
-          </div>
-          <button type="button" class="btn btn-primary" style="width: 100%;" id="order-cta-submit">Отправить заявку</button>
-        </div>
-
-        <div id="order-cta-success" hidden>
-          <div style="font-size: 40px; margin-bottom: 12px;">✅</div>
-          <h2 style="margin: 0 0 8px;">Заявка отправлена</h2>
-          <p style="margin: 0;">Менеджер свяжется с вами в ближайшее время.</p>
+      <div class="cta-band reveal">
+        <h2 data-i18n="home_cta_h2">Готовы сделать заказ?</h2>
+        <p data-i18n="home_cta_p">Оставьте заявку — менеджер свяжется и поможет оформить выкуп.</p>
+        <div class="hero-actions">
+          <button type="button" class="btn btn-primary" data-open-request-modal>Оставить заявку</button>
         </div>
       </div>
     </div>
@@ -337,60 +314,36 @@
   </div>
 </footer>
 
+<div class="modal-overlay" id="request-modal-overlay" hidden>
+  <div class="modal-card">
+    <button type="button" class="modal-close" id="request-modal-close" aria-label="Закрыть">✕</button>
+    <div id="modal-intro">
+      <span class="eyebrow">Выкуп товара</span>
+      <h2 style="font-size: 24px; margin: 10px 0 6px;">Оставьте заявку</h2>
+      <p style="color: var(--muted); font-size: 14px; margin: 0 0 20px;">Заполните форму — менеджер свяжется и поможет с выкупом.</p>
+      <div class="calc-input-row">
+        <label for="modal-name">Имя</label>
+        <input type="text" id="modal-name" placeholder="Как к вам обращаться">
+      </div>
+      <div class="calc-input-row">
+        <label for="modal-link">Ссылка на товар</label>
+        <input type="text" id="modal-link" placeholder="https://...">
+      </div>
+      <div class="calc-input-row">
+        <label for="modal-phone">Номер телефона</label>
+        <input type="text" id="modal-phone" value="+7 ">
+      </div>
+      <button type="button" class="btn btn-primary" style="width: 100%;" id="modal-submit">Отправить заявку</button>
+    </div>
+    <div id="modal-success" hidden style="text-align: center;">
+      <div style="font-size: 40px; margin-bottom: 12px;">✅</div>
+      <h2 style="margin: 0 0 8px;">Заявка отправлена</h2>
+      <p style="margin: 0; color: var(--muted);">Менеджер свяжется с вами в ближайшее время.</p>
+    </div>
+  </div>
+</div>
+
 <script src="assets/i18n.js"></script>
 <script src="assets/script.js"></script>
-<script>
-  var ctaOpenBtn = document.getElementById("order-cta-open");
-  var ctaSubmitBtn = document.getElementById("order-cta-submit");
-  var ctaIntro = document.getElementById("order-cta-intro");
-  var ctaForm = document.getElementById("order-cta-form");
-  var ctaSuccess = document.getElementById("order-cta-success");
-
-  if (ctaOpenBtn) {
-    ctaOpenBtn.addEventListener("click", function () {
-      ctaIntro.hidden = true;
-      ctaForm.hidden = false;
-    });
-  }
-
-  if (ctaSubmitBtn) {
-    ctaSubmitBtn.addEventListener("click", function () {
-      var name = document.getElementById("cta-name").value.trim();
-      var link = document.getElementById("cta-link").value.trim();
-      var phone = document.getElementById("cta-phone").value.trim();
-
-      if (!name || phone.replace(/\D/g, "").length < 10) {
-        alert("Заполните, пожалуйста, имя и телефон полностью.");
-        return;
-      }
-
-      ctaSubmitBtn.disabled = true;
-      ctaSubmitBtn.textContent = "Отправка...";
-
-      var formData = new FormData();
-      formData.append("name", name);
-      formData.append("link", link);
-      formData.append("phone", phone);
-
-      fetch("send-request.php", { method: "POST", body: formData })
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-          if (data.ok) {
-            ctaForm.hidden = true;
-            ctaSuccess.hidden = false;
-          } else {
-            alert("Не получилось отправить заявку. Попробуйте написать нам в WhatsApp или Telegram.");
-          }
-        })
-        .catch(function () {
-          alert("Не получилось отправить заявку. Попробуйте написать нам в WhatsApp или Telegram.");
-        })
-        .finally(function () {
-          ctaSubmitBtn.disabled = false;
-          ctaSubmitBtn.textContent = "Отправить заявку";
-        });
-    });
-  }
-</script>
 </body>
 </html>

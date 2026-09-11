@@ -63,6 +63,7 @@
       <a href="en/contact.html" class="lang-btn lang-link">ENG</a>
     </div>
     <div class="header-cta">
+      <button type="button" class="btn btn-primary btn-sm" data-open-request-modal>Оставить заявку</button>
       <a href="contact.html" class="btn btn-outline btn-sm" data-i18n="nav_contact">Связаться</a>
     </div>
     <button class="menu-toggle" aria-label="Меню" data-i18n-aria="menu_aria">
@@ -116,6 +117,35 @@
 <div class="floating-bar">
   <a href="https://wa.me/77064459568" target="_blank" rel="noopener" class="fab wa" aria-label="WhatsApp">💬</a>
   <a href="https://t.me/usklogistics" target="_blank" rel="noopener" class="fab tg" aria-label="Telegram">✈️</a>
+</div>
+
+<div class="modal-overlay" id="request-modal-overlay" hidden>
+  <div class="modal-card">
+    <button type="button" class="modal-close" id="request-modal-close" aria-label="Закрыть">✕</button>
+    <div id="modal-intro">
+      <span class="eyebrow">Выкуп товара</span>
+      <h2 style="font-size: 24px; margin: 10px 0 6px;">Оставьте заявку</h2>
+      <p style="color: var(--muted); font-size: 14px; margin: 0 0 20px;">Заполните форму — менеджер свяжется и поможет с выкупом.</p>
+      <div class="calc-input-row">
+        <label for="modal-name">Имя</label>
+        <input type="text" id="modal-name" placeholder="Как к вам обращаться">
+      </div>
+      <div class="calc-input-row">
+        <label for="modal-link">Ссылка на товар</label>
+        <input type="text" id="modal-link" placeholder="https://...">
+      </div>
+      <div class="calc-input-row">
+        <label for="modal-phone">Номер телефона</label>
+        <input type="text" id="modal-phone" value="+7 ">
+      </div>
+      <button type="button" class="btn btn-primary" style="width: 100%;" id="modal-submit">Отправить заявку</button>
+    </div>
+    <div id="modal-success" hidden style="text-align: center;">
+      <div style="font-size: 40px; margin-bottom: 12px;">✅</div>
+      <h2 style="margin: 0 0 8px;">Заявка отправлена</h2>
+      <p style="margin: 0; color: var(--muted);">Менеджер свяжется с вами в ближайшее время.</p>
+    </div>
+  </div>
 </div>
 
 <script src="assets/i18n.js"></script>
