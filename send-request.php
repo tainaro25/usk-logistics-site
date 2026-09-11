@@ -40,20 +40,26 @@ if ($track !== '') $lines[] = "📦 Трек-номер: " . $esc($track);
 
 $text = implode("\n", $lines);
 
-$ch = curl_init("https://api.telegram.org/bot{$TELEGRAM_BOT_TOKEN}/sendMessage");
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
-    'chat_id' => $TELEGRAM_CHAT_ID,
-    'text' => $text,
-    'parse_mode' => 'HTML',
-]));
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-$response = curl_exec($ch);
-$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-curl_close($ch);
+$chatIds = isset($TELEGRAM_CHAT_IDS) ? $TELEGRAM_CHAT_IDS : [$TELEGRAM_CHAT_ID];
 
-if ($httpCode === 200) {
+$allOk = true;
+foreach ($chatIds as $chatId) {
+    $ch = curl_init("https://api.telegram.org/bot{$TELEGRAM_BOT_TOKEN}/sendMessage");
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+        'chat_id' => $chatId,
+        'text' => $text,
+        'parse_mode' => 'HTML',
+    ]));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    if ($httpCode !== 200) $allOk = false;
+}
+
+if ($allOk) {
     echo json_encode(['ok' => true]);
 } else {
     http_response_code(502);
