@@ -289,12 +289,35 @@
 
   <section class="alt">
     <div class="wrap">
-      <div class="cta-band reveal">
-        <h2 data-i18n="home_cta_h2">Готовы сделать заказ?</h2>
-        <p data-i18n="home_cta_p">Напишите нам — поможем рассчитать стоимость и оформить доставку.</p>
-        <div class="hero-actions">
-          <a href="https://wa.me/77064459568" target="_blank" rel="noopener" class="btn btn-wa" data-i18n="btn_wa">WhatsApp</a>
-          <a href="https://t.me/usklogistics" target="_blank" rel="noopener" class="btn btn-tg" data-i18n="btn_tg">Telegram</a>
+      <div class="cta-band reveal" id="order-cta">
+        <div id="order-cta-intro">
+          <h2 data-i18n="home_cta_h2">Готовы сделать заказ?</h2>
+          <p data-i18n="home_cta_p">Оставьте заявку — менеджер свяжется и поможет оформить выкуп.</p>
+          <div class="hero-actions">
+            <button type="button" class="btn btn-primary" id="order-cta-open">Оставить заявку</button>
+          </div>
+        </div>
+
+        <div id="order-cta-form" hidden style="max-width: 420px; margin: 0 auto; text-align: left;">
+          <div class="calc-input-row">
+            <label for="cta-name">Имя</label>
+            <input type="text" id="cta-name" placeholder="Как к вам обращаться">
+          </div>
+          <div class="calc-input-row">
+            <label for="cta-link">Ссылка на товар</label>
+            <input type="text" id="cta-link" placeholder="https://...">
+          </div>
+          <div class="calc-input-row">
+            <label for="cta-phone">Номер телефона</label>
+            <input type="text" id="cta-phone" placeholder="+7 ___ ___ __ __">
+          </div>
+          <button type="button" class="btn btn-primary" style="width: 100%;" id="order-cta-submit">Отправить заявку</button>
+        </div>
+
+        <div id="order-cta-success" hidden>
+          <div style="font-size: 40px; margin-bottom: 12px;">✅</div>
+          <h2 style="margin: 0 0 8px;">Заявка отправлена</h2>
+          <p style="margin: 0;">Менеджер свяжется с вами в ближайшее время.</p>
         </div>
       </div>
     </div>
@@ -316,5 +339,58 @@
 
 <script src="assets/i18n.js"></script>
 <script src="assets/script.js"></script>
+<script>
+  var ctaOpenBtn = document.getElementById("order-cta-open");
+  var ctaSubmitBtn = document.getElementById("order-cta-submit");
+  var ctaIntro = document.getElementById("order-cta-intro");
+  var ctaForm = document.getElementById("order-cta-form");
+  var ctaSuccess = document.getElementById("order-cta-success");
+
+  if (ctaOpenBtn) {
+    ctaOpenBtn.addEventListener("click", function () {
+      ctaIntro.hidden = true;
+      ctaForm.hidden = false;
+    });
+  }
+
+  if (ctaSubmitBtn) {
+    ctaSubmitBtn.addEventListener("click", function () {
+      var name = document.getElementById("cta-name").value.trim();
+      var link = document.getElementById("cta-link").value.trim();
+      var phone = document.getElementById("cta-phone").value.trim();
+
+      if (!name || !phone) {
+        alert("Заполните, пожалуйста, имя и телефон.");
+        return;
+      }
+
+      ctaSubmitBtn.disabled = true;
+      ctaSubmitBtn.textContent = "Отправка...";
+
+      var formData = new FormData();
+      formData.append("name", name);
+      formData.append("link", link);
+      formData.append("phone", phone);
+
+      fetch("send-request.php", { method: "POST", body: formData })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (data.ok) {
+            ctaForm.hidden = true;
+            ctaSuccess.hidden = false;
+          } else {
+            alert("Не получилось отправить заявку. Попробуйте написать нам в WhatsApp или Telegram.");
+          }
+        })
+        .catch(function () {
+          alert("Не получилось отправить заявку. Попробуйте написать нам в WhatsApp или Telegram.");
+        })
+        .finally(function () {
+          ctaSubmitBtn.disabled = false;
+          ctaSubmitBtn.textContent = "Отправить заявку";
+        });
+    });
+  }
+</script>
 </body>
 </html>
