@@ -1,4 +1,5 @@
 <?php
+session_start();
 header('Content-Type: application/json; charset=utf-8');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -25,6 +26,20 @@ if ($name === '' || $phone === '') {
     http_response_code(400);
     echo json_encode(['ok' => false, 'error' => 'missing_fields']);
     exit;
+}
+
+$dbConfigFile = __DIR__ . '/db-config.php';
+if (file_exists($dbConfigFile)) {
+    require $dbConfigFile;
+    $conn = db_connect();
+    if (!$conn->connect_error) {
+        $userId = !empty($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+        $stmt = $conn->prepare('INSERT INTO buyout_requests (user_id, name, phone, product_link) VALUES (?, ?, ?, ?)');
+        $stmt->bind_param('isss', $userId, $name, $phone, $link);
+        $stmt->execute();
+        $stmt->close();
+        $conn->close();
+    }
 }
 
 $esc = function ($value) {

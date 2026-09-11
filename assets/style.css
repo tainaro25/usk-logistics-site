@@ -130,6 +130,14 @@ img {
   gap: 12px;
 }
 
+.account-icon-btn {
+  padding: 9px 10px;
+}
+
+.nav-mobile-only {
+  display: none;
+}
+
 .lang-switch {
   display: flex;
   align-items: center;
@@ -360,6 +368,25 @@ img {
 @media (max-width: 640px) {
   .routes-wrap {
     margin-top: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .site-header .wrap {
+    flex-wrap: wrap;
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    row-gap: 8px;
+  }
+
+  .lang-switch {
+    order: 3;
+    margin-left: auto;
+  }
+
+  .header-cta {
+    order: 4;
   }
 }
 
@@ -1057,6 +1084,14 @@ table.price-table tr:last-child td {
 
   .menu-toggle {
     display: block;
+  }
+
+  .header-cta .btn-outline {
+    display: none;
+  }
+
+  .nav-mobile-only {
+    display: inline;
   }
 
   .steps,
