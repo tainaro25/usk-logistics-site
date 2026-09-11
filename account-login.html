@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Вход — USK Logistics</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css?v=2">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a href="index.html" class="logo">USK <span>Logistics</span></a>
+    <nav class="nav">
+      <a href="index.html">Главная</a>
+      <a href="about.html">О нас</a>
+      <a href="tariffs.html">Тарифы</a>
+      <a href="offer.html">Оферта</a>
+    </nav>
+    <div class="lang-switch" role="group" aria-label="Тіл / Язык">
+      <button type="button" class="lang-btn" data-lang="kk">ҚАЗ</button>
+      <button type="button" class="lang-btn active" data-lang="ru">РУС</button>
+      <a href="en/index.html" class="lang-btn lang-link">ENG</a>
+    </div>
+    <div class="header-cta">
+      <a href="account-login.html" class="btn btn-primary btn-sm">Личный кабинет</a>
+      <a href="contact.html" class="btn btn-outline btn-sm">Связаться</a>
+    </div>
+    <button class="menu-toggle" aria-label="Меню">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="hero" style="padding: 56px 0 40px;">
+    <div class="wrap" style="max-width: 460px;">
+      <div class="calc-card" style="margin: 0;">
+        <div class="calc-toggle">
+          <button type="button" class="calc-option active" id="tab-login">Вход</button>
+          <button type="button" class="calc-option" id="tab-register">Регистрация</button>
+        </div>
+
+        <button type="button" class="btn btn-google" id="google-btn">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l5.7-5.7C34.5 6.1 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.6 18.9 12 24 12c3.1 0 5.8 1.1 8 3l5.7-5.7C34.5 6.1 29.5 4 24 4c-7.7 0-14.3 4.4-17.7 10.7z"/><path fill="#4CAF50" d="M24 44c5.3 0 10.1-2 13.7-5.4l-6.3-5.3C29.4 35 26.8 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.6 39.5 16.3 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.7l6.3 5.3C40.9 36 44 30.5 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg>
+          Войти через Google
+        </button>
+
+        <div class="auth-divider">или email</div>
+
+        <div class="calc-input-row" id="register-name-row" hidden>
+          <label for="register-name">Имя</label>
+          <input type="text" id="register-name" placeholder="Как к вам обращаться">
+        </div>
+        <div class="calc-input-row">
+          <label for="login-email">Email</label>
+          <input type="text" id="login-email" placeholder="you@example.com">
+        </div>
+        <div class="calc-input-row" id="register-phone-row" hidden>
+          <label for="register-phone">Телефон</label>
+          <input type="text" id="register-phone" value="+7 ">
+        </div>
+        <div class="calc-input-row">
+          <label for="login-password">Пароль</label>
+          <input type="password" id="login-password" placeholder="Минимум 6 символов">
+        </div>
+
+        <p id="auth-error" style="color: #dc2626; font-size: 14px; margin: 0 0 16px; display: none;"></p>
+
+        <button type="button" class="btn btn-primary" style="width: 100%;" id="submit-btn">Войти</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="logo">USK <span>Logistics</span></div>
+    <div class="footer-links">
+      <a href="about.html">О нас</a>
+      <a href="tariffs.html">Тарифы</a>
+      <a href="offer.html">Оферта</a>
+      <a href="contact.html">Связаться</a>
+    </div>
+    <div class="copyright">© 2026 USK Logistics. Все права защищены.</div>
+  </div>
+</footer>
+
+<script>
+  var loginTab = document.getElementById("tab-login");
+  var registerTab = document.getElementById("tab-register");
+  var submitBtn = document.getElementById("submit-btn");
+  var registerNameRow = document.getElementById("register-name-row");
+  var registerPhoneRow = document.getElementById("register-phone-row");
+  var errorEl = document.getElementById("auth-error");
+  var isRegister = false;
+
+  function showError(msg) {
+    errorEl.textContent = msg;
+    errorEl.style.display = "block";
+  }
+
+  function hideError() {
+    errorEl.style.display = "none";
+  }
+
+  loginTab.addEventListener("click", function () {
+    isRegister = false;
+    loginTab.classList.add("active");
+    registerTab.classList.remove("active");
+    registerNameRow.hidden = true;
+    registerPhoneRow.hidden = true;
+    submitBtn.textContent = "Войти";
+    hideError();
+  });
+
+  registerTab.addEventListener("click", function () {
+    isRegister = true;
+    registerTab.classList.add("active");
+    loginTab.classList.remove("active");
+    registerNameRow.hidden = false;
+    registerPhoneRow.hidden = false;
+    submitBtn.textContent = "Создать аккаунт";
+    hideError();
+  });
+
+  document.getElementById("google-btn").addEventListener("click", function () {
+    alert("Вход через Google пока в разработке — используйте email и пароль.");
+  });
+
+  var errorMessages = {
+    invalid_input: "Проверьте, что все поля заполнены (пароль — минимум 6 символов).",
+    email_taken: "Этот email уже зарегистрирован — попробуйте войти.",
+    invalid_credentials: "Неверный email или пароль.",
+    db_connection_failed: "Ошибка подключения к серверу. Попробуйте позже.",
+    not_configured: "Сервер ещё не настроен. Попробуйте позже."
+  };
+
+  submitBtn.addEventListener("click", function () {
+    hideError();
+    var email = document.getElementById("login-email").value.trim();
+    var password = document.getElementById("login-password").value;
+
+    if (!email || !password) {
+      showError("Заполните email и пароль.");
+      return;
+    }
+
+    var formData = new FormData();
+    formData.append("email", email);
+    formData.append("password", password);
+
+    var url = "api/login.php";
+    if (isRegister) {
+      var name = document.getElementById("register-name").value.trim();
+      var phone = document.getElementById("register-phone").value.trim();
+      if (!name || phone.replace(/\D/g, "").length < 10) {
+        showError("Заполните имя и телефон полностью.");
+        return;
+      }
+      formData.append("name", name);
+      formData.append("phone", phone);
+      url = "api/register.php";
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Подождите...";
+
+    fetch(url, { method: "POST", body: formData })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.ok) {
+          window.location.href = "account-dashboard.html";
+        } else {
+          showError(errorMessages[data.error] || "Что-то пошло не так. Попробуйте ещё раз.");
+        }
+      })
+      .catch(function () {
+        showError("Не удалось связаться с сервером. Попробуйте позже.");
+      })
+      .finally(function () {
+        submitBtn.disabled = false;
+        submitBtn.textContent = isRegister ? "Создать аккаунт" : "Войти";
+      });
+  });
+
+  document.querySelector(".menu-toggle").addEventListener("click", function () {
+    document.body.classList.toggle("nav-open");
+  });
+</script>
+</body>
+</html>

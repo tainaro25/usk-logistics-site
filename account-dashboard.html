@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Личный кабинет — USK Logistics</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css?v=2">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a href="index.html" class="logo">USK <span>Logistics</span></a>
+    <nav class="nav">
+      <a href="index.html">Главная</a>
+      <a href="about.html">О нас</a>
+      <a href="tariffs.html">Тарифы</a>
+      <a href="offer.html">Оферта</a>
+    </nav>
+    <div class="lang-switch" role="group" aria-label="Тіл / Язык">
+      <button type="button" class="lang-btn" data-lang="kk">ҚАЗ</button>
+      <button type="button" class="lang-btn active" data-lang="ru">РУС</button>
+      <a href="en/index.html" class="lang-btn lang-link">ENG</a>
+    </div>
+    <div class="header-cta">
+      <a href="account-dashboard.html" class="btn btn-primary btn-sm">Личный кабинет</a>
+      <a href="contact.html" class="btn btn-outline btn-sm">Связаться</a>
+    </div>
+    <button class="menu-toggle" aria-label="Меню">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section style="padding: 40px 0 80px;">
+    <div class="wrap">
+      <div class="account-layout" id="account-layout" hidden>
+        <aside class="account-sidebar">
+          <nav class="account-nav">
+            <a href="#" class="tab-link active" data-tab="orders">📦 Мои заказы</a>
+            <a href="#" class="tab-link" data-tab="profile">👤 Личные данные</a>
+            <a href="#" class="tab-link" data-tab="buyout">🛒 Заявки на выкуп</a>
+            <a href="#" id="logout-link" class="logout">↩ Выйти</a>
+          </nav>
+        </aside>
+
+        <div class="account-panel">
+          <div class="tab-content" id="tab-orders">
+            <h1>Мои заказы</h1>
+            <div id="orders-list"></div>
+          </div>
+
+          <div class="tab-content" id="tab-profile" hidden>
+            <h1>Личные данные</h1>
+            <div class="profile-form-row">
+              <div class="calc-input-row">
+                <label>Имя</label>
+                <input type="text" id="profile-name">
+              </div>
+              <div class="calc-input-row">
+                <label>Телефон</label>
+                <input type="text" id="profile-phone">
+              </div>
+            </div>
+            <div class="calc-input-row">
+              <label>Email</label>
+              <input type="text" id="profile-email" disabled>
+            </div>
+            <div class="calc-input-row">
+              <label>Адрес доставки</label>
+              <input type="text" id="profile-address" placeholder="Город, улица, дом, квартира">
+            </div>
+            <p id="profile-message" style="color: var(--muted); font-size: 14px; margin: 0 0 16px; display: none;"></p>
+            <button type="button" class="btn btn-primary" id="profile-save">Сохранить изменения</button>
+          </div>
+
+          <div class="tab-content" id="tab-buyout" hidden>
+            <h1>Заявки на выкуп</h1>
+            <div id="buyouts-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="logo">USK <span>Logistics</span></div>
+    <div class="footer-links">
+      <a href="about.html">О нас</a>
+      <a href="tariffs.html">Тарифы</a>
+      <a href="offer.html">Оферта</a>
+      <a href="contact.html">Связаться</a>
+    </div>
+    <div class="copyright">© 2026 USK Logistics. Все права защищены.</div>
+  </div>
+</footer>
+
+<script>
+  var links = document.querySelectorAll(".tab-link");
+  var panels = document.querySelectorAll(".tab-content");
+
+  links.forEach(function (link) {
+    link.addEventListener("click", function (e) {
+      e.preventDefault();
+      links.forEach(function (l) { l.classList.remove("active"); });
+      link.classList.add("active");
+      var target = link.dataset.tab;
+      panels.forEach(function (p) {
+        p.hidden = p.id !== "tab-" + target;
+      });
+    });
+  });
+
+  document.querySelector(".menu-toggle").addEventListener("click", function () {
+    document.body.classList.toggle("nav-open");
+  });
+
+  var statusClass = {
+    "на рассмотрении": "status-transit",
+    "выкуплен": "status-transit",
+    "на складе": "status-warehouse",
+    "в пути": "status-transit",
+    "доставлено": "status-delivered",
+    "в обработке": "status-transit",
+    "одобрена": "status-warehouse",
+    "отклонена": "status-delivered",
+    "новая": "status-transit"
+  };
+
+  function formatDate(isoString) {
+    var d = new Date(isoString.replace(" ", "T"));
+    return d.toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
+  }
+
+  function renderOrders(orders) {
+    var box = document.getElementById("orders-list");
+    if (!orders.length) {
+      box.innerHTML = '<p style="color: var(--muted); font-size: 14px;">У вас пока нет заказов. Оформите заявку на выкуп — и она появится здесь.</p>';
+      return;
+    }
+    box.innerHTML = orders.map(function (o) {
+      return '<div class="order-row"><div class="order-info"><strong>' + o.track_number + (o.description ? " · " + o.description : "") +
+        '</strong><span>' + (o.origin ? "Из " + o.origin + " · " : "") + "создан " + formatDate(o.created_at) +
+        '</span></div><span class="status-badge ' + (statusClass[o.status] || "status-transit") + '">' + o.status + "</span></div>";
+    }).join("");
+  }
+
+  function renderBuyouts(buyouts) {
+    var box = document.getElementById("buyouts-list");
+    if (!buyouts.length) {
+      box.innerHTML = '<p style="color: var(--muted); font-size: 14px;">Заявок пока нет.</p>';
+      return;
+    }
+    box.innerHTML = buyouts.map(function (b) {
+      return '<div class="order-row"><div class="order-info"><strong>Ссылка на товар: ' + (b.product_link || "—") +
+        '</strong><span>Отправлено ' + formatDate(b.created_at) +
+        '</span></div><span class="status-badge ' + (statusClass[b.status] || "status-transit") + '">' + b.status + "</span></div>";
+    }).join("");
+  }
+
+  fetch("api/me.php")
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (!data.ok) {
+        window.location.href = "account-login.html";
+        return;
+      }
+      document.getElementById("account-layout").hidden = false;
+      document.getElementById("profile-name").value = data.user.name || "";
+      document.getElementById("profile-phone").value = data.user.phone || "";
+      document.getElementById("profile-email").value = data.user.email || "";
+      document.getElementById("profile-address").value = data.user.delivery_address || "";
+      renderOrders(data.orders);
+      renderBuyouts(data.buyouts);
+    })
+    .catch(function () {
+      window.location.href = "account-login.html";
+    });
+
+  document.getElementById("profile-save").addEventListener("click", function () {
+    var btn = this;
+    var msg = document.getElementById("profile-message");
+    var name = document.getElementById("profile-name").value.trim();
+    var phone = document.getElementById("profile-phone").value.trim();
+    var address = document.getElementById("profile-address").value.trim();
+
+    if (!name || !phone) {
+      msg.style.color = "#dc2626";
+      msg.textContent = "Заполните имя и телефон.";
+      msg.style.display = "block";
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Сохранение...";
+
+    var formData = new FormData();
+    formData.append("name", name);
+    formData.append("phone", phone);
+    formData.append("delivery_address", address);
+
+    fetch("api/update-profile.php", { method: "POST", body: formData })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        msg.style.color = data.ok ? "#16a34a" : "#dc2626";
+        msg.textContent = data.ok ? "Изменения сохранены." : "Не получилось сохранить. Попробуйте ещё раз.";
+        msg.style.display = "block";
+      })
+      .catch(function () {
+        msg.style.color = "#dc2626";
+        msg.textContent = "Не удалось связаться с сервером.";
+        msg.style.display = "block";
+      })
+      .finally(function () {
+        btn.disabled = false;
+        btn.textContent = "Сохранить изменения";
+      });
+  });
+
+  document.getElementById("logout-link").addEventListener("click", function (e) {
+    e.preventDefault();
+    fetch("api/logout.php").finally(function () {
+      window.location.href = "account-login.html";
+    });
+  });
+</script>
+</body>
+</html>
