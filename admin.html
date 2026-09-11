@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=6">
+<link rel="stylesheet" href="assets/style.css?v=7">
 </head>
 <body>
 
@@ -19,9 +19,6 @@
     <nav class="nav">
       <a href="index.html">Главная</a>
     </nav>
-    <div class="header-cta">
-      <a href="account-dashboard.html" class="btn btn-outline btn-sm">Личный кабинет</a>
-    </div>
     <button class="menu-toggle" aria-label="Меню">
       <span></span><span></span><span></span>
     </button>
@@ -51,37 +48,37 @@
 
           <div class="tab-content" id="tab-create" hidden>
             <h1>Создать заказ</h1>
-            <div class="calc-input-row">
-              <label for="new-order-user">Клиент</label>
-              <select id="new-order-user"></select>
+            <div class="calc-input-row" style="position: relative;">
+              <label for="new-order-user-search">Клиент</label>
+              <input type="text" id="new-order-user-search" placeholder="Начните вводить имя или email..." autocomplete="off">
+              <input type="hidden" id="new-order-user-id">
+              <div id="new-order-user-suggestions" class="user-suggestions" hidden></div>
             </div>
             <div class="calc-input-row">
               <label for="new-order-track">Трек-номер</label>
-              <input type="text" id="new-order-track" placeholder="Например, USK-10005">
+              <input type="text" id="new-order-track" placeholder="Например, KZ4471829563US">
             </div>
             <div class="calc-input-row">
               <label for="new-order-desc">Товар</label>
               <input type="text" id="new-order-desc" placeholder="Например, Кроссовки Nike Air Max">
             </div>
-            <div class="profile-form-row">
-              <div class="calc-input-row">
-                <label for="new-order-origin">Откуда</label>
-                <select id="new-order-origin">
-                  <option value="США">США</option>
-                  <option value="Европа">Европа</option>
-                  <option value="Китай">Китай</option>
-                  <option value="Китай Экспресс">Китай Экспресс</option>
-                </select>
+            <div class="calc-input-row">
+              <label>Откуда</label>
+              <div class="calc-toggle" id="new-order-origin-toggle">
+                <button type="button" class="calc-option active" data-value="США">США</button>
+                <button type="button" class="calc-option" data-value="Европа">Европа</button>
+                <button type="button" class="calc-option" data-value="Китай">Китай</button>
+                <button type="button" class="calc-option" data-value="Китай Экспресс">Китай Экспресс</button>
               </div>
-              <div class="calc-input-row">
-                <label for="new-order-status">Статус</label>
-                <select id="new-order-status">
-                  <option value="на рассмотрении">на рассмотрении</option>
-                  <option value="выкуплен">выкуплен</option>
-                  <option value="на складе">на складе</option>
-                  <option value="в пути">в пути</option>
-                  <option value="доставлено">доставлено</option>
-                </select>
+            </div>
+            <div class="calc-input-row">
+              <label>Статус</label>
+              <div class="calc-toggle" id="new-order-status-toggle">
+                <button type="button" class="calc-option active" data-value="на рассмотрении">на рассмотрении</button>
+                <button type="button" class="calc-option" data-value="выкуплен">выкуплен</button>
+                <button type="button" class="calc-option" data-value="на складе">на складе</button>
+                <button type="button" class="calc-option" data-value="в пути">в пути</button>
+                <button type="button" class="calc-option" data-value="доставлено">доставлено</button>
               </div>
             </div>
             <p id="create-message" style="font-size: 14px; margin: 0 0 16px; display: none;"></p>
@@ -102,13 +99,6 @@
     </div>
   </section>
 </main>
-
-<footer class="site-footer">
-  <div class="wrap footer-grid">
-    <div class="logo">USK <span>Logistics</span></div>
-    <div class="copyright">© 2026 USK Logistics. Внутренняя панель.</div>
-  </div>
-</footer>
 
 <script>
   var ORDER_STATUSES = ["на рассмотрении", "выкуплен", "на складе", "в пути", "доставлено"];
@@ -226,17 +216,76 @@
       });
   }
 
+  var allUsers = [];
+
   function loadUsersIntoSelect() {
     fetch("api/admin-users.php")
       .then(function (r) { return r.json(); })
       .then(function (data) {
         if (!data.ok) return;
-        var select = document.getElementById("new-order-user");
-        select.innerHTML = data.users.map(function (u) {
-          return '<option value="' + u.id + '">' + u.name + ' (' + u.email + ')</option>';
-        }).join("");
+        allUsers = data.users;
       });
   }
+
+  var userSearchInput = document.getElementById("new-order-user-search");
+  var userIdField = document.getElementById("new-order-user-id");
+  var userSuggestionsBox = document.getElementById("new-order-user-suggestions");
+
+  userSearchInput.addEventListener("input", function () {
+    userIdField.value = "";
+    var query = userSearchInput.value.trim().toLowerCase();
+    if (!query) {
+      userSuggestionsBox.hidden = true;
+      return;
+    }
+    var matches = allUsers.filter(function (u) {
+      return u.name.toLowerCase().indexOf(query) !== -1 || u.email.toLowerCase().indexOf(query) !== -1;
+    }).slice(0, 8);
+
+    if (!matches.length) {
+      userSuggestionsBox.innerHTML = '<div class="user-suggestion-empty">Никого не найдено</div>';
+      userSuggestionsBox.hidden = false;
+      return;
+    }
+
+    userSuggestionsBox.innerHTML = matches.map(function (u) {
+      return '<div class="user-suggestion-item" data-user-id="' + u.id + '" data-user-label="' + u.name + ' (' + u.email + ')">' +
+        '<strong>' + u.name + '</strong><span>' + u.email + '</span></div>';
+    }).join("");
+    userSuggestionsBox.hidden = false;
+
+    userSuggestionsBox.querySelectorAll(".user-suggestion-item").forEach(function (item) {
+      item.addEventListener("click", function () {
+        userIdField.value = item.dataset.userId;
+        userSearchInput.value = item.dataset.userLabel;
+        userSuggestionsBox.hidden = true;
+      });
+    });
+  });
+
+  document.addEventListener("click", function (e) {
+    if (e.target !== userSearchInput && !userSuggestionsBox.contains(e.target)) {
+      userSuggestionsBox.hidden = true;
+    }
+  });
+
+  var selectedOrigin = "США";
+  document.getElementById("new-order-origin-toggle").addEventListener("click", function (e) {
+    var btn = e.target.closest(".calc-option");
+    if (!btn) return;
+    this.querySelectorAll(".calc-option").forEach(function (b) { b.classList.remove("active"); });
+    btn.classList.add("active");
+    selectedOrigin = btn.dataset.value;
+  });
+
+  var selectedNewOrderStatus = "на рассмотрении";
+  document.getElementById("new-order-status-toggle").addEventListener("click", function (e) {
+    var btn = e.target.closest(".calc-option");
+    if (!btn) return;
+    this.querySelectorAll(".calc-option").forEach(function (b) { b.classList.remove("active"); });
+    btn.classList.add("active");
+    selectedNewOrderStatus = btn.dataset.value;
+  });
 
   function loadBuyouts() {
     fetch("api/admin-buyouts.php")
@@ -361,11 +410,11 @@
   document.getElementById("create-order-btn").addEventListener("click", function () {
     var btn = this;
     var msg = document.getElementById("create-message");
-    var userId = document.getElementById("new-order-user").value;
+    var userId = document.getElementById("new-order-user-id").value;
     var track = document.getElementById("new-order-track").value.trim();
     var desc = document.getElementById("new-order-desc").value.trim();
-    var origin = document.getElementById("new-order-origin").value;
-    var status = document.getElementById("new-order-status").value;
+    var origin = selectedOrigin;
+    var status = selectedNewOrderStatus;
 
     if (!userId || !track) {
       msg.style.color = "#dc2626";
@@ -392,6 +441,8 @@
           msg.textContent = "Заказ создан.";
           document.getElementById("new-order-track").value = "";
           document.getElementById("new-order-desc").value = "";
+          userSearchInput.value = "";
+          userIdField.value = "";
           loadOrders();
         } else if (data.error === "track_number_taken") {
           msg.style.color = "#dc2626";
