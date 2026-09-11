@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=4">
+<link rel="stylesheet" href="assets/style.css?v=5">
 </head>
 <body>
 
@@ -45,7 +45,7 @@
           <nav class="account-nav">
             <a href="#" class="tab-link active" data-tab="orders">📦 Мои заказы</a>
             <a href="#" class="tab-link" data-tab="profile">👤 Личные данные</a>
-            <a href="#" class="tab-link" data-tab="buyout">🛒 Заявки на выкуп</a>
+            <a href="#" class="tab-link" data-tab="buyout">🕘 История заявок</a>
             <a href="#" id="logout-link" class="logout">↩ Выйти</a>
           </nav>
         </aside>
@@ -81,7 +81,8 @@
           </div>
 
           <div class="tab-content" id="tab-buyout" hidden>
-            <h1>Заявки на выкуп</h1>
+            <h1>История заявок</h1>
+            <p style="color: var(--muted); font-size: 14px; margin: -12px 0 20px;">Все запросы, которые вы отправляли через сайт. Как только заявка подтверждается — по ней заводится настоящий заказ в разделе «Мои заказы».</p>
             <div id="buyouts-list"></div>
           </div>
         </div>
@@ -143,14 +144,36 @@
   function renderOrders(orders) {
     var box = document.getElementById("orders-list");
     if (!orders.length) {
-      box.innerHTML = '<p style="color: var(--muted); font-size: 14px;">У вас пока нет заказов. Оформите заявку на выкуп — и она появится здесь.</p>';
+      box.innerHTML = '<p style="color: var(--muted); font-size: 14px;">У вас пока нет заказов. Оформите заявку на выкуп — как только она подтвердится, здесь появится заказ с трек-номером.</p>';
       return;
     }
     box.innerHTML = orders.map(function (o) {
-      return '<div class="order-row"><div class="order-info"><strong>' + o.track_number + (o.description ? " · " + o.description : "") +
-        '</strong><span>' + (o.origin ? "Из " + o.origin + " · " : "") + "создан " + formatDate(o.created_at) +
-        '</span></div><span class="status-badge ' + (statusClass[o.status] || "status-transit") + '">' + o.status + "</span></div>";
+      return '' +
+        '<div class="order-card">' +
+          '<div class="order-card-header">' +
+            '<h3>Заказ №' + o.id + (o.description ? " · " + o.description : "") + '</h3>' +
+            '<span class="status-badge ' + (statusClass[o.status] || "status-transit") + '">' + o.status + '</span>' +
+          '</div>' +
+          '<div class="order-card-details">' +
+            '<div class="detail-item"><span class="detail-label">Трек-номер</span><span class="detail-value">' + o.track_number +
+              ' <button type="button" class="copy-btn" data-copy="' + o.track_number + '" title="Скопировать">⧉</button></span></div>' +
+            '<div class="detail-item"><span class="detail-label">Откуда</span><span class="detail-value">' + (o.origin || "—") + '</span></div>' +
+            '<div class="detail-item"><span class="detail-label">Дата создания</span><span class="detail-value">' + formatDate(o.created_at) + '</span></div>' +
+          '</div>' +
+        '</div>';
     }).join("");
+
+    box.querySelectorAll(".copy-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var text = btn.dataset.copy;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(function () {
+            btn.textContent = "✓";
+            setTimeout(function () { btn.textContent = "⧉"; }, 1500);
+          });
+        }
+      });
+    });
   }
 
   function renderBuyouts(buyouts) {
@@ -160,7 +183,7 @@
       return;
     }
     box.innerHTML = buyouts.map(function (b) {
-      return '<div class="order-row"><div class="order-info"><strong>Ссылка на товар: ' + (b.product_link || "—") +
+      return '<div class="order-row"><div class="order-info"><strong>' + (b.product_link || "Заявка без ссылки") +
         '</strong><span>Отправлено ' + formatDate(b.created_at) +
         '</span></div><span class="status-badge ' + (statusClass[b.status] || "status-transit") + '">' + b.status + "</span></div>";
     }).join("");
