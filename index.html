@@ -309,7 +309,7 @@
           </div>
           <div class="calc-input-row">
             <label for="cta-phone">Номер телефона</label>
-            <input type="text" id="cta-phone" placeholder="+7 ___ ___ __ __">
+            <input type="text" id="cta-phone" value="+7 ">
           </div>
           <button type="button" class="btn btn-primary" style="width: 100%;" id="order-cta-submit">Отправить заявку</button>
         </div>
@@ -359,8 +359,8 @@
       var link = document.getElementById("cta-link").value.trim();
       var phone = document.getElementById("cta-phone").value.trim();
 
-      if (!name || !phone) {
-        alert("Заполните, пожалуйста, имя и телефон.");
+      if (!name || phone.replace(/\D/g, "").length < 10) {
+        alert("Заполните, пожалуйста, имя и телефон полностью.");
         return;
       }
 
