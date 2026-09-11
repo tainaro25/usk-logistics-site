@@ -27,12 +27,16 @@ if ($name === '' || $phone === '') {
     exit;
 }
 
-$lines = ["🆕 Новая заявка на выкуп"];
-$lines[] = "Имя: " . $name;
-$lines[] = "Телефон: " . $phone;
-if ($email !== '') $lines[] = "Email: " . $email;
-if ($link !== '')  $lines[] = "Ссылка на товар: " . $link;
-if ($track !== '') $lines[] = "Трек-номер: " . $track;
+$esc = function ($value) {
+    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+};
+
+$lines = ["<b>Новая заявка</b>"];
+$lines[] = "👤 Имя: " . $esc($name);
+$lines[] = "📞 Телефон: " . $esc($phone);
+if ($email !== '') $lines[] = "✉️ Email: " . $esc($email);
+if ($link !== '')  $lines[] = "🔗 Ссылка на товар: " . $esc($link);
+if ($track !== '') $lines[] = "📦 Трек-номер: " . $esc($track);
 
 $text = implode("\n", $lines);
 
@@ -41,6 +45,7 @@ curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
     'chat_id' => $TELEGRAM_CHAT_ID,
     'text' => $text,
+    'parse_mode' => 'HTML',
 ]));
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_TIMEOUT, 10);
