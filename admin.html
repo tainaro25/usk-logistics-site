@@ -39,6 +39,7 @@
             <a href="#" class="tab-link active" data-tab="orders">📦 Все заказы</a>
             <a href="#" class="tab-link" data-tab="create">➕ Создать заказ</a>
             <a href="#" class="tab-link" data-tab="requests">🕘 Заявки</a>
+            <a href="#" class="tab-link" data-tab="users">👤 Пользователи</a>
           </nav>
         </aside>
 
@@ -90,6 +91,11 @@
           <div class="tab-content" id="tab-requests" hidden>
             <h1>Заявки клиентов</h1>
             <div id="admin-requests-list"></div>
+          </div>
+
+          <div class="tab-content" id="tab-users" hidden>
+            <h1>Пользователи</h1>
+            <div id="admin-users-list"></div>
           </div>
         </div>
       </div>
@@ -175,6 +181,7 @@
                 '<div style="display:flex; gap:10px;">' +
                   '<select class="order-status-select" data-order-id="' + o.id + '" style="flex:1; padding:10px 12px; border-radius:10px; border:1px solid var(--border);">' + selectOptions(ORDER_STATUSES, o.status) + '</select>' +
                   '<button type="button" class="btn btn-outline btn-sm save-order-status" data-order-id="' + o.id + '">Сохранить</button>' +
+                  '<button type="button" class="btn btn-outline btn-sm delete-order-btn" data-order-id="' + o.id + '" style="color:#dc2626; border-color:#dc2626;">Удалить</button>' +
                 '</div>' +
               '</div>' +
             '</div>';
@@ -197,6 +204,22 @@
               })
               .finally(function () {
                 setTimeout(function () { btn.disabled = false; btn.textContent = "Сохранить"; }, 1200);
+              });
+          });
+        });
+
+        box.querySelectorAll(".delete-order-btn").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            if (!confirm("Удалить этот заказ безвозвратно?")) return;
+            var orderId = btn.dataset.orderId;
+            var formData = new FormData();
+            formData.append("order_id", orderId);
+            btn.disabled = true;
+            fetch("api/admin-delete-order.php", { method: "POST", body: formData })
+              .then(function (r) { return r.json(); })
+              .then(function (data) {
+                if (data.ok) loadOrders();
+                else btn.disabled = false;
               });
           });
         });
@@ -243,6 +266,7 @@
                 '<div style="display:flex; gap:10px;">' +
                   '<select class="buyout-status-select" data-buyout-id="' + b.id + '" style="flex:1; padding:10px 12px; border-radius:10px; border:1px solid var(--border);">' + selectOptions(BUYOUT_STATUSES, b.status) + '</select>' +
                   '<button type="button" class="btn btn-outline btn-sm save-buyout-status" data-buyout-id="' + b.id + '">Сохранить</button>' +
+                  '<button type="button" class="btn btn-outline btn-sm delete-buyout-btn" data-buyout-id="' + b.id + '" style="color:#dc2626; border-color:#dc2626;">Удалить</button>' +
                 '</div>' +
               '</div>' +
             '</div>';
@@ -264,6 +288,70 @@
               })
               .finally(function () {
                 setTimeout(function () { btn.disabled = false; btn.textContent = "Сохранить"; }, 1200);
+              });
+          });
+        });
+
+        box.querySelectorAll(".delete-buyout-btn").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            if (!confirm("Удалить эту заявку безвозвратно?")) return;
+            var buyoutId = btn.dataset.buyoutId;
+            var formData = new FormData();
+            formData.append("buyout_id", buyoutId);
+            btn.disabled = true;
+            fetch("api/admin-delete-buyout.php", { method: "POST", body: formData })
+              .then(function (r) { return r.json(); })
+              .then(function (data) {
+                if (data.ok) loadBuyouts();
+                else btn.disabled = false;
+              });
+          });
+        });
+      });
+  }
+
+  function loadUsersList() {
+    fetch("api/admin-users.php")
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.ok) return;
+        var box = document.getElementById("admin-users-list");
+        if (!data.users.length) {
+          box.innerHTML = '<p style="color: var(--muted); font-size: 14px;">Пользователей пока нет.</p>';
+          return;
+        }
+        box.innerHTML = data.users.map(function (u) {
+          return '' +
+            '<div class="order-card">' +
+              '<div class="order-card-header">' +
+                '<h3>' + u.name + '</h3>' +
+                '<button type="button" class="btn btn-outline btn-sm delete-user-btn" data-user-id="' + u.id + '" style="color:#dc2626; border-color:#dc2626;">Удалить профиль</button>' +
+              '</div>' +
+              '<div class="order-card-details">' +
+                '<div class="detail-item"><span class="detail-label">Email</span><span class="detail-value">' + u.email + '</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Телефон</span><span class="detail-value">' + (u.phone || "—") + '</span></div>' +
+              '</div>' +
+            '</div>';
+        }).join("");
+
+        box.querySelectorAll(".delete-user-btn").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            if (!confirm("Удалить этот профиль? Вместе с ним удалятся и все его заказы. Это необратимо.")) return;
+            var userId = btn.dataset.userId;
+            var formData = new FormData();
+            formData.append("user_id", userId);
+            btn.disabled = true;
+            fetch("api/admin-delete-user.php", { method: "POST", body: formData })
+              .then(function (r) { return r.json(); })
+              .then(function (data) {
+                if (data.ok) {
+                  loadUsersList();
+                  loadUsersIntoSelect();
+                  loadOrders();
+                } else {
+                  btn.disabled = false;
+                  alert(data.error === "cannot_delete_self" ? "Нельзя удалить самого себя." : "Не получилось удалить.");
+                }
               });
           });
         });
@@ -332,6 +420,7 @@
       loadOrders();
       loadUsersIntoSelect();
       loadBuyouts();
+      loadUsersList();
     })
     .catch(function () {
       document.getElementById("access-message").textContent = "Не удалось связаться с сервером.";
