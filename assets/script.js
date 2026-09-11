@@ -3,6 +3,20 @@ function parseLocaleNumber(value) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  const accountLinks = document.querySelectorAll('a[href="account-login.html"]');
+  if (accountLinks.length) {
+    fetch("/api/me.php")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.ok) {
+          accountLinks.forEach((link) => {
+            link.href = "account-dashboard.html";
+          });
+        }
+      })
+      .catch(() => {});
+  }
+
   const toggle = document.querySelector(".menu-toggle");
   if (toggle) {
     toggle.addEventListener("click", () => {
