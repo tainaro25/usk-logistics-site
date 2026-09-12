@@ -37,6 +37,14 @@ $stmt = $conn->prepare('UPDATE orders SET status = ? WHERE id = ?');
 $stmt->bind_param('si', $status, $orderId);
 $ok = $stmt->execute();
 $stmt->close();
+
+if ($ok) {
+    $stmt = $conn->prepare('INSERT INTO order_status_history (order_id, status) VALUES (?, ?)');
+    $stmt->bind_param('is', $orderId, $status);
+    $stmt->execute();
+    $stmt->close();
+}
+
 $conn->close();
 
 echo json_encode(['ok' => $ok]);

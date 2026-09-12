@@ -59,7 +59,14 @@ if (!$stmt->execute()) {
     exit;
 }
 
+$orderId = $stmt->insert_id;
 $stmt->close();
+
+$stmt = $conn->prepare('INSERT INTO order_status_history (order_id, status) VALUES (?, ?)');
+$stmt->bind_param('is', $orderId, $status);
+$stmt->execute();
+$stmt->close();
+
 $conn->close();
 
 echo json_encode(['ok' => true]);

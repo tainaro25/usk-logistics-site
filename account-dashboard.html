@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=22">
+<link rel="stylesheet" href="assets/style.css?v=23">
 </head>
 <body>
 
@@ -225,6 +225,15 @@
     return str.slice(0, maxLen) + "...";
   }
 
+  function formatShortDateTime(isoString) {
+    var d = new Date(isoString.replace(" ", "T"));
+    var day = String(d.getDate()).padStart(2, "0");
+    var month = String(d.getMonth() + 1).padStart(2, "0");
+    var hours = String(d.getHours()).padStart(2, "0");
+    var minutes = String(d.getMinutes()).padStart(2, "0");
+    return day + "." + month + ", " + hours + ":" + minutes;
+  }
+
   function esc(value) {
     var div = document.createElement("div");
     div.textContent = value === null || value === undefined ? "" : String(value);
@@ -239,16 +248,19 @@
   var CUSTOMER_STEPS = ["сформировано", "на складе", "в пути", "прибыл", "доставлено"];
   var ADMIN_STEPS = ["на рассмотрении", "выкуплен", "на складе", "в пути", "доставлено"];
 
-  function buildTracker(currentStatus, steps) {
+  function buildTracker(currentStatus, steps, statusHistory) {
     var STEPS = steps || CUSTOMER_STEPS;
+    var history = statusHistory || {};
     var idx = STEPS.indexOf(currentStatus);
     if (idx === -1) idx = 0;
     var html = STEPS.map(function (status, i) {
       var stateClass = i < idx ? "done" : (i === idx ? "current" : "");
       var dotClass = "tracker-dot" + (i === idx ? " pulse" : "");
+      var dateText = (i <= idx && history[status]) ? formatShortDateTime(history[status]) : "";
       var stepHtml = '<div class="tracker-step ' + stateClass + '">' +
         '<div class="' + dotClass + '"></div>' +
         '<div class="tracker-label">' + esc(statusLabel(status)) + '</div>' +
+        (dateText ? '<div class="tracker-date">' + esc(dateText) + '</div>' : "") +
         '<div class="tracker-tooltip">' + esc(trackerInfo(status)) + '</div>' +
       '</div>';
       if (i < STEPS.length - 1) {
@@ -263,19 +275,17 @@
   function orderCardHtml(o) {
     var isCustomerOrder = o.source === "customer";
     var steps = isCustomerOrder ? CUSTOMER_STEPS : ADMIN_STEPS;
-    var statusChanged = o.updated_at && o.created_at && o.updated_at !== o.created_at;
     return '' +
       '<div class="order-card">' +
         '<div class="order-card-header">' +
           '<h3>' + esc(t("account_order_number_prefix")) + o.seq + (o.description ? " · " + esc(o.description) : "") + '</h3>' +
         '</div>' +
-        buildTracker(o.status, steps) +
+        buildTracker(o.status, steps, o.status_history) +
         '<div class="order-card-details">' +
           '<div class="detail-item"><span class="detail-label">' + esc(t("account_track_number_label")) + '</span><span class="detail-value">' + esc(o.track_number) +
             ' <button type="button" class="copy-btn" data-copy="' + esc(o.track_number) + '" title="' + esc(t("account_copy_title")) + '">⧉</button></span></div>' +
           (isCustomerOrder ? "" : '<div class="detail-item"><span class="detail-label">' + esc(t("account_origin_field_label")) + '</span><span class="detail-value">' + esc(o.origin ? originLabel(o.origin) : "-") + '</span></div>') +
           '<div class="detail-item"><span class="detail-label">' + esc(t("account_created_field_label")) + '</span><span class="detail-value">' + formatDate(o.created_at) + '</span></div>' +
-          (statusChanged ? '<div class="detail-item"><span class="detail-label">' + esc(t("account_status_updated_label")) + '</span><span class="detail-value">' + formatDateTime(o.updated_at) + '</span></div>' : "") +
         '</div>' +
       '</div>';
   }

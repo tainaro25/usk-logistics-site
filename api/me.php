@@ -52,6 +52,26 @@ while ($row = $result->fetch_assoc()) {
 $stmt->close();
 $orders = array_reverse($orders);
 
+$orderIds = array_column($orders, 'id');
+$statusHistoryByOrder = [];
+if ($orderIds) {
+    $placeholders = implode(',', array_fill(0, count($orderIds), '?'));
+    $types = str_repeat('i', count($orderIds));
+    $stmt = $conn->prepare("SELECT order_id, status, changed_at FROM order_status_history WHERE order_id IN ($placeholders) ORDER BY changed_at ASC");
+    $stmt->bind_param($types, ...$orderIds);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $statusHistoryByOrder[$row['order_id']][$row['status']] = $row['changed_at'];
+    }
+    $stmt->close();
+}
+
+foreach ($orders as &$order) {
+    $order['status_history'] = (object) ($statusHistoryByOrder[$order['id']] ?? []);
+}
+unset($order);
+
 $buyouts = [];
 $stmt = $conn->prepare('SELECT product_link, status, created_at FROM buyout_requests WHERE user_id = ? ORDER BY created_at DESC');
 $stmt->bind_param('i', $userId);
