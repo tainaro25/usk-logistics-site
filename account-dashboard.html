@@ -180,13 +180,25 @@
 
   var CUSTOMER_STEPS = ["сформировано", "на складе", "в пути", "прибыл", "доставлено"];
 
+  var CUSTOMER_STEP_INFO = {
+    "сформировано": "Заказ принят в работу — мы уже знаем о нём и готовимся к его получению.",
+    "на складе": "Товар прибыл на наш зарубежный склад.",
+    "в пути": "Посылка вылетела из страны заказа и уже в пути в Казахстан.",
+    "прибыл": "Товар уже у нас в Казахстане и готовится к выдаче.",
+    "доставлено": "Посылка доставлена клиенту."
+  };
+
   function buildTracker(currentStatus) {
     var idx = CUSTOMER_STEPS.indexOf(currentStatus);
     if (idx === -1) idx = 0;
     var html = CUSTOMER_STEPS.map(function (label, i) {
       var stateClass = i < idx ? "done" : (i === idx ? "current" : "");
       var dotClass = "tracker-dot" + (i === idx ? " pulse" : "");
-      var stepHtml = '<div class="tracker-step ' + stateClass + '"><div class="' + dotClass + '"></div><div class="tracker-label">' + label + '</div></div>';
+      var stepHtml = '<div class="tracker-step ' + stateClass + '">' +
+        '<div class="' + dotClass + '"></div>' +
+        '<div class="tracker-label">' + label + '</div>' +
+        '<div class="tracker-tooltip">' + (CUSTOMER_STEP_INFO[label] || "") + '</div>' +
+      '</div>';
       if (i < CUSTOMER_STEPS.length - 1) {
         var lineClass = "tracker-line" + (i < idx ? " done" : "");
         stepHtml += '<div class="' + lineClass + '"></div>';
