@@ -145,7 +145,7 @@
   </div>
 </footer>
 
-<script src="assets/i18n.js?v=19"></script>
+<script src="assets/i18n.js?v=20"></script>
 <script>
   function t(key) {
     var lang = (window.USK_I18N && window.USK_I18N.currentLang) || "ru";
@@ -327,7 +327,7 @@
       }
       CSRF_TOKEN = data.csrf || "";
       document.getElementById("account-layout").hidden = false;
-      document.getElementById("profile-id").value = data.user.id;
+      document.getElementById("profile-id").value = "#" + String(data.user.id).padStart(4, "0");
       document.getElementById("profile-name").value = data.user.name || "";
       document.getElementById("profile-phone").value = data.user.phone || "";
       document.getElementById("profile-email").value = data.user.email || "";

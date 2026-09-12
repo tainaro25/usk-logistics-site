@@ -125,6 +125,10 @@
     return div.innerHTML;
   }
 
+  function formatUserId(id) {
+    return "#" + String(id).padStart(4, "0");
+  }
+
   var CSRF_TOKEN = "";
   function csrfHeaders() {
     return { "X-CSRF-Token": CSRF_TOKEN };
@@ -168,7 +172,7 @@
               '</div>' +
               '<div class="order-card-details">' +
                 '<div class="detail-item"><span class="detail-label">Трек-номер</span><span class="detail-value">' + esc(o.track_number) + '</span></div>' +
-                '<div class="detail-item"><span class="detail-label">Клиент</span><span class="detail-value">#' + o.user_id + ' · ' + esc(o.user_name) + ' (' + esc(o.user_email) + ')</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Клиент</span><span class="detail-value">' + formatUserId(o.user_id) + ' · ' + esc(o.user_name) + ' (' + esc(o.user_email) + ')</span></div>' +
                 '<div class="detail-item"><span class="detail-label">Откуда</span><span class="detail-value">' + esc(o.origin || "-") + '</span></div>' +
                 '<div class="detail-item"><span class="detail-label">Добавлен</span><span class="detail-value">' + (o.source === "customer" ? "самим клиентом" : "администратором") + '</span></div>' +
                 '<div class="detail-item"><span class="detail-label">Дата</span><span class="detail-value">' + formatDate(o.created_at) + '</span></div>' +
@@ -245,11 +249,12 @@
       userSuggestionsBox.hidden = true;
       return;
     }
+    var idQuery = query.replace(/[^0-9]/g, "");
     var matches = allUsers.filter(function (u) {
       return u.name.toLowerCase().indexOf(query) !== -1 ||
         u.email.toLowerCase().indexOf(query) !== -1 ||
         (u.phone || "").toLowerCase().replace(/\s/g, "").indexOf(query.replace(/\s/g, "")) !== -1 ||
-        String(u.id).indexOf(query) !== -1;
+        (idQuery !== "" && (String(u.id).indexOf(idQuery) !== -1 || String(u.id).padStart(4, "0").indexOf(idQuery) !== -1));
     }).slice(0, 8);
 
     if (!matches.length) {
@@ -260,7 +265,7 @@
 
     userSuggestionsBox.innerHTML = matches.map(function (u) {
       return '<div class="user-suggestion-item" data-user-id="' + u.id + '" data-user-label="' + esc(u.name + " (" + u.email + ")") + '">' +
-        '<strong>#' + u.id + ' · ' + esc(u.name) + '</strong><span>' + esc(u.email) + (u.phone ? " · " + esc(u.phone) : "") + '</span></div>';
+        '<strong>' + formatUserId(u.id) + ' · ' + esc(u.name) + '</strong><span>' + esc(u.email) + (u.phone ? " · " + esc(u.phone) : "") + '</span></div>';
     }).join("");
     userSuggestionsBox.hidden = false;
 
@@ -383,7 +388,7 @@
           return '' +
             '<div class="order-card">' +
               '<div class="order-card-header">' +
-                '<h3>#' + u.id + ' · ' + esc(u.name) + '</h3>' +
+                '<h3>' + formatUserId(u.id) + ' · ' + esc(u.name) + '</h3>' +
                 '<button type="button" class="btn btn-outline btn-sm delete-user-btn" data-user-id="' + u.id + '" style="color:#dc2626; border-color:#dc2626;">Удалить профиль</button>' +
               '</div>' +
               '<div class="order-card-details">' +
