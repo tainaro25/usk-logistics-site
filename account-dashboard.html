@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=8">
+<link rel="stylesheet" href="assets/style.css?v=9">
 </head>
 <body>
 
@@ -80,6 +80,10 @@
 
           <div class="tab-content" id="tab-profile" hidden>
             <h1>Личные данные</h1>
+            <div class="calc-input-row">
+              <label>ID пользователя</label>
+              <input type="text" id="profile-id" disabled>
+            </div>
             <div class="profile-form-row">
               <div class="calc-input-row">
                 <label>Имя</label>
@@ -234,6 +238,7 @@
         return;
       }
       document.getElementById("account-layout").hidden = false;
+      document.getElementById("profile-id").value = data.user.id;
       document.getElementById("profile-name").value = data.user.name || "";
       document.getElementById("profile-phone").value = data.user.phone || "";
       document.getElementById("profile-email").value = data.user.email || "";

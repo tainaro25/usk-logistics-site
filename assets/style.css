@@ -1335,6 +1335,18 @@ table.price-table tr:last-child td {
   color: #c2410c;
 }
 
+.admin-badge {
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: rgba(37, 99, 235, 0.08);
+  border: 1px solid rgba(37, 99, 235, 0.15);
+  padding: 7px 16px;
+  border-radius: 999px;
+}
+
 .profile-form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;

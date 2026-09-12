@@ -9,19 +9,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=8">
+<link rel="stylesheet" href="assets/style.css?v=10">
 </head>
 <body>
 
 <header class="site-header">
   <div class="wrap">
     <a href="index.html" class="logo">USK <span>Logistics</span></a>
-    <nav class="nav">
-      <a href="index.html">Главная</a>
-    </nav>
-    <button class="menu-toggle" aria-label="Меню">
-      <span></span><span></span><span></span>
-    </button>
+    <span class="admin-badge">Админ-панель</span>
   </div>
 </header>
 
@@ -141,10 +136,6 @@
     });
   });
 
-  document.querySelector(".menu-toggle").addEventListener("click", function () {
-    document.body.classList.toggle("nav-open");
-  });
-
   function loadOrders() {
     fetch("api/admin-orders.php")
       .then(function (r) { return r.json(); })
@@ -165,7 +156,7 @@
               '</div>' +
               '<div class="order-card-details">' +
                 '<div class="detail-item"><span class="detail-label">Трек-номер</span><span class="detail-value">' + o.track_number + '</span></div>' +
-                '<div class="detail-item"><span class="detail-label">Клиент</span><span class="detail-value">' + o.user_name + ' (' + o.user_email + ')</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Клиент</span><span class="detail-value">#' + o.user_id + ' · ' + o.user_name + ' (' + o.user_email + ')</span></div>' +
                 '<div class="detail-item"><span class="detail-label">Откуда</span><span class="detail-value">' + (o.origin || "—") + '</span></div>' +
                 '<div class="detail-item"><span class="detail-label">Добавлен</span><span class="detail-value">' + (o.source === "customer" ? "самим клиентом" : "администратором") + '</span></div>' +
                 '<div class="detail-item"><span class="detail-label">Дата</span><span class="detail-value">' + formatDate(o.created_at) + '</span></div>' +
@@ -243,7 +234,10 @@
       return;
     }
     var matches = allUsers.filter(function (u) {
-      return u.name.toLowerCase().indexOf(query) !== -1 || u.email.toLowerCase().indexOf(query) !== -1;
+      return u.name.toLowerCase().indexOf(query) !== -1 ||
+        u.email.toLowerCase().indexOf(query) !== -1 ||
+        (u.phone || "").toLowerCase().replace(/\s/g, "").indexOf(query.replace(/\s/g, "")) !== -1 ||
+        String(u.id).indexOf(query) !== -1;
     }).slice(0, 8);
 
     if (!matches.length) {
@@ -254,7 +248,7 @@
 
     userSuggestionsBox.innerHTML = matches.map(function (u) {
       return '<div class="user-suggestion-item" data-user-id="' + u.id + '" data-user-label="' + u.name + ' (' + u.email + ')">' +
-        '<strong>' + u.name + '</strong><span>' + u.email + '</span></div>';
+        '<strong>#' + u.id + ' · ' + u.name + '</strong><span>' + u.email + (u.phone ? " · " + u.phone : "") + '</span></div>';
     }).join("");
     userSuggestionsBox.hidden = false;
 
@@ -377,7 +371,7 @@
           return '' +
             '<div class="order-card">' +
               '<div class="order-card-header">' +
-                '<h3>' + u.name + '</h3>' +
+                '<h3>#' + u.id + ' · ' + u.name + '</h3>' +
                 '<button type="button" class="btn btn-outline btn-sm delete-user-btn" data-user-id="' + u.id + '" style="color:#dc2626; border-color:#dc2626;">Удалить профиль</button>' +
               '</div>' +
               '<div class="order-card-details">' +
