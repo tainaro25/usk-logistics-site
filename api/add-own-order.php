@@ -24,8 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $trackNumber = trim($_POST['track_number'] ?? '');
 $description = trim($_POST['description'] ?? '');
+$origin = trim($_POST['origin'] ?? '');
 
-if ($trackNumber === '') {
+$allowedOrigins = ['США', 'Европа', 'Китай', 'Китай Экспресс'];
+if ($trackNumber === '' || !in_array($origin, $allowedOrigins, true)) {
     http_response_code(400);
     echo json_encode(['ok' => false, 'error' => 'invalid_input']);
     exit;
@@ -39,11 +41,11 @@ if ($conn->connect_error) {
 }
 
 $userId = $_SESSION['user_id'];
-$status = 'на складе';
+$status = 'сформировано';
 $source = 'customer';
 
-$stmt = $conn->prepare('INSERT INTO orders (user_id, track_number, description, status, source) VALUES (?, ?, ?, ?, ?)');
-$stmt->bind_param('issss', $userId, $trackNumber, $description, $status, $source);
+$stmt = $conn->prepare('INSERT INTO orders (user_id, track_number, description, origin, status, source) VALUES (?, ?, ?, ?, ?, ?)');
+$stmt->bind_param('isssss', $userId, $trackNumber, $description, $origin, $status, $source);
 
 if (!$stmt->execute()) {
     $error = $stmt->errno === 1062 ? 'track_number_taken' : 'insert_failed';

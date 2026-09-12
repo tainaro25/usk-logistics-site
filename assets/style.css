@@ -1335,6 +1335,11 @@ table.price-table tr:last-child td {
   color: #c2410c;
 }
 
+.status-pending {
+  background: #f1f5f9;
+  color: #475569;
+}
+
 .order-tracker {
   display: flex;
   align-items: flex-start;

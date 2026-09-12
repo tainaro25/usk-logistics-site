@@ -66,6 +66,15 @@
                   <label for="own-track-desc">Что это (необязательно)</label>
                   <input type="text" id="own-track-desc" placeholder="Например, Кроссовки">
                 </div>
+                <div class="calc-input-row">
+                  <label>Откуда везёте</label>
+                  <div class="calc-toggle" id="own-track-origin-toggle">
+                    <button type="button" class="calc-option active" data-value="США">США</button>
+                    <button type="button" class="calc-option" data-value="Европа">Европа</button>
+                    <button type="button" class="calc-option" data-value="Китай">Китай</button>
+                    <button type="button" class="calc-option" data-value="Китай Экспресс">Китай Экспресс</button>
+                  </div>
+                </div>
                 <p id="own-track-message" style="font-size: 14px; margin: 0 0 12px; display: none;"></p>
                 <button type="button" class="btn btn-primary" id="own-track-submit">Добавить</button>
               </div>
@@ -153,6 +162,7 @@
   var statusClass = {
     "на рассмотрении": "status-transit",
     "выкуплен": "status-transit",
+    "сформировано": "status-pending",
     "на складе": "status-warehouse",
     "в пути": "status-transit",
     "прибыл": "status-arrived",
@@ -168,7 +178,7 @@
     return d.toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
   }
 
-  var CUSTOMER_STEPS = ["на складе", "в пути", "прибыл", "доставлено"];
+  var CUSTOMER_STEPS = ["сформировано", "на складе", "в пути", "прибыл", "доставлено"];
 
   function buildTracker(currentStatus) {
     var idx = CUSTOMER_STEPS.indexOf(currentStatus);
@@ -315,6 +325,15 @@
     form.hidden = !form.hidden;
   });
 
+  var selectedOwnOrigin = "США";
+  document.getElementById("own-track-origin-toggle").addEventListener("click", function (e) {
+    var btn = e.target.closest(".calc-option");
+    if (!btn) return;
+    this.querySelectorAll(".calc-option").forEach(function (b) { b.classList.remove("active"); });
+    btn.classList.add("active");
+    selectedOwnOrigin = btn.dataset.value;
+  });
+
   document.getElementById("own-track-submit").addEventListener("click", function () {
     var btn = this;
     var msg = document.getElementById("own-track-message");
@@ -334,6 +353,7 @@
     var formData = new FormData();
     formData.append("track_number", track);
     formData.append("description", desc);
+    formData.append("origin", selectedOwnOrigin);
 
     fetch("api/add-own-order.php", { method: "POST", body: formData })
       .then(function (r) { return r.json(); })

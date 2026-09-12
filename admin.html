@@ -97,12 +97,13 @@
 
 <script>
   var ORDER_STATUSES_ADMIN = ["на рассмотрении", "выкуплен", "на складе", "в пути", "доставлено"];
-  var ORDER_STATUSES_CUSTOMER = ["на складе", "в пути", "прибыл", "доставлено"];
+  var ORDER_STATUSES_CUSTOMER = ["сформировано", "на складе", "в пути", "прибыл", "доставлено"];
   var BUYOUT_STATUSES = ["новая", "в обработке", "одобрена", "отклонена"];
 
   var statusClass = {
     "на рассмотрении": "status-transit",
     "выкуплен": "status-transit",
+    "сформировано": "status-pending",
     "на складе": "status-warehouse",
     "в пути": "status-transit",
     "прибыл": "status-arrived",
