@@ -34,12 +34,20 @@ if ($conn->connect_error) {
     exit;
 }
 
+require __DIR__ . '/rate-limit.php';
+$ip = rate_limit_client_ip();
+$rateLimitKeys = [
+    ['key' => 'register:ip:' . $ip, 'max_attempts' => 10, 'window_seconds' => 3600, 'lock_seconds' => 1800],
+];
+rate_limit_enforce($conn, $rateLimitKeys);
+
 $stmt = $conn->prepare('SELECT id FROM users WHERE email = ?');
 $stmt->bind_param('s', $email);
 $stmt->execute();
 $stmt->store_result();
 if ($stmt->num_rows > 0) {
     $stmt->close();
+    rate_limit_register_failure($conn, $rateLimitKeys);
     $conn->close();
     http_response_code(409);
     echo json_encode(['ok' => false, 'error' => 'email_taken']);
@@ -54,11 +62,14 @@ $stmt->bind_param('ssss', $name, $phone, $email, $hash);
 
 if (!$stmt->execute()) {
     $stmt->close();
+    rate_limit_register_failure($conn, $rateLimitKeys);
     $conn->close();
     http_response_code(500);
     echo json_encode(['ok' => false, 'error' => 'insert_failed']);
     exit;
 }
+
+rate_limit_reset($conn, $rateLimitKeys);
 
 $userId = $stmt->insert_id;
 $stmt->close();

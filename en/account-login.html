@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Вход - USK Logistics</title>
+<title>Log In - USK Logistics</title>
 <meta name="robots" content="noindex, nofollow">
-<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=17">
+<link rel="stylesheet" href="../assets/style.css?v=17">
 </head>
 <body>
 
@@ -17,21 +17,21 @@
   <div class="wrap">
     <a href="index.html" class="logo">USK <span>Logistics</span></a>
     <nav class="nav">
-      <a href="index.html" data-i18n="nav_home">Главная</a>
-      <a href="about.html" data-i18n="nav_about">О нас</a>
-      <a href="tariffs.html" data-i18n="nav_tariffs">Тарифы</a>
-      <a href="offer.html" data-i18n="nav_offer">Оферта</a>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="tariffs.html">Rates</a>
+      <a href="offer.html">Public Offer</a>
     </nav>
-    <div class="lang-switch" role="group" aria-label="Тіл / Язык">
-      <button type="button" class="lang-btn" data-lang="kk">ҚАЗ</button>
-      <button type="button" class="lang-btn active" data-lang="ru">РУС</button>
-      <a href="en/account-login.html" class="lang-btn lang-link">ENG</a>
+    <div class="lang-switch" role="group" aria-label="Language / Тіл / Язык">
+      <a href="../account-login.html?lang=kk" class="lang-btn lang-link">ҚАЗ</a>
+      <a href="../account-login.html" class="lang-btn lang-link">РУС</a>
+      <button type="button" class="lang-btn active" disabled>ENG</button>
     </div>
     <div class="header-cta">
-      <a href="account-login.html" class="btn btn-primary btn-sm" data-i18n="nav_account">Личный кабинет</a>
-      <a href="contact.html" class="btn btn-outline btn-sm" data-i18n="nav_contact">Связаться</a>
+      <a href="account-login.html" class="btn btn-primary btn-sm">Account</a>
+      <a href="contact.html" class="btn btn-outline btn-sm">Contact</a>
     </div>
-    <button class="menu-toggle" aria-label="Меню" data-i18n-aria="menu_aria">
+    <button class="menu-toggle" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -42,37 +42,37 @@
     <div class="wrap" style="max-width: 460px;">
       <div class="calc-card" style="margin: 0;">
         <div class="calc-toggle">
-          <button type="button" class="calc-option active" id="tab-login" data-i18n="account_tab_login">Вход</button>
-          <button type="button" class="calc-option" id="tab-register" data-i18n="account_tab_register">Регистрация</button>
+          <button type="button" class="calc-option active" id="tab-login">Log In</button>
+          <button type="button" class="calc-option" id="tab-register">Sign Up</button>
         </div>
 
         <button type="button" class="btn btn-google" id="google-btn">
           <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l5.7-5.7C34.5 6.1 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.6 18.9 12 24 12c3.1 0 5.8 1.1 8 3l5.7-5.7C34.5 6.1 29.5 4 24 4c-7.7 0-14.3 4.4-17.7 10.7z"/><path fill="#4CAF50" d="M24 44c5.3 0 10.1-2 13.7-5.4l-6.3-5.3C29.4 35 26.8 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.6 39.5 16.3 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.7l6.3 5.3C40.9 36 44 30.5 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg>
-          <span data-i18n="account_google_btn">Войти через Google</span>
+          Sign in with Google
         </button>
 
-        <div class="auth-divider" data-i18n="account_or_email">или email</div>
+        <div class="auth-divider">or email</div>
 
         <div class="calc-input-row" id="register-name-row" hidden>
-          <label for="register-name" data-i18n="modal_name_label">Имя</label>
-          <input type="text" id="register-name" placeholder="Как к вам обращаться" data-i18n-placeholder="modal_name_placeholder">
+          <label for="register-name">Name</label>
+          <input type="text" id="register-name" placeholder="How should we address you">
         </div>
         <div class="calc-input-row">
-          <label for="login-email" data-i18n="account_email_label">Email</label>
+          <label for="login-email">Email</label>
           <input type="text" id="login-email" placeholder="you@example.com">
         </div>
         <div class="calc-input-row" id="register-phone-row" hidden>
-          <label for="register-phone" data-i18n="account_phone_label">Телефон</label>
-          <input type="text" id="register-phone" value="+7 ">
+          <label for="register-phone">Phone</label>
+          <input type="text" id="register-phone" value="+1 ">
         </div>
         <div class="calc-input-row">
-          <label for="login-password" data-i18n="account_password_label">Пароль</label>
-          <input type="password" id="login-password" placeholder="Минимум 6 символов" data-i18n-placeholder="account_password_placeholder">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" placeholder="At least 6 characters">
         </div>
 
         <p id="auth-error" style="color: #dc2626; font-size: 14px; margin: 0 0 16px; display: none;"></p>
 
-        <button type="button" class="btn btn-primary" style="width: 100%;" id="submit-btn" data-i18n="account_login_btn">Войти</button>
+        <button type="button" class="btn btn-primary" style="width: 100%;" id="submit-btn">Log In</button>
       </div>
     </div>
   </section>
@@ -82,23 +82,16 @@
   <div class="wrap footer-grid">
     <div class="logo">USK <span>Logistics</span></div>
     <div class="footer-links">
-      <a href="about.html" data-i18n="nav_about">О нас</a>
-      <a href="tariffs.html" data-i18n="nav_tariffs">Тарифы</a>
-      <a href="offer.html" data-i18n="nav_offer">Оферта</a>
-      <a href="contact.html" data-i18n="nav_contact">Связаться</a>
+      <a href="about.html">About</a>
+      <a href="tariffs.html">Rates</a>
+      <a href="offer.html">Public Offer</a>
+      <a href="contact.html">Contact</a>
     </div>
-    <div class="copyright" data-i18n="footer_copyright">© 2026 USK Logistics. Все права защищены.</div>
+    <div class="copyright">© 2026 USK Logistics. All rights reserved.</div>
   </div>
 </footer>
 
-<script src="assets/i18n.js?v=17"></script>
 <script>
-  function t(key) {
-    var lang = (window.USK_I18N && window.USK_I18N.currentLang) || "ru";
-    var dict = (window.USK_I18N && window.USK_I18N.dict[lang]) || {};
-    return dict[key] || key;
-  }
-
   var loginTab = document.getElementById("tab-login");
   var registerTab = document.getElementById("tab-register");
   var submitBtn = document.getElementById("submit-btn");
@@ -106,7 +99,6 @@
   var registerPhoneRow = document.getElementById("register-phone-row");
   var errorEl = document.getElementById("auth-error");
   var isRegister = false;
-  var isSubmitting = false;
 
   function showError(msg) {
     errorEl.textContent = msg;
@@ -117,21 +109,13 @@
     errorEl.style.display = "none";
   }
 
-  function refreshSubmitLabel() {
-    if (isSubmitting) {
-      submitBtn.textContent = t("account_wait_btn");
-      return;
-    }
-    submitBtn.textContent = isRegister ? t("account_register_btn") : t("account_login_btn");
-  }
-
   loginTab.addEventListener("click", function () {
     isRegister = false;
     loginTab.classList.add("active");
     registerTab.classList.remove("active");
     registerNameRow.hidden = true;
     registerPhoneRow.hidden = true;
-    refreshSubmitLabel();
+    submitBtn.textContent = "Log In";
     hideError();
   });
 
@@ -141,13 +125,22 @@
     loginTab.classList.remove("active");
     registerNameRow.hidden = false;
     registerPhoneRow.hidden = false;
-    refreshSubmitLabel();
+    submitBtn.textContent = "Create Account";
     hideError();
   });
 
   document.getElementById("google-btn").addEventListener("click", function () {
-    alert(t("account_google_alert"));
+    alert("Google sign-in is still in development - please use email and password.");
   });
+
+  var errorMessages = {
+    invalid_input: "Check that all fields are filled in (password - at least 6 characters).",
+    email_taken: "This email is already registered - try logging in instead.",
+    invalid_credentials: "Incorrect email or password.",
+    db_connection_failed: "Server connection error. Please try again later.",
+    not_configured: "The server isn't set up yet. Please try again later.",
+    too_many_attempts: "Too many attempts. Please try again in a few minutes."
+  };
 
   submitBtn.addEventListener("click", function () {
     hideError();
@@ -155,7 +148,7 @@
     var password = document.getElementById("login-password").value;
 
     if (!email || !password) {
-      showError(t("account_err_fill_email_password"));
+      showError("Please fill in email and password.");
       return;
     }
 
@@ -163,22 +156,21 @@
     formData.append("email", email);
     formData.append("password", password);
 
-    var url = "api/login.php";
+    var url = "../api/login.php";
     if (isRegister) {
       var name = document.getElementById("register-name").value.trim();
       var phone = document.getElementById("register-phone").value.trim();
       if (!name || phone.replace(/\D/g, "").length < 10) {
-        showError(t("account_err_fill_name_phone"));
+        showError("Please fill in your name and phone number completely.");
         return;
       }
       formData.append("name", name);
       formData.append("phone", phone);
-      url = "api/register.php";
+      url = "../api/register.php";
     }
 
-    isSubmitting = true;
     submitBtn.disabled = true;
-    refreshSubmitLabel();
+    submitBtn.textContent = "Please wait...";
 
     fetch(url, { method: "POST", body: formData })
       .then(function (r) { return r.json(); })
@@ -186,20 +178,17 @@
         if (data.ok) {
           window.location.href = "account-dashboard.html";
         } else {
-          showError(data.error ? t(data.error) : t("err_generic"));
+          showError(errorMessages[data.error] || "Something went wrong. Please try again.");
         }
       })
       .catch(function () {
-        showError(t("err_server_unreachable"));
+        showError("Could not reach the server. Please try again later.");
       })
       .finally(function () {
-        isSubmitting = false;
         submitBtn.disabled = false;
-        refreshSubmitLabel();
+        submitBtn.textContent = isRegister ? "Create Account" : "Log In";
       });
   });
-
-  window.addEventListener("usklangchange", refreshSubmitLabel);
 
   document.querySelector(".menu-toggle").addEventListener("click", function () {
     document.body.classList.toggle("nav-open");

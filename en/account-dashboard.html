@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Личный кабинет - USK Logistics</title>
+<title>My Account - USK Logistics</title>
 <meta name="robots" content="noindex, nofollow">
-<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=17">
+<link rel="stylesheet" href="../assets/style.css?v=17">
 </head>
 <body>
 
@@ -17,21 +17,21 @@
   <div class="wrap">
     <a href="index.html" class="logo">USK <span>Logistics</span></a>
     <nav class="nav">
-      <a href="index.html" data-i18n="nav_home">Главная</a>
-      <a href="about.html" data-i18n="nav_about">О нас</a>
-      <a href="tariffs.html" data-i18n="nav_tariffs">Тарифы</a>
-      <a href="offer.html" data-i18n="nav_offer">Оферта</a>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="tariffs.html">Rates</a>
+      <a href="offer.html">Public Offer</a>
     </nav>
-    <div class="lang-switch" role="group" aria-label="Тіл / Язык">
-      <button type="button" class="lang-btn" data-lang="kk">ҚАЗ</button>
-      <button type="button" class="lang-btn active" data-lang="ru">РУС</button>
-      <a href="en/account-dashboard.html" class="lang-btn lang-link">ENG</a>
+    <div class="lang-switch" role="group" aria-label="Language / Тіл / Язык">
+      <a href="../account-dashboard.html?lang=kk" class="lang-btn lang-link">ҚАЗ</a>
+      <a href="../account-dashboard.html" class="lang-btn lang-link">РУС</a>
+      <button type="button" class="lang-btn active" disabled>ENG</button>
     </div>
     <div class="header-cta">
-      <a href="account-dashboard.html" class="btn btn-primary btn-sm" data-i18n="nav_account">Личный кабинет</a>
-      <a href="contact.html" class="btn btn-outline btn-sm" data-i18n="nav_contact">Связаться</a>
+      <a href="account-dashboard.html" class="btn btn-primary btn-sm">Account</a>
+      <a href="contact.html" class="btn btn-outline btn-sm">Contact</a>
     </div>
-    <button class="menu-toggle" aria-label="Меню" data-i18n-aria="menu_aria">
+    <button class="menu-toggle" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -43,81 +43,81 @@
       <div class="account-layout" id="account-layout" hidden>
         <aside class="account-sidebar">
           <nav class="account-nav">
-            <a href="#" class="tab-link active" data-tab="orders"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg> <span data-i18n="account_nav_orders">Мои заказы</span></a>
-            <a href="#" class="tab-link" data-tab="profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> <span data-i18n="account_nav_profile">Личные данные</span></a>
-            <a href="#" class="tab-link" data-tab="buyout"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <span data-i18n="account_nav_history">История заявок</span></a>
-            <a href="#" id="logout-link" class="logout"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> <span data-i18n="account_nav_logout">Выйти</span></a>
+            <a href="#" class="tab-link active" data-tab="orders"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg> My Orders</a>
+            <a href="#" class="tab-link" data-tab="profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Personal Info</a>
+            <a href="#" class="tab-link" data-tab="buyout"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Request History</a>
+            <a href="#" id="logout-link" class="logout"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Log Out</a>
           </nav>
         </aside>
 
         <div class="account-panel">
           <div class="tab-content" id="tab-orders">
-            <h1 data-i18n="account_nav_orders">Мои заказы</h1>
+            <h1>My Orders</h1>
 
             <div style="margin-bottom: 28px;">
-              <button type="button" class="btn btn-outline btn-sm" id="add-track-toggle" data-i18n="account_add_track_btn">+ Добавить свой трек-номер</button>
+              <button type="button" class="btn btn-outline btn-sm" id="add-track-toggle">+ Add your tracking number</button>
               <div id="add-track-form" hidden style="margin-top: 16px; max-width: 420px;">
-                <p style="color: var(--muted); font-size: 13px; margin: 0 0 16px;" data-i18n="account_add_track_hint">Если вы уже сами оформили покупку и знаете трек-номер - добавьте его сюда, чтобы отслеживать в личном кабинете.</p>
+                <p style="color: var(--muted); font-size: 13px; margin: 0 0 16px;">If you already placed the order yourself and know the tracking number - add it here to track it in your account.</p>
                 <div class="calc-input-row">
-                  <label for="own-track-number" data-i18n="account_track_number_label">Трек-номер</label>
-                  <input type="text" id="own-track-number" placeholder="Например, KZ4471829563US">
+                  <label for="own-track-number">Tracking number</label>
+                  <input type="text" id="own-track-number" placeholder="e.g. KZ4471829563US">
                 </div>
                 <div class="calc-input-row">
-                  <label for="own-track-desc" data-i18n="account_track_desc_label">Что это (необязательно)</label>
-                  <input type="text" id="own-track-desc" placeholder="Например, Кроссовки" data-i18n-placeholder="account_track_desc_placeholder">
+                  <label for="own-track-desc">What is it (optional)</label>
+                  <input type="text" id="own-track-desc" placeholder="e.g. Sneakers">
                 </div>
                 <div class="calc-input-row">
-                  <label data-i18n="account_track_origin_label">Откуда везёте</label>
+                  <label>Shipping from</label>
                   <div class="calc-toggle" id="own-track-origin-toggle">
-                    <button type="button" class="calc-option active" data-value="США" data-i18n="tariffs_row_us">США</button>
-                    <button type="button" class="calc-option" data-value="Европа" data-i18n="tariffs_row_eu">Европа</button>
-                    <button type="button" class="calc-option" data-value="Китай" data-i18n="tariffs_row_cn">Китай</button>
-                    <button type="button" class="calc-option" data-value="Китай Экспресс" data-i18n="tariffs_row_cne">Китай Экспресс</button>
+                    <button type="button" class="calc-option active" data-value="США">USA</button>
+                    <button type="button" class="calc-option" data-value="Европа">Europe</button>
+                    <button type="button" class="calc-option" data-value="Китай">China</button>
+                    <button type="button" class="calc-option" data-value="Китай Экспресс">China Express</button>
                   </div>
                 </div>
                 <p id="own-track-message" style="font-size: 14px; margin: 0 0 12px; display: none;"></p>
-                <button type="button" class="btn btn-primary" id="own-track-submit" data-i18n="account_track_add_btn">Добавить</button>
+                <button type="button" class="btn btn-primary" id="own-track-submit">Add</button>
               </div>
             </div>
 
-            <h2 style="font-size: 18px; margin: 0 0 12px;" data-i18n="account_current_h2">Текущие</h2>
+            <h2 style="font-size: 18px; margin: 0 0 12px;">Active</h2>
             <div id="orders-current"></div>
 
-            <h2 style="font-size: 18px; margin: 28px 0 12px;" data-i18n="account_completed_h2">Завершённые</h2>
+            <h2 style="font-size: 18px; margin: 28px 0 12px;">Completed</h2>
             <div id="orders-completed"></div>
           </div>
 
           <div class="tab-content" id="tab-profile" hidden>
-            <h1 data-i18n="account_nav_profile">Личные данные</h1>
+            <h1>Personal Info</h1>
             <div class="calc-input-row">
-              <label data-i18n="account_profile_id_label">ID пользователя</label>
+              <label>User ID</label>
               <input type="text" id="profile-id" disabled>
             </div>
             <div class="profile-form-row">
               <div class="calc-input-row">
-                <label data-i18n="modal_name_label">Имя</label>
+                <label>Name</label>
                 <input type="text" id="profile-name">
               </div>
               <div class="calc-input-row">
-                <label data-i18n="account_phone_label">Телефон</label>
+                <label>Phone</label>
                 <input type="text" id="profile-phone">
               </div>
             </div>
             <div class="calc-input-row">
-              <label data-i18n="account_email_label">Email</label>
+              <label>Email</label>
               <input type="text" id="profile-email" disabled>
             </div>
             <div class="calc-input-row">
-              <label data-i18n="account_profile_address_label">Адрес доставки</label>
-              <input type="text" id="profile-address" placeholder="Город, улица, дом, квартира" data-i18n-placeholder="account_profile_address_placeholder">
+              <label>Delivery address</label>
+              <input type="text" id="profile-address" placeholder="City, street, house, apartment">
             </div>
             <p id="profile-message" style="color: var(--muted); font-size: 14px; margin: 0 0 16px; display: none;"></p>
-            <button type="button" class="btn btn-primary" id="profile-save" data-i18n="account_profile_save_btn">Сохранить изменения</button>
+            <button type="button" class="btn btn-primary" id="profile-save">Save Changes</button>
           </div>
 
           <div class="tab-content" id="tab-buyout" hidden>
-            <h1 data-i18n="account_nav_history">История заявок</h1>
-            <p style="color: var(--muted); font-size: 14px; margin: -12px 0 20px;" data-i18n="account_history_hint">Все запросы, которые вы отправляли через сайт. Как только заявка подтверждается - по ней заводится настоящий заказ в разделе «Мои заказы».</p>
+            <h1>Request History</h1>
+            <p style="color: var(--muted); font-size: 14px; margin: -12px 0 20px;">All requests you've sent through the site. As soon as a request is confirmed, a real order for it appears under "My Orders".</p>
             <div id="buyouts-list"></div>
           </div>
         </div>
@@ -130,41 +130,16 @@
   <div class="wrap footer-grid">
     <div class="logo">USK <span>Logistics</span></div>
     <div class="footer-links">
-      <a href="about.html" data-i18n="nav_about">О нас</a>
-      <a href="tariffs.html" data-i18n="nav_tariffs">Тарифы</a>
-      <a href="offer.html" data-i18n="nav_offer">Оферта</a>
-      <a href="contact.html" data-i18n="nav_contact">Связаться</a>
+      <a href="about.html">About</a>
+      <a href="tariffs.html">Rates</a>
+      <a href="offer.html">Public Offer</a>
+      <a href="contact.html">Contact</a>
     </div>
-    <div class="copyright" data-i18n="footer_copyright">© 2026 USK Logistics. Все права защищены.</div>
+    <div class="copyright">© 2026 USK Logistics. All rights reserved.</div>
   </div>
 </footer>
 
-<script src="assets/i18n.js?v=17"></script>
 <script>
-  function t(key) {
-    var lang = (window.USK_I18N && window.USK_I18N.currentLang) || "ru";
-    var dict = (window.USK_I18N && window.USK_I18N.dict[lang]) || {};
-    return dict[key] || key;
-  }
-
-  function statusLabel(status) {
-    var lang = (window.USK_I18N && window.USK_I18N.currentLang) || "ru";
-    var map = (window.USK_I18N && window.USK_I18N.statusLabels[lang]) || {};
-    return map[status] || status;
-  }
-
-  function originLabel(origin) {
-    var lang = (window.USK_I18N && window.USK_I18N.currentLang) || "ru";
-    var map = (window.USK_I18N && window.USK_I18N.originLabels[lang]) || {};
-    return map[origin] || origin;
-  }
-
-  function trackerInfo(status) {
-    var lang = (window.USK_I18N && window.USK_I18N.currentLang) || "ru";
-    var map = (window.USK_I18N && window.USK_I18N.trackerInfo[lang]) || {};
-    return map[status] || "";
-  }
-
   var links = document.querySelectorAll(".tab-link");
   var panels = document.querySelectorAll(".tab-content");
 
@@ -198,11 +173,46 @@
     "новая": "status-transit"
   };
 
+  var STATUS_LABELS = {
+    "на рассмотрении": "under review",
+    "выкуплен": "purchased",
+    "сформировано": "placed",
+    "на складе": "at warehouse",
+    "в пути": "in transit",
+    "прибыл": "arrived",
+    "доставлено": "delivered",
+    "в обработке": "processing",
+    "одобрена": "approved",
+    "отклонена": "declined",
+    "новая": "new"
+  };
+
+  var ORIGIN_LABELS = {
+    "США": "USA",
+    "Европа": "Europe",
+    "Китай": "China",
+    "Китай Экспресс": "China Express"
+  };
+
+  var CUSTOMER_STEP_INFO = {
+    "сформировано": "Order accepted - we know about it and are preparing to receive it.",
+    "на складе": "The item has arrived at our overseas warehouse.",
+    "в пути": "The parcel has left the country of origin and is on its way to Kazakhstan.",
+    "прибыл": "The item is already in Kazakhstan and is being prepared for handover.",
+    "доставлено": "The parcel has been delivered to the customer."
+  };
+
+  function statusLabel(status) {
+    return STATUS_LABELS[status] || status;
+  }
+
+  function originLabel(origin) {
+    return ORIGIN_LABELS[origin] || origin;
+  }
+
   function formatDate(isoString) {
     var d = new Date(isoString.replace(" ", "T"));
-    var lang = (window.USK_I18N && window.USK_I18N.currentLang) || "ru";
-    var locale = lang === "kk" ? "kk-KZ" : "ru-RU";
-    return d.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" });
+    return d.toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" });
   }
 
   function esc(value) {
@@ -227,7 +237,7 @@
       var stepHtml = '<div class="tracker-step ' + stateClass + '">' +
         '<div class="' + dotClass + '"></div>' +
         '<div class="tracker-label">' + esc(statusLabel(status)) + '</div>' +
-        '<div class="tracker-tooltip">' + esc(trackerInfo(status)) + '</div>' +
+        '<div class="tracker-tooltip">' + esc(CUSTOMER_STEP_INFO[status] || "") + '</div>' +
       '</div>';
       if (i < CUSTOMER_STEPS.length - 1) {
         var lineClass = "tracker-line" + (i < idx ? " done" : "");
@@ -243,15 +253,15 @@
     return '' +
       '<div class="order-card">' +
         '<div class="order-card-header">' +
-          '<h3>' + esc(t("account_order_number_prefix")) + o.id + (o.description ? " · " + esc(o.description) : "") + '</h3>' +
+          '<h3>Order #' + o.id + (o.description ? " · " + esc(o.description) : "") + '</h3>' +
           (isCustomerOrder ? "" : '<span class="status-badge ' + (statusClass[o.status] || "status-transit") + '">' + esc(statusLabel(o.status)) + '</span>') +
         '</div>' +
         (isCustomerOrder ? buildTracker(o.status) : "") +
         '<div class="order-card-details">' +
-          '<div class="detail-item"><span class="detail-label">' + esc(t("account_track_number_label")) + '</span><span class="detail-value">' + esc(o.track_number) +
-            ' <button type="button" class="copy-btn" data-copy="' + esc(o.track_number) + '" title="' + esc(t("account_copy_title")) + '">⧉</button></span></div>' +
-          (isCustomerOrder ? "" : '<div class="detail-item"><span class="detail-label">' + esc(t("account_origin_field_label")) + '</span><span class="detail-value">' + esc(o.origin ? originLabel(o.origin) : "-") + '</span></div>') +
-          '<div class="detail-item"><span class="detail-label">' + esc(t("account_created_field_label")) + '</span><span class="detail-value">' + formatDate(o.created_at) + '</span></div>' +
+          '<div class="detail-item"><span class="detail-label">Tracking number</span><span class="detail-value">' + esc(o.track_number) +
+            ' <button type="button" class="copy-btn" data-copy="' + esc(o.track_number) + '" title="Copy">⧉</button></span></div>' +
+          (isCustomerOrder ? "" : '<div class="detail-item"><span class="detail-label">From</span><span class="detail-value">' + esc(o.origin ? originLabel(o.origin) : "-") + '</span></div>') +
+          '<div class="detail-item"><span class="detail-label">Date created</span><span class="detail-value">' + formatDate(o.created_at) + '</span></div>' +
         '</div>' +
       '</div>';
   }
@@ -270,11 +280,7 @@
     });
   }
 
-  var LAST_ORDERS = [];
-  var LAST_BUYOUTS = [];
-
   function renderOrders(orders) {
-    LAST_ORDERS = orders;
     var currentBox = document.getElementById("orders-current");
     var completedBox = document.getElementById("orders-completed");
 
@@ -283,36 +289,30 @@
 
     currentBox.innerHTML = current.length
       ? current.map(orderCardHtml).join("")
-      : '<p style="color: var(--muted); font-size: 14px;">' + esc(t("account_no_active_orders")) + '</p>';
+      : '<p style="color: var(--muted); font-size: 14px;">No active orders yet. Submit a purchase request or add your tracking number above - it will appear here.</p>';
 
     completedBox.innerHTML = completed.length
       ? completed.map(orderCardHtml).join("")
-      : '<p style="color: var(--muted); font-size: 14px;">' + esc(t("account_no_completed_orders")) + '</p>';
+      : '<p style="color: var(--muted); font-size: 14px;">No completed orders yet.</p>';
 
     attachCopyHandlers(currentBox);
     attachCopyHandlers(completedBox);
   }
 
   function renderBuyouts(buyouts) {
-    LAST_BUYOUTS = buyouts;
     var box = document.getElementById("buyouts-list");
     if (!buyouts.length) {
-      box.innerHTML = '<p style="color: var(--muted); font-size: 14px;">' + esc(t("account_no_buyouts")) + '</p>';
+      box.innerHTML = '<p style="color: var(--muted); font-size: 14px;">No requests yet.</p>';
       return;
     }
     box.innerHTML = buyouts.map(function (b) {
-      return '<div class="order-row"><div class="order-info"><strong>' + esc(b.product_link || t("account_buyout_no_link")) +
-        '</strong><span>' + esc(t("account_buyout_sent_prefix")) + formatDate(b.created_at) +
+      return '<div class="order-row"><div class="order-info"><strong>' + esc(b.product_link || "Request without a link") +
+        '</strong><span>Sent ' + formatDate(b.created_at) +
         '</span></div><span class="status-badge ' + (statusClass[b.status] || "status-transit") + '">' + esc(statusLabel(b.status)) + "</span></div>";
     }).join("");
   }
 
-  window.addEventListener("usklangchange", function () {
-    renderOrders(LAST_ORDERS);
-    renderBuyouts(LAST_BUYOUTS);
-  });
-
-  fetch("api/me.php")
+  fetch("../api/me.php")
     .then(function (r) { return r.json(); })
     .then(function (data) {
       if (!data.ok) {
@@ -342,34 +342,34 @@
 
     if (!name || !phone) {
       msg.style.color = "#dc2626";
-      msg.textContent = t("account_profile_fill_required");
+      msg.textContent = "Please fill in your name and phone number.";
       msg.style.display = "block";
       return;
     }
 
     btn.disabled = true;
-    btn.textContent = t("account_profile_saving_btn");
+    btn.textContent = "Saving...";
 
     var formData = new FormData();
     formData.append("name", name);
     formData.append("phone", phone);
     formData.append("delivery_address", address);
 
-    fetch("api/update-profile.php", { method: "POST", headers: csrfHeaders(), body: formData })
+    fetch("../api/update-profile.php", { method: "POST", headers: csrfHeaders(), body: formData })
       .then(function (r) { return r.json(); })
       .then(function (data) {
         msg.style.color = data.ok ? "#16a34a" : "#dc2626";
-        msg.textContent = data.ok ? t("account_profile_saved_msg") : t("account_profile_save_fail");
+        msg.textContent = data.ok ? "Changes saved." : "Could not save. Please try again.";
         msg.style.display = "block";
       })
       .catch(function () {
         msg.style.color = "#dc2626";
-        msg.textContent = t("err_server_unreachable");
+        msg.textContent = "Could not reach the server.";
         msg.style.display = "block";
       })
       .finally(function () {
         btn.disabled = false;
-        btn.textContent = t("account_profile_save_btn");
+        btn.textContent = "Save Changes";
       });
   });
 
@@ -395,20 +395,20 @@
 
     if (!track) {
       msg.style.color = "#dc2626";
-      msg.textContent = t("account_track_empty_error");
+      msg.textContent = "Please enter a tracking number.";
       msg.style.display = "block";
       return;
     }
 
     btn.disabled = true;
-    btn.textContent = t("account_track_adding_btn");
+    btn.textContent = "Adding...";
 
     var formData = new FormData();
     formData.append("track_number", track);
     formData.append("description", desc);
     formData.append("origin", selectedOwnOrigin);
 
-    fetch("api/add-own-order.php", { method: "POST", headers: csrfHeaders(), body: formData })
+    fetch("../api/add-own-order.php", { method: "POST", headers: csrfHeaders(), body: formData })
       .then(function (r) { return r.json(); })
       .then(function (data) {
         if (data.ok) {
@@ -416,33 +416,33 @@
           document.getElementById("own-track-desc").value = "";
           msg.style.display = "none";
           document.getElementById("add-track-form").hidden = true;
-          fetch("api/me.php").then(function (r) { return r.json(); }).then(function (d) {
+          fetch("../api/me.php").then(function (r) { return r.json(); }).then(function (d) {
             if (d.ok) renderOrders(d.orders);
           });
           return;
         } else if (data.error === "track_number_taken") {
           msg.style.color = "#dc2626";
-          msg.textContent = t("account_track_taken");
+          msg.textContent = "This tracking number has already been added.";
         } else {
           msg.style.color = "#dc2626";
-          msg.textContent = t("account_track_fail");
+          msg.textContent = "Could not add it. Please try again.";
         }
         msg.style.display = "block";
       })
       .catch(function () {
         msg.style.color = "#dc2626";
-        msg.textContent = t("err_server_unreachable");
+        msg.textContent = "Could not reach the server.";
         msg.style.display = "block";
       })
       .finally(function () {
         btn.disabled = false;
-        btn.textContent = t("account_track_add_btn");
+        btn.textContent = "Add";
       });
   });
 
   document.getElementById("logout-link").addEventListener("click", function (e) {
     e.preventDefault();
-    fetch("api/logout.php").finally(function () {
+    fetch("../api/logout.php").finally(function () {
       window.location.href = "account-login.html";
     });
   });

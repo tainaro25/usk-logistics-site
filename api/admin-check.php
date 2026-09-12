@@ -15,4 +15,5 @@ require __DIR__ . '/admin-guard.php';
 require_admin($conn);
 $conn->close();
 
-echo json_encode(['ok' => true]);
+require __DIR__ . '/csrf.php';
+echo json_encode(['ok' => true, 'csrf' => csrf_token()]);

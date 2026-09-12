@@ -119,6 +119,17 @@
     return d.toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
   }
 
+  function esc(value) {
+    var div = document.createElement("div");
+    div.textContent = value === null || value === undefined ? "" : String(value);
+    return div.innerHTML;
+  }
+
+  var CSRF_TOKEN = "";
+  function csrfHeaders() {
+    return { "X-CSRF-Token": CSRF_TOKEN };
+  }
+
   function selectOptions(list, selected) {
     return list.map(function (s) {
       return '<option value="' + s + '"' + (s === selected ? " selected" : "") + '>' + s + "</option>";
@@ -152,13 +163,13 @@
           return '' +
             '<div class="order-card">' +
               '<div class="order-card-header">' +
-                '<h3>Заказ №' + o.id + (o.description ? " · " + o.description : "") + '</h3>' +
-                '<span class="status-badge ' + (statusClass[o.status] || "status-transit") + '">' + o.status + '</span>' +
+                '<h3>Заказ №' + o.id + (o.description ? " · " + esc(o.description) : "") + '</h3>' +
+                '<span class="status-badge ' + (statusClass[o.status] || "status-transit") + '">' + esc(o.status) + '</span>' +
               '</div>' +
               '<div class="order-card-details">' +
-                '<div class="detail-item"><span class="detail-label">Трек-номер</span><span class="detail-value">' + o.track_number + '</span></div>' +
-                '<div class="detail-item"><span class="detail-label">Клиент</span><span class="detail-value">#' + o.user_id + ' · ' + o.user_name + ' (' + o.user_email + ')</span></div>' +
-                '<div class="detail-item"><span class="detail-label">Откуда</span><span class="detail-value">' + (o.origin || "-") + '</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Трек-номер</span><span class="detail-value">' + esc(o.track_number) + '</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Клиент</span><span class="detail-value">#' + o.user_id + ' · ' + esc(o.user_name) + ' (' + esc(o.user_email) + ')</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Откуда</span><span class="detail-value">' + esc(o.origin || "-") + '</span></div>' +
                 '<div class="detail-item"><span class="detail-label">Добавлен</span><span class="detail-value">' + (o.source === "customer" ? "самим клиентом" : "администратором") + '</span></div>' +
                 '<div class="detail-item"><span class="detail-label">Дата</span><span class="detail-value">' + formatDate(o.created_at) + '</span></div>' +
               '</div>' +
@@ -182,7 +193,7 @@
             var formData = new FormData();
             formData.append("order_id", orderId);
             formData.append("status", select.value);
-            fetch("api/admin-update-order.php", { method: "POST", body: formData })
+            fetch("api/admin-update-order.php", { method: "POST", headers: csrfHeaders(), body: formData })
               .then(function (r) { return r.json(); })
               .then(function (data) {
                 btn.textContent = data.ok ? "Сохранено" : "Ошибка";
@@ -201,7 +212,7 @@
             var formData = new FormData();
             formData.append("order_id", orderId);
             btn.disabled = true;
-            fetch("api/admin-delete-order.php", { method: "POST", body: formData })
+            fetch("api/admin-delete-order.php", { method: "POST", headers: csrfHeaders(), body: formData })
               .then(function (r) { return r.json(); })
               .then(function (data) {
                 if (data.ok) loadOrders();
@@ -248,8 +259,8 @@
     }
 
     userSuggestionsBox.innerHTML = matches.map(function (u) {
-      return '<div class="user-suggestion-item" data-user-id="' + u.id + '" data-user-label="' + u.name + ' (' + u.email + ')">' +
-        '<strong>#' + u.id + ' · ' + u.name + '</strong><span>' + u.email + (u.phone ? " · " + u.phone : "") + '</span></div>';
+      return '<div class="user-suggestion-item" data-user-id="' + u.id + '" data-user-label="' + esc(u.name + " (" + u.email + ")") + '">' +
+        '<strong>#' + u.id + ' · ' + esc(u.name) + '</strong><span>' + esc(u.email) + (u.phone ? " · " + esc(u.phone) : "") + '</span></div>';
     }).join("");
     userSuggestionsBox.hidden = false;
 
@@ -300,13 +311,13 @@
           return '' +
             '<div class="order-card">' +
               '<div class="order-card-header">' +
-                '<h3>' + b.name + '</h3>' +
-                '<span class="status-badge ' + (statusClass[b.status] || "status-transit") + '">' + b.status + '</span>' +
+                '<h3>' + esc(b.name) + '</h3>' +
+                '<span class="status-badge ' + (statusClass[b.status] || "status-transit") + '">' + esc(b.status) + '</span>' +
               '</div>' +
               '<div class="order-card-details">' +
-                '<div class="detail-item"><span class="detail-label">Телефон</span><span class="detail-value">' + b.phone + '</span></div>' +
-                '<div class="detail-item"><span class="detail-label">Ссылка на товар</span><span class="detail-value">' + (b.product_link || "-") + '</span></div>' +
-                '<div class="detail-item"><span class="detail-label">Аккаунт</span><span class="detail-value">' + (b.user_email || "гость (без аккаунта)") + '</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Телефон</span><span class="detail-value">' + esc(b.phone) + '</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Ссылка на товар</span><span class="detail-value">' + esc(b.product_link || "-") + '</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Аккаунт</span><span class="detail-value">' + esc(b.user_email || "гость (без аккаунта)") + '</span></div>' +
                 '<div class="detail-item"><span class="detail-label">Дата</span><span class="detail-value">' + formatDate(b.created_at) + '</span></div>' +
               '</div>' +
               '<div class="calc-input-row" style="margin: 16px 0 0;">' +
@@ -329,7 +340,7 @@
             var formData = new FormData();
             formData.append("buyout_id", buyoutId);
             formData.append("status", select.value);
-            fetch("api/admin-update-buyout.php", { method: "POST", body: formData })
+            fetch("api/admin-update-buyout.php", { method: "POST", headers: csrfHeaders(), body: formData })
               .then(function (r) { return r.json(); })
               .then(function (data) {
                 btn.textContent = data.ok ? "Сохранено" : "Ошибка";
@@ -347,7 +358,7 @@
             var formData = new FormData();
             formData.append("buyout_id", buyoutId);
             btn.disabled = true;
-            fetch("api/admin-delete-buyout.php", { method: "POST", body: formData })
+            fetch("api/admin-delete-buyout.php", { method: "POST", headers: csrfHeaders(), body: formData })
               .then(function (r) { return r.json(); })
               .then(function (data) {
                 if (data.ok) loadBuyouts();
@@ -372,12 +383,12 @@
           return '' +
             '<div class="order-card">' +
               '<div class="order-card-header">' +
-                '<h3>#' + u.id + ' · ' + u.name + '</h3>' +
+                '<h3>#' + u.id + ' · ' + esc(u.name) + '</h3>' +
                 '<button type="button" class="btn btn-outline btn-sm delete-user-btn" data-user-id="' + u.id + '" style="color:#dc2626; border-color:#dc2626;">Удалить профиль</button>' +
               '</div>' +
               '<div class="order-card-details">' +
-                '<div class="detail-item"><span class="detail-label">Email</span><span class="detail-value">' + u.email + '</span></div>' +
-                '<div class="detail-item"><span class="detail-label">Телефон</span><span class="detail-value">' + (u.phone || "-") + '</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Email</span><span class="detail-value">' + esc(u.email) + '</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Телефон</span><span class="detail-value">' + esc(u.phone || "-") + '</span></div>' +
               '</div>' +
             '</div>';
         }).join("");
@@ -389,7 +400,7 @@
             var formData = new FormData();
             formData.append("user_id", userId);
             btn.disabled = true;
-            fetch("api/admin-delete-user.php", { method: "POST", body: formData })
+            fetch("api/admin-delete-user.php", { method: "POST", headers: csrfHeaders(), body: formData })
               .then(function (r) { return r.json(); })
               .then(function (data) {
                 if (data.ok) {
@@ -432,7 +443,7 @@
     formData.append("origin", origin);
     formData.append("status", status);
 
-    fetch("api/admin-create-order.php", { method: "POST", body: formData })
+    fetch("api/admin-create-order.php", { method: "POST", headers: csrfHeaders(), body: formData })
       .then(function (r) { return r.json(); })
       .then(function (data) {
         if (data.ok) {
@@ -465,6 +476,7 @@
         document.getElementById("access-message").textContent = "Доступ только для администраторов.";
         return;
       }
+      CSRF_TOKEN = data.csrf || "";
       document.getElementById("access-message").hidden = true;
       document.getElementById("admin-layout").hidden = false;
       loadOrders();

@@ -44,7 +44,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-<link rel="stylesheet" href="assets/style.css?v=15">
+<link rel="stylesheet" href="assets/style.css?v=17">
 </head>
 <body>
 
@@ -57,7 +57,7 @@
       <a href="tariffs.html" data-i18n="nav_tariffs">Тарифы</a>
       <a href="offer.html" data-i18n="nav_offer">Оферта</a>
       <a href="contact.html" class="nav-mobile-only" data-i18n="nav_contact">Связаться</a>
-      <a href="account-login.html" class="nav-mobile-only">Личный кабинет</a>
+      <a href="account-login.html" class="nav-mobile-only" data-i18n="nav_account">Личный кабинет</a>
     </nav>
     <div class="lang-switch" role="group" aria-label="Тіл / Язык">
       <button type="button" class="lang-btn" data-lang="kk">ҚАЗ</button>
@@ -65,10 +65,10 @@
       <a href="en/about.html" class="lang-btn lang-link">ENG</a>
     </div>
     <div class="header-cta">
-      <a href="account-login.html" class="btn btn-outline btn-sm account-icon-btn" aria-label="Личный кабинет">
+      <a href="account-login.html" class="btn btn-outline btn-sm account-icon-btn" aria-label="Личный кабинет" data-i18n-aria="nav_account">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </a>
-      <button type="button" class="btn btn-primary btn-sm" data-open-request-modal>Оставить заявку</button>
+      <button type="button" class="btn btn-primary btn-sm" data-open-request-modal data-i18n="header_cta_btn">Оставить заявку</button>
       <a href="contact.html" class="btn btn-outline btn-sm" data-i18n="nav_contact">Связаться</a>
     </div>
     <button class="menu-toggle" aria-label="Меню" data-i18n-aria="menu_aria">
@@ -145,34 +145,34 @@
 
 <div class="modal-overlay" id="request-modal-overlay" hidden>
   <div class="modal-card">
-    <button type="button" class="modal-close" id="request-modal-close" aria-label="Закрыть">✕</button>
+    <button type="button" class="modal-close" id="request-modal-close" aria-label="Закрыть" data-i18n-aria="modal_close_aria">✕</button>
     <div id="modal-intro">
-      <span class="eyebrow">Выкуп товара</span>
-      <h2 style="font-size: 24px; margin: 10px 0 6px;">Оставьте заявку</h2>
-      <p style="color: var(--muted); font-size: 14px; margin: 0 0 20px;">Заполните форму - менеджер свяжется и поможет с выкупом.</p>
+      <span class="eyebrow" data-i18n="modal_eyebrow">Выкуп товара</span>
+      <h2 style="font-size: 24px; margin: 10px 0 6px;" data-i18n="modal_h2">Оставьте заявку</h2>
+      <p style="color: var(--muted); font-size: 14px; margin: 0 0 20px;" data-i18n="modal_p">Заполните форму - менеджер свяжется и поможет с выкупом.</p>
       <div class="calc-input-row">
-        <label for="modal-name">Имя</label>
-        <input type="text" id="modal-name" placeholder="Как к вам обращаться">
+        <label for="modal-name" data-i18n="modal_name_label">Имя</label>
+        <input type="text" id="modal-name" placeholder="Как к вам обращаться" data-i18n-placeholder="modal_name_placeholder">
       </div>
       <div class="calc-input-row">
-        <label for="modal-link">Ссылка на товар</label>
+        <label for="modal-link" data-i18n="modal_link_label">Ссылка на товар</label>
         <input type="text" id="modal-link" placeholder="https://...">
       </div>
       <div class="calc-input-row">
-        <label for="modal-phone">Номер телефона</label>
+        <label for="modal-phone" data-i18n="modal_phone_label">Номер телефона</label>
         <input type="text" id="modal-phone" value="+7 ">
       </div>
-      <button type="button" class="btn btn-primary" style="width: 100%;" id="modal-submit">Отправить заявку</button>
+      <button type="button" class="btn btn-primary" style="width: 100%;" id="modal-submit" data-i18n="modal_submit_btn">Отправить заявку</button>
     </div>
     <div id="modal-success" hidden style="text-align: center;">
       <div style="font-size: 40px; margin-bottom: 12px;">✅</div>
-      <h2 style="margin: 0 0 8px;">Заявка отправлена</h2>
-      <p style="margin: 0; color: var(--muted);">Менеджер свяжется с вами в ближайшее время.</p>
+      <h2 style="margin: 0 0 8px;" data-i18n="modal_success_h2">Заявка отправлена</h2>
+      <p style="margin: 0; color: var(--muted);" data-i18n="modal_success_p">Менеджер свяжется с вами в ближайшее время.</p>
     </div>
   </div>
 </div>
 
-<script src="assets/i18n.js?v=15"></script>
-<script src="assets/script.js?v=15"></script>
+<script src="assets/i18n.js?v=17"></script>
+<script src="assets/script.js?v=17"></script>
 </body>
 </html>

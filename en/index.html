@@ -56,12 +56,65 @@
   }
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I place an order?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Click \"Leave a Request\" on the site, send us a link to the item you want and your contact details. A manager will contact you, calculate the exact cost and arrange the purchase." }
+    },
+    {
+      "@type": "Question",
+      "name": "How long does delivery take?",
+      "acceptedAnswer": { "@type": "Answer", "text": "It depends on the route: USA - 10-15 business days, Europe - 7-40 business days, China - 10-15 business days, China Express - 3-5 business days." }
+    },
+    {
+      "@type": "Question",
+      "name": "How is the delivery cost calculated?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Based on the actual weight of the parcel once it arrives at the warehouse - rates range from $6 to $12 per kg depending on the route. Oversized parcels are calculated by volumetric weight." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the purchase commission?",
+      "acceptedAnswer": { "@type": "Answer", "text": "We buy the item on your behalf and at your expense. The commission for this service is 5% to 10% of the order amount depending on the product category, but no less than $5." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a personal account and why do I need one?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A personal account is where you can track your orders, see their status, request history and manage your details." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I track an order if I already placed the purchase myself?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. In your personal account there is an \"Add your tracking number\" button - the order will appear under \"My Orders\" with status tracking." }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if the item is lost or damaged?",
+      "acceptedAnswer": { "@type": "Answer", "text": "We are responsible for the safekeeping of the item from the moment it's received at our warehouse until it's handed over to you. If damage or loss occurs due to our fault, compensation is paid equal to the declared value of the item." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I cancel an order?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes, but only before the item is actually purchased. After purchase, cancellation isn't possible." }
+    },
+    {
+      "@type": "Question",
+      "name": "How can I contact you?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Via WhatsApp or Telegram - the buttons are on every page of the site. We reply quickly during business hours." }
+    }
+  ]
+}
+</script>
 <style>.reveal{opacity:0}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
-<link rel="stylesheet" href="../assets/style.css?v=15">
+<link rel="stylesheet" href="../assets/style.css?v=17">
 </head>
 <body>
 
@@ -73,6 +126,8 @@
       <a href="about.html">About</a>
       <a href="tariffs.html">Rates</a>
       <a href="offer.html">Public Offer</a>
+      <a href="contact.html" class="nav-mobile-only">Contact</a>
+      <a href="account-login.html" class="nav-mobile-only">Account</a>
     </nav>
     <div class="lang-switch" role="group" aria-label="Language / Тіл / Язык">
       <a href="../index.html?lang=kk" class="lang-btn lang-link">ҚАЗ</a>
@@ -80,6 +135,10 @@
       <button type="button" class="lang-btn active" disabled>ENG</button>
     </div>
     <div class="header-cta">
+      <a href="account-login.html" class="btn btn-outline btn-sm account-icon-btn" aria-label="Account">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
+      <button type="button" class="btn btn-primary btn-sm" data-open-request-modal>Leave a Request</button>
       <a href="contact.html" class="btn btn-outline btn-sm">Contact</a>
     </div>
     <button class="menu-toggle" aria-label="Menu">
@@ -299,6 +358,99 @@
       </div>
     </div>
   </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Questions and Answers</span>
+        <h2>Frequently Asked Questions</h2>
+        <p>If you didn't find the answer here - just message us on WhatsApp or Telegram.</p>
+      </div>
+      <div class="faq-list reveal">
+        <div class="faq-item">
+          <button type="button" class="faq-question">
+            <span>How do I place an order?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Click "Leave a Request" on the site, send us a link to the item you want and your contact details. A manager will contact you, calculate the exact cost and arrange the purchase.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button type="button" class="faq-question">
+            <span>How long does delivery take?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>It depends on the route: USA - 10-15 business days, Europe - 7-40 business days, China - 10-15 business days, China Express - 3-5 business days.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button type="button" class="faq-question">
+            <span>How is the delivery cost calculated?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Based on the actual weight of the parcel once it arrives at the warehouse - rates range from $6 to $12 per kg depending on the route. You can estimate the amount in advance using the calculator on the Rates page. Oversized parcels are calculated by volumetric weight.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button type="button" class="faq-question">
+            <span>What is the purchase commission?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>We buy the item on your behalf and at your expense. The commission for this service is 5% to 10% of the order amount depending on the product category, but no less than $5.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button type="button" class="faq-question">
+            <span>What is a personal account and why do I need one?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>A personal account is where you can track your orders, see their status, view your request history and manage your details. Registration takes just a couple of minutes - all you need is an email and a password.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button type="button" class="faq-question">
+            <span>Can I track an order if I already placed the purchase myself?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Yes. In your personal account there is an "Add your tracking number" button - enter it, and the order will appear under "My Orders" with status tracking through every stage: placed, at warehouse, in transit, arrived, delivered.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button type="button" class="faq-question">
+            <span>What happens if the item is lost or damaged?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>We are responsible for the safekeeping of the item from the moment it's received at our warehouse until it's handed over to you. If damage or loss occurs due to our fault, compensation is paid equal to the declared value of the item.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button type="button" class="faq-question">
+            <span>Can I cancel an order?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Yes, but only before the item is actually purchased. Once purchased, cancellation isn't possible - a return is possible only if the specific store's rules allow it, and the customer covers all return costs.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button type="button" class="faq-question">
+            <span>How can I contact you?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>The easiest way is via WhatsApp or Telegram - the buttons are on every page of the site. We reply quickly during business hours.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer class="site-footer">
@@ -319,6 +471,35 @@
   <a href="https://t.me/usklogistics" target="_blank" rel="noopener" class="fab tg" aria-label="Telegram">✈️</a>
 </div>
 
-<script src="../assets/script.js?v=15"></script>
+<div class="modal-overlay" id="request-modal-overlay" hidden>
+  <div class="modal-card">
+    <button type="button" class="modal-close" id="request-modal-close" aria-label="Close">✕</button>
+    <div id="modal-intro">
+      <span class="eyebrow">Purchase Request</span>
+      <h2 style="font-size: 24px; margin: 10px 0 6px;">Leave a Request</h2>
+      <p style="color: var(--muted); font-size: 14px; margin: 0 0 20px;">Fill out the form - a manager will contact you and help with the purchase.</p>
+      <div class="calc-input-row">
+        <label for="modal-name">Name</label>
+        <input type="text" id="modal-name" placeholder="How should we address you">
+      </div>
+      <div class="calc-input-row">
+        <label for="modal-link">Product link</label>
+        <input type="text" id="modal-link" placeholder="https://...">
+      </div>
+      <div class="calc-input-row">
+        <label for="modal-phone">Phone number</label>
+        <input type="text" id="modal-phone" value="+1 ">
+      </div>
+      <button type="button" class="btn btn-primary" style="width: 100%;" id="modal-submit">Send Request</button>
+    </div>
+    <div id="modal-success" hidden style="text-align: center;">
+      <div style="font-size: 40px; margin-bottom: 12px;">✅</div>
+      <h2 style="margin: 0 0 8px;">Request Sent</h2>
+      <p style="margin: 0; color: var(--muted);">A manager will contact you shortly.</p>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/script.js?v=17"></script>
 </body>
 </html>

@@ -8,6 +8,9 @@ if (empty($_SESSION['user_id'])) {
     exit;
 }
 
+require __DIR__ . '/csrf.php';
+require_csrf();
+
 $configFile = __DIR__ . '/../db-config.php';
 if (!file_exists($configFile)) {
     http_response_code(500);

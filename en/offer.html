@@ -44,7 +44,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
-<link rel="stylesheet" href="../assets/style.css?v=15">
+<link rel="stylesheet" href="../assets/style.css?v=17">
 </head>
 <body>
 
@@ -56,6 +56,8 @@
       <a href="about.html">About</a>
       <a href="tariffs.html">Rates</a>
       <a href="offer.html" class="active">Public Offer</a>
+      <a href="contact.html" class="nav-mobile-only">Contact</a>
+      <a href="account-login.html" class="nav-mobile-only">Account</a>
     </nav>
     <div class="lang-switch" role="group" aria-label="Language / Тіл / Язык">
       <a href="../offer.html?lang=kk" class="lang-btn lang-link">ҚАЗ</a>
@@ -63,6 +65,10 @@
       <button type="button" class="lang-btn active" disabled>ENG</button>
     </div>
     <div class="header-cta">
+      <a href="account-login.html" class="btn btn-outline btn-sm account-icon-btn" aria-label="Account">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
+      <button type="button" class="btn btn-primary btn-sm" data-open-request-modal>Leave a Request</button>
       <a href="contact.html" class="btn btn-outline btn-sm">Contact</a>
     </div>
     <button class="menu-toggle" aria-label="Menu">
@@ -128,6 +134,35 @@
   <a href="https://t.me/usklogistics" target="_blank" rel="noopener" class="fab tg" aria-label="Telegram">✈️</a>
 </div>
 
-<script src="../assets/script.js?v=15"></script>
+<div class="modal-overlay" id="request-modal-overlay" hidden>
+  <div class="modal-card">
+    <button type="button" class="modal-close" id="request-modal-close" aria-label="Close">✕</button>
+    <div id="modal-intro">
+      <span class="eyebrow">Purchase Request</span>
+      <h2 style="font-size: 24px; margin: 10px 0 6px;">Leave a Request</h2>
+      <p style="color: var(--muted); font-size: 14px; margin: 0 0 20px;">Fill out the form - a manager will contact you and help with the purchase.</p>
+      <div class="calc-input-row">
+        <label for="modal-name">Name</label>
+        <input type="text" id="modal-name" placeholder="How should we address you">
+      </div>
+      <div class="calc-input-row">
+        <label for="modal-link">Product link</label>
+        <input type="text" id="modal-link" placeholder="https://...">
+      </div>
+      <div class="calc-input-row">
+        <label for="modal-phone">Phone number</label>
+        <input type="text" id="modal-phone" value="+1 ">
+      </div>
+      <button type="button" class="btn btn-primary" style="width: 100%;" id="modal-submit">Send Request</button>
+    </div>
+    <div id="modal-success" hidden style="text-align: center;">
+      <div style="font-size: 40px; margin-bottom: 12px;">✅</div>
+      <h2 style="margin: 0 0 8px;">Request Sent</h2>
+      <p style="margin: 0; color: var(--muted);">A manager will contact you shortly.</p>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/script.js?v=17"></script>
 </body>
 </html>

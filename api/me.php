@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . '/../session-init.php';
+require __DIR__ . '/csrf.php';
 header('Content-Type: application/json; charset=utf-8');
 
 if (empty($_SESSION['user_id'])) {
@@ -59,4 +60,4 @@ while ($row = $result->fetch_assoc()) {
 $stmt->close();
 $conn->close();
 
-echo json_encode(['ok' => true, 'user' => $user, 'orders' => $orders, 'buyouts' => $buyouts]);
+echo json_encode(['ok' => true, 'user' => $user, 'orders' => $orders, 'buyouts' => $buyouts, 'csrf' => csrf_token()]);

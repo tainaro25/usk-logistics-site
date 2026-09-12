@@ -32,19 +32,31 @@ if ($conn->connect_error) {
     exit;
 }
 
+require __DIR__ . '/rate-limit.php';
+$ip = rate_limit_client_ip();
+$rateLimitKeys = [
+    ['key' => 'login:ip:' . $ip, 'max_attempts' => 20, 'window_seconds' => 900, 'lock_seconds' => 900],
+    ['key' => 'login:ip-email:' . $ip . ':' . $email, 'max_attempts' => 5, 'window_seconds' => 900, 'lock_seconds' => 900],
+];
+rate_limit_enforce($conn, $rateLimitKeys);
+
 $stmt = $conn->prepare('SELECT id, name, password_hash FROM users WHERE email = ?');
 $stmt->bind_param('s', $email);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 $stmt->close();
-$conn->close();
 
 if (!$user || !password_verify($password, $user['password_hash'])) {
+    rate_limit_register_failure($conn, $rateLimitKeys);
+    $conn->close();
     http_response_code(401);
     echo json_encode(['ok' => false, 'error' => 'invalid_credentials']);
     exit;
 }
+
+rate_limit_reset($conn, $rateLimitKeys);
+$conn->close();
 
 $_SESSION['user_id'] = $user['id'];
 

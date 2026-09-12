@@ -13,6 +13,8 @@ require $configFile;
 $conn = db_connect();
 require __DIR__ . '/admin-guard.php';
 require_admin($conn);
+require __DIR__ . '/csrf.php';
+require_csrf();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $conn->close();
