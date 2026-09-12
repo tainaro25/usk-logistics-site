@@ -39,7 +39,7 @@ if (!$user) {
 }
 
 $orders = [];
-$stmt = $conn->prepare('SELECT id, track_number, description, origin, status, created_at FROM orders WHERE user_id = ? ORDER BY created_at DESC');
+$stmt = $conn->prepare('SELECT id, track_number, description, origin, status, source, created_at FROM orders WHERE user_id = ? ORDER BY created_at DESC');
 $stmt->bind_param('i', $userId);
 $stmt->execute();
 $result = $stmt->get_result();

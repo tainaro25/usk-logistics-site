@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=7">
+<link rel="stylesheet" href="assets/style.css?v=8">
 </head>
 <body>
 
@@ -101,7 +101,8 @@
 </main>
 
 <script>
-  var ORDER_STATUSES = ["на рассмотрении", "выкуплен", "на складе", "в пути", "доставлено"];
+  var ORDER_STATUSES_ADMIN = ["на рассмотрении", "выкуплен", "на складе", "в пути", "доставлено"];
+  var ORDER_STATUSES_CUSTOMER = ["на складе", "в пути", "прибыл", "доставлено"];
   var BUYOUT_STATUSES = ["новая", "в обработке", "одобрена", "отклонена"];
 
   var statusClass = {
@@ -109,6 +110,7 @@
     "выкуплен": "status-transit",
     "на складе": "status-warehouse",
     "в пути": "status-transit",
+    "прибыл": "status-arrived",
     "доставлено": "status-delivered",
     "в обработке": "status-transit",
     "одобрена": "status-warehouse",
@@ -154,6 +156,7 @@
           return;
         }
         box.innerHTML = data.orders.map(function (o) {
+          var statusList = o.source === "customer" ? ORDER_STATUSES_CUSTOMER : ORDER_STATUSES_ADMIN;
           return '' +
             '<div class="order-card">' +
               '<div class="order-card-header">' +
@@ -164,12 +167,13 @@
                 '<div class="detail-item"><span class="detail-label">Трек-номер</span><span class="detail-value">' + o.track_number + '</span></div>' +
                 '<div class="detail-item"><span class="detail-label">Клиент</span><span class="detail-value">' + o.user_name + ' (' + o.user_email + ')</span></div>' +
                 '<div class="detail-item"><span class="detail-label">Откуда</span><span class="detail-value">' + (o.origin || "—") + '</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Добавлен</span><span class="detail-value">' + (o.source === "customer" ? "самим клиентом" : "администратором") + '</span></div>' +
                 '<div class="detail-item"><span class="detail-label">Дата</span><span class="detail-value">' + formatDate(o.created_at) + '</span></div>' +
               '</div>' +
               '<div class="calc-input-row" style="margin: 16px 0 0;">' +
                 '<label>Сменить статус</label>' +
                 '<div style="display:flex; gap:10px;">' +
-                  '<select class="order-status-select" data-order-id="' + o.id + '" style="flex:1; padding:10px 12px; border-radius:10px; border:1px solid var(--border);">' + selectOptions(ORDER_STATUSES, o.status) + '</select>' +
+                  '<select class="order-status-select" data-order-id="' + o.id + '" style="flex:1; padding:10px 12px; border-radius:10px; border:1px solid var(--border);">' + selectOptions(statusList, o.status) + '</select>' +
                   '<button type="button" class="btn btn-outline btn-sm save-order-status" data-order-id="' + o.id + '">Сохранить</button>' +
                   '<button type="button" class="btn btn-outline btn-sm delete-order-btn" data-order-id="' + o.id + '" style="color:#dc2626; border-color:#dc2626;">Удалить</button>' +
                 '</div>' +

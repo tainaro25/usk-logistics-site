@@ -1330,6 +1330,11 @@ table.price-table tr:last-child td {
   color: #166534;
 }
 
+.status-arrived {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
 .profile-form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;

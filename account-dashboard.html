@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=7">
+<link rel="stylesheet" href="assets/style.css?v=8">
 </head>
 <body>
 
@@ -53,7 +53,29 @@
         <div class="account-panel">
           <div class="tab-content" id="tab-orders">
             <h1>Мои заказы</h1>
-            <div id="orders-list"></div>
+
+            <div style="margin-bottom: 28px;">
+              <button type="button" class="btn btn-outline btn-sm" id="add-track-toggle">+ Добавить свой трек-номер</button>
+              <div id="add-track-form" hidden style="margin-top: 16px; max-width: 420px;">
+                <p style="color: var(--muted); font-size: 13px; margin: 0 0 16px;">Если вы уже сами оформили покупку и знаете трек-номер — добавьте его сюда, чтобы отслеживать в личном кабинете.</p>
+                <div class="calc-input-row">
+                  <label for="own-track-number">Трек-номер</label>
+                  <input type="text" id="own-track-number" placeholder="Например, KZ4471829563US">
+                </div>
+                <div class="calc-input-row">
+                  <label for="own-track-desc">Что это (необязательно)</label>
+                  <input type="text" id="own-track-desc" placeholder="Например, Кроссовки">
+                </div>
+                <p id="own-track-message" style="font-size: 14px; margin: 0 0 12px; display: none;"></p>
+                <button type="button" class="btn btn-primary" id="own-track-submit">Добавить</button>
+              </div>
+            </div>
+
+            <h2 style="font-size: 18px; margin: 0 0 12px;">Текущие</h2>
+            <div id="orders-current"></div>
+
+            <h2 style="font-size: 18px; margin: 28px 0 12px;">Завершённые</h2>
+            <div id="orders-completed"></div>
           </div>
 
           <div class="tab-content" id="tab-profile" hidden>
@@ -129,6 +151,7 @@
     "выкуплен": "status-transit",
     "на складе": "status-warehouse",
     "в пути": "status-transit",
+    "прибыл": "status-arrived",
     "доставлено": "status-delivered",
     "в обработке": "status-transit",
     "одобрена": "status-warehouse",
@@ -141,28 +164,23 @@
     return d.toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
   }
 
-  function renderOrders(orders) {
-    var box = document.getElementById("orders-list");
-    if (!orders.length) {
-      box.innerHTML = '<p style="color: var(--muted); font-size: 14px;">У вас пока нет заказов. Оформите заявку на выкуп — как только она подтвердится, здесь появится заказ с трек-номером.</p>';
-      return;
-    }
-    box.innerHTML = orders.map(function (o) {
-      return '' +
-        '<div class="order-card">' +
-          '<div class="order-card-header">' +
-            '<h3>Заказ №' + o.id + (o.description ? " · " + o.description : "") + '</h3>' +
-            '<span class="status-badge ' + (statusClass[o.status] || "status-transit") + '">' + o.status + '</span>' +
-          '</div>' +
-          '<div class="order-card-details">' +
-            '<div class="detail-item"><span class="detail-label">Трек-номер</span><span class="detail-value">' + o.track_number +
-              ' <button type="button" class="copy-btn" data-copy="' + o.track_number + '" title="Скопировать">⧉</button></span></div>' +
-            '<div class="detail-item"><span class="detail-label">Откуда</span><span class="detail-value">' + (o.origin || "—") + '</span></div>' +
-            '<div class="detail-item"><span class="detail-label">Дата создания</span><span class="detail-value">' + formatDate(o.created_at) + '</span></div>' +
-          '</div>' +
-        '</div>';
-    }).join("");
+  function orderCardHtml(o) {
+    return '' +
+      '<div class="order-card">' +
+        '<div class="order-card-header">' +
+          '<h3>Заказ №' + o.id + (o.description ? " · " + o.description : "") + '</h3>' +
+          '<span class="status-badge ' + (statusClass[o.status] || "status-transit") + '">' + o.status + '</span>' +
+        '</div>' +
+        '<div class="order-card-details">' +
+          '<div class="detail-item"><span class="detail-label">Трек-номер</span><span class="detail-value">' + o.track_number +
+            ' <button type="button" class="copy-btn" data-copy="' + o.track_number + '" title="Скопировать">⧉</button></span></div>' +
+          '<div class="detail-item"><span class="detail-label">Откуда</span><span class="detail-value">' + (o.origin || "—") + '</span></div>' +
+          '<div class="detail-item"><span class="detail-label">Дата создания</span><span class="detail-value">' + formatDate(o.created_at) + '</span></div>' +
+        '</div>' +
+      '</div>';
+  }
 
+  function attachCopyHandlers(box) {
     box.querySelectorAll(".copy-btn").forEach(function (btn) {
       btn.addEventListener("click", function () {
         var text = btn.dataset.copy;
@@ -174,6 +192,25 @@
         }
       });
     });
+  }
+
+  function renderOrders(orders) {
+    var currentBox = document.getElementById("orders-current");
+    var completedBox = document.getElementById("orders-completed");
+
+    var current = orders.filter(function (o) { return o.status !== "доставлено"; });
+    var completed = orders.filter(function (o) { return o.status === "доставлено"; });
+
+    currentBox.innerHTML = current.length
+      ? current.map(orderCardHtml).join("")
+      : '<p style="color: var(--muted); font-size: 14px;">Активных заказов пока нет. Оформите заявку на выкуп или добавьте свой трек-номер выше — и он появится здесь.</p>';
+
+    completedBox.innerHTML = completed.length
+      ? completed.map(orderCardHtml).join("")
+      : '<p style="color: var(--muted); font-size: 14px;">Завершённых заказов пока нет.</p>';
+
+    attachCopyHandlers(currentBox);
+    attachCopyHandlers(completedBox);
   }
 
   function renderBuyouts(buyouts) {
@@ -245,6 +282,62 @@
       .finally(function () {
         btn.disabled = false;
         btn.textContent = "Сохранить изменения";
+      });
+  });
+
+  document.getElementById("add-track-toggle").addEventListener("click", function () {
+    var form = document.getElementById("add-track-form");
+    form.hidden = !form.hidden;
+  });
+
+  document.getElementById("own-track-submit").addEventListener("click", function () {
+    var btn = this;
+    var msg = document.getElementById("own-track-message");
+    var track = document.getElementById("own-track-number").value.trim();
+    var desc = document.getElementById("own-track-desc").value.trim();
+
+    if (!track) {
+      msg.style.color = "#dc2626";
+      msg.textContent = "Укажите трек-номер.";
+      msg.style.display = "block";
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Добавление...";
+
+    var formData = new FormData();
+    formData.append("track_number", track);
+    formData.append("description", desc);
+
+    fetch("api/add-own-order.php", { method: "POST", body: formData })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.ok) {
+          msg.style.color = "#16a34a";
+          msg.textContent = "Трек-номер добавлен.";
+          document.getElementById("own-track-number").value = "";
+          document.getElementById("own-track-desc").value = "";
+          fetch("api/me.php").then(function (r) { return r.json(); }).then(function (d) {
+            if (d.ok) renderOrders(d.orders);
+          });
+        } else if (data.error === "track_number_taken") {
+          msg.style.color = "#dc2626";
+          msg.textContent = "Такой трек-номер уже добавлен.";
+        } else {
+          msg.style.color = "#dc2626";
+          msg.textContent = "Не получилось добавить. Попробуйте ещё раз.";
+        }
+        msg.style.display = "block";
+      })
+      .catch(function () {
+        msg.style.color = "#dc2626";
+        msg.textContent = "Не удалось связаться с сервером.";
+        msg.style.display = "block";
+      })
+      .finally(function () {
+        btn.disabled = false;
+        btn.textContent = "Добавить";
       });
   });
 
