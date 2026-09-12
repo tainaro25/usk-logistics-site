@@ -44,7 +44,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-<link rel="stylesheet" href="assets/style.css?v=17">
+<link rel="stylesheet" href="assets/style.css?v=21">
 </head>
 <body>
 
@@ -56,6 +56,7 @@
       <a href="about.html" data-i18n="nav_about">О нас</a>
       <a href="tariffs.html" data-i18n="nav_tariffs">Тарифы</a>
       <a href="offer.html" data-i18n="nav_offer">Оферта</a>
+      <a href="blog.html">Блог</a>
       <a href="contact.html" class="nav-mobile-only active" data-i18n="nav_contact">Связаться</a>
       <a href="account-login.html" class="nav-mobile-only" data-i18n="nav_account">Личный кабинет</a>
     </nav>
@@ -65,11 +66,17 @@
       <a href="en/contact.html" class="lang-btn lang-link">ENG</a>
     </div>
     <div class="header-cta">
-      <a href="account-login.html" class="btn btn-outline btn-sm account-icon-btn" aria-label="Личный кабинет" data-i18n-aria="nav_account">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      </a>
-      <button type="button" class="btn btn-primary btn-sm" data-open-request-modal data-i18n="header_cta_btn">Оставить заявку</button>
-      <a href="contact.html" class="btn btn-outline btn-sm" data-i18n="nav_contact">Связаться</a>
+      <span class="press-depth">
+        <a href="account-login.html" class="btn btn-outline btn-sm account-icon-btn" aria-label="Личный кабинет" data-i18n-aria="nav_account">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </a>
+      </span>
+      <span class="press-depth">
+        <button type="button" class="btn btn-primary btn-sm" data-open-request-modal data-i18n="header_cta_btn">Оставить заявку</button>
+      </span>
+      <span class="press-depth">
+        <a href="contact.html" class="btn btn-outline btn-sm" data-i18n="nav_contact">Связаться</a>
+      </span>
     </div>
     <button class="menu-toggle" aria-label="Меню" data-i18n-aria="menu_aria">
       <span></span><span></span><span></span>
@@ -113,6 +120,7 @@
       <a href="about.html" data-i18n="nav_about">О нас</a>
       <a href="tariffs.html" data-i18n="nav_tariffs">Тарифы</a>
       <a href="offer.html" data-i18n="nav_offer">Оферта</a>
+      <a href="blog.html">Блог</a>
       <a href="contact.html" data-i18n="nav_contact">Связаться</a>
     </div>
     <div class="copyright" data-i18n="footer_copyright">© 2026 USK Logistics. Все права защищены.</div>
@@ -143,6 +151,10 @@
         <label for="modal-phone" data-i18n="modal_phone_label">Номер телефона</label>
         <input type="text" id="modal-phone" value="+7 ">
       </div>
+      <label class="modal-checkbox-row">
+        <input type="checkbox" id="modal-prohibited-check">
+        <span data-i18n="modal_checkbox_label">Я ознакомился(-ась) со <a href="#" data-open-prohibited-modal>списком товаров, запрещённых к перевозке</a>, и подтверждаю, что заказываемый товар в этот список не входит.</span>
+      </label>
       <button type="button" class="btn btn-primary" style="width: 100%;" id="modal-submit" data-i18n="modal_submit_btn">Отправить заявку</button>
     </div>
     <div id="modal-success" hidden style="text-align: center;">
@@ -153,7 +165,16 @@
   </div>
 </div>
 
-<script src="assets/i18n.js?v=17"></script>
-<script src="assets/script.js?v=17"></script>
+<div class="modal-overlay" id="prohibited-modal-overlay" hidden>
+  <div class="modal-card">
+    <button type="button" class="modal-close" id="prohibited-modal-close" aria-label="Закрыть" data-i18n-aria="modal_close_aria">✕</button>
+    <h2 style="font-size: 20px; margin: 0 0 16px;" data-i18n="prohibited_modal_title">Список товаров, запрещённых к перевозке</h2>
+    <div data-i18n="prohibited_list_html"><ul class="prohibited-list"><li>Оружие, боеприпасы и их части</li><li>Лекарства и медицинские препараты (рецептурные и содержащие психоактивные вещества)</li><li>Драгоценности, драгоценные металлы и камни</li><li>Товары двойного назначения (военного и специального назначения)</li><li>Дроны и беспилотные летательные аппараты</li><li>Наличные деньги и ценные бумаги</li><li>Взрывчатые, легковоспламеняющиеся и токсичные вещества</li><li>Живые животные и растения</li><li>Контрафактная и поддельная продукция</li><li>Табачные изделия и алкоголь (на отдельных направлениях)</li></ul></div>
+    <p style="font-size: 13px; color: var(--muted); margin: 0;" data-i18n="prohibited_note">Точный перечень может отличаться в зависимости от направления и требований таможни - актуальный список уточняйте у менеджера перед оформлением заказа.</p>
+  </div>
+</div>
+
+<script src="assets/i18n.js?v=19"></script>
+<script src="assets/script.js?v=19"></script>
 </body>
 </html>

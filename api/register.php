@@ -73,8 +73,20 @@ rate_limit_reset($conn, $rateLimitKeys);
 
 $userId = $stmt->insert_id;
 $stmt->close();
+
+require __DIR__ . '/send-email.php';
+$code = generate_verification_code();
+$expires = date('Y-m-d H:i:s', time() + 900);
+
+$stmt = $conn->prepare('UPDATE users SET verification_code = ?, verification_code_expires = ? WHERE id = ?');
+$stmt->bind_param('ssi', $code, $expires, $userId);
+$stmt->execute();
+$stmt->close();
+
+$emailSent = send_verification_code_email($email, $code);
+
 $conn->close();
 
-$_SESSION['user_id'] = $userId;
+$_SESSION['pending_verify_user_id'] = $userId;
 
-echo json_encode(['ok' => true, 'user' => ['id' => $userId, 'name' => $name, 'email' => $email]]);
+echo json_encode(['ok' => true, 'needs_verification' => true, 'email' => $email, 'email_sent' => $emailSent]);

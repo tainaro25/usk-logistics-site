@@ -2,7 +2,77 @@ function parseLocaleNumber(value) {
   return parseFloat(String(value || "").replace(",", "."));
 }
 
+function initPressDepth() {
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  document.querySelectorAll(".press-depth").forEach((wrapper) => {
+    const btn = wrapper.querySelector(":scope > .btn");
+    if (!btn) return;
+
+    let pointerId = null;
+
+    const setPressed = (isPressed) => {
+      wrapper.classList.toggle("is-pressed", isPressed);
+    };
+
+    const contains = (event) => {
+      const r = btn.getBoundingClientRect();
+      return (
+        event.clientX >= r.left &&
+        event.clientX <= r.right &&
+        event.clientY >= r.top &&
+        event.clientY <= r.bottom
+      );
+    };
+
+    const onMove = (event) => {
+      if (event.pointerId !== pointerId) return;
+      setPressed(contains(event));
+    };
+
+    const stop = (event) => {
+      if (event && event.pointerId !== pointerId) return;
+      pointerId = null;
+      setPressed(false);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", stop);
+      window.removeEventListener("pointercancel", stop);
+    };
+
+    btn.addEventListener("pointerdown", (event) => {
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+
+      if (!reduceMotion) {
+        const r = btn.getBoundingClientRect();
+        const rx = Math.max(-1, Math.min(1, ((event.clientY - r.top) / r.height) * 2 - 1));
+        const ry = Math.max(-1, Math.min(1, ((event.clientX - r.left) / r.width) * 2 - 1));
+        wrapper.style.setProperty("--press-rx", -rx * 6 + "deg");
+        wrapper.style.setProperty("--press-ry", ry * 6 + "deg");
+      }
+
+      pointerId = event.pointerId;
+      setPressed(true);
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", stop);
+      window.addEventListener("pointercancel", stop);
+    });
+
+    btn.addEventListener("keydown", (event) => {
+      if (event.repeat) return;
+      if (event.key === " " || event.key === "Enter") setPressed(true);
+    });
+
+    btn.addEventListener("keyup", (event) => {
+      if (event.key === " " || event.key === "Enter" || event.key === "Escape") setPressed(false);
+    });
+
+    btn.addEventListener("blur", () => stop());
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  initPressDepth();
+
   const accountLinks = document.querySelectorAll('a[href="account-login.html"]');
   if (accountLinks.length) {
     fetch("/api/me.php")
@@ -145,6 +215,39 @@ document.addEventListener("DOMContentLoaded", () => {
     revealEls.forEach((el) => observer.observe(el));
   }
 
+  function i18nText(key, fallback) {
+    if (window.USK_I18N && window.USK_I18N.currentLang) {
+      const dict = window.USK_I18N.dict[window.USK_I18N.currentLang] || {};
+      if (dict[key]) return dict[key];
+    }
+    return fallback;
+  }
+
+  const prohibitedOverlay = document.getElementById("prohibited-modal-overlay");
+  if (prohibitedOverlay) {
+    const closeProhibited = () => {
+      prohibitedOverlay.hidden = true;
+    };
+
+    document.addEventListener("click", (e) => {
+      if (e.target.closest("[data-open-prohibited-modal]")) {
+        e.preventDefault();
+        prohibitedOverlay.hidden = false;
+      }
+    });
+
+    const prohibitedCloseBtn = document.getElementById("prohibited-modal-close");
+    if (prohibitedCloseBtn) prohibitedCloseBtn.addEventListener("click", closeProhibited);
+
+    prohibitedOverlay.addEventListener("click", (e) => {
+      if (e.target === prohibitedOverlay) closeProhibited();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !prohibitedOverlay.hidden) closeProhibited();
+    });
+  }
+
   const modalOverlay = document.getElementById("request-modal-overlay");
   if (modalOverlay) {
     const openBtns = document.querySelectorAll("[data-open-request-modal]");
@@ -155,6 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const nameInput = document.getElementById("modal-name");
     const linkInput = document.getElementById("modal-link");
     const phoneInput = document.getElementById("modal-phone");
+    const prohibitedCheck = document.getElementById("modal-prohibited-check");
 
     const openModal = (e) => {
       if (e) e.preventDefault();
@@ -185,12 +289,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const phone = phoneInput.value.trim();
 
         if (!name || phone.replace(/\D/g, "").length < 10) {
-          alert("Заполните, пожалуйста, имя и телефон полностью.");
+          alert(i18nText("modal_err_fill_name_phone", "Please fill in your name and phone number completely."));
+          return;
+        }
+
+        if (prohibitedCheck && !prohibitedCheck.checked) {
+          alert(i18nText("modal_checkbox_error", "Please confirm that you've reviewed the list of prohibited items."));
           return;
         }
 
         submitBtn.disabled = true;
-        submitBtn.textContent = "Отправка...";
+        submitBtn.textContent = i18nText("modal_sending_btn", "Sending...");
 
         const formData = new FormData();
         formData.append("name", name);
@@ -204,15 +313,15 @@ document.addEventListener("DOMContentLoaded", () => {
               intro.hidden = true;
               success.hidden = false;
             } else {
-              alert("Не получилось отправить заявку. Попробуйте написать нам в WhatsApp или Telegram.");
+              alert(i18nText("modal_err_submit_fail", "Could not send the request. Please message us on WhatsApp or Telegram."));
             }
           })
           .catch(() => {
-            alert("Не получилось отправить заявку. Попробуйте написать нам в WhatsApp или Telegram.");
+            alert(i18nText("modal_err_submit_fail", "Could not send the request. Please message us on WhatsApp or Telegram."));
           })
           .finally(() => {
             submitBtn.disabled = false;
-            submitBtn.textContent = "Отправить заявку";
+            submitBtn.textContent = i18nText("modal_submit_btn", "Send Request");
           });
       });
     }

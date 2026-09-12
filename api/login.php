@@ -40,7 +40,7 @@ $rateLimitKeys = [
 ];
 rate_limit_enforce($conn, $rateLimitKeys);
 
-$stmt = $conn->prepare('SELECT id, name, password_hash FROM users WHERE email = ?');
+$stmt = $conn->prepare('SELECT id, name, phone, password_hash, email_verified FROM users WHERE email = ?');
 $stmt->bind_param('s', $email);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -56,6 +56,17 @@ if (!$user || !password_verify($password, $user['password_hash'])) {
 }
 
 rate_limit_reset($conn, $rateLimitKeys);
+
+if ((int)$user['email_verified'] !== 1) {
+    $conn->close();
+    $_SESSION['pending_verify_user_id'] = $user['id'];
+    echo json_encode(['ok' => false, 'error' => 'email_not_verified', 'needs_verification' => true, 'email' => $email]);
+    exit;
+}
+
+require __DIR__ . '/link-guest-buyouts.php';
+link_guest_buyouts($conn, $user['id'], $user['phone']);
+
 $conn->close();
 
 $_SESSION['user_id'] = $user['id'];

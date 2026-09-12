@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=17">
+<link rel="stylesheet" href="assets/style.css?v=21">
 </head>
 <body>
 
@@ -21,6 +21,7 @@
       <a href="about.html" data-i18n="nav_about">О нас</a>
       <a href="tariffs.html" data-i18n="nav_tariffs">Тарифы</a>
       <a href="offer.html" data-i18n="nav_offer">Оферта</a>
+      <a href="blog.html">Блог</a>
     </nav>
     <div class="lang-switch" role="group" aria-label="Тіл / Язык">
       <button type="button" class="lang-btn" data-lang="kk">ҚАЗ</button>
@@ -28,8 +29,12 @@
       <a href="en/account-login.html" class="lang-btn lang-link">ENG</a>
     </div>
     <div class="header-cta">
-      <a href="account-login.html" class="btn btn-primary btn-sm" data-i18n="nav_account">Личный кабинет</a>
-      <a href="contact.html" class="btn btn-outline btn-sm" data-i18n="nav_contact">Связаться</a>
+      <span class="press-depth">
+        <a href="account-login.html" class="btn btn-primary btn-sm" data-i18n="nav_account">Личный кабинет</a>
+      </span>
+      <span class="press-depth">
+        <a href="contact.html" class="btn btn-outline btn-sm" data-i18n="nav_contact">Связаться</a>
+      </span>
     </div>
     <button class="menu-toggle" aria-label="Меню" data-i18n-aria="menu_aria">
       <span></span><span></span><span></span>
@@ -40,7 +45,7 @@
 <main>
   <section class="hero" style="padding: 56px 0 40px;">
     <div class="wrap" style="max-width: 460px;">
-      <div class="calc-card" style="margin: 0;">
+      <div class="calc-card" style="margin: 0;" id="login-card">
         <div class="calc-toggle">
           <button type="button" class="calc-option active" id="tab-login" data-i18n="account_tab_login">Вход</button>
           <button type="button" class="calc-option" id="tab-register" data-i18n="account_tab_register">Регистрация</button>
@@ -74,6 +79,23 @@
 
         <button type="button" class="btn btn-primary" style="width: 100%;" id="submit-btn" data-i18n="account_login_btn">Войти</button>
       </div>
+
+      <div class="calc-card" style="margin: 0;" id="verify-card" hidden>
+        <h2 style="font-size: 20px; margin: 0 0 8px;">Подтвердите email</h2>
+        <p style="color: var(--muted); font-size: 14px; margin: 0 0 20px;">Мы отправили 6-значный код на <strong id="verify-email-label"></strong>. Введите его ниже.</p>
+
+        <div class="calc-input-row">
+          <label for="verify-code">Код подтверждения</label>
+          <input type="text" id="verify-code" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="000000" style="letter-spacing: 4px; font-size: 20px; text-align: center;">
+        </div>
+
+        <p id="verify-error" style="color: #dc2626; font-size: 14px; margin: 0 0 16px; display: none;"></p>
+        <p id="verify-info" style="color: #16a34a; font-size: 14px; margin: 0 0 16px; display: none;"></p>
+
+        <button type="button" class="btn btn-primary" style="width: 100%; margin-bottom: 12px;" id="verify-submit-btn">Подтвердить</button>
+        <button type="button" class="btn btn-outline" style="width: 100%; margin-bottom: 12px;" id="resend-code-btn">Отправить код ещё раз</button>
+        <button type="button" class="btn btn-outline" style="width: 100%;" id="verify-back-btn">Назад</button>
+      </div>
     </div>
   </section>
 </main>
@@ -85,13 +107,14 @@
       <a href="about.html" data-i18n="nav_about">О нас</a>
       <a href="tariffs.html" data-i18n="nav_tariffs">Тарифы</a>
       <a href="offer.html" data-i18n="nav_offer">Оферта</a>
+      <a href="blog.html">Блог</a>
       <a href="contact.html" data-i18n="nav_contact">Связаться</a>
     </div>
     <div class="copyright" data-i18n="footer_copyright">© 2026 USK Logistics. Все права защищены.</div>
   </div>
 </footer>
 
-<script src="assets/i18n.js?v=17"></script>
+<script src="assets/i18n.js?v=19"></script>
 <script>
   function t(key) {
     var lang = (window.USK_I18N && window.USK_I18N.currentLang) || "ru";
@@ -183,7 +206,9 @@
     fetch(url, { method: "POST", body: formData })
       .then(function (r) { return r.json(); })
       .then(function (data) {
-        if (data.ok) {
+        if (data.needs_verification) {
+          showVerifyCard(data.email || email);
+        } else if (data.ok) {
           window.location.href = "account-dashboard.html";
         } else {
           showError(data.error ? t(data.error) : t("err_generic"));
@@ -203,6 +228,104 @@
 
   document.querySelector(".menu-toggle").addEventListener("click", function () {
     document.body.classList.toggle("nav-open");
+  });
+
+  var loginCard = document.getElementById("login-card");
+  var verifyCard = document.getElementById("verify-card");
+  var verifyEmailLabel = document.getElementById("verify-email-label");
+  var verifyCodeInput = document.getElementById("verify-code");
+  var verifyError = document.getElementById("verify-error");
+  var verifyInfo = document.getElementById("verify-info");
+  var verifySubmitBtn = document.getElementById("verify-submit-btn");
+  var resendBtn = document.getElementById("resend-code-btn");
+  var verifyBackBtn = document.getElementById("verify-back-btn");
+
+  var verifyErrorMessages = {
+    invalid_code: "Неверный код. Попробуйте ещё раз.",
+    code_expired: "Код истёк. Запросите новый ниже.",
+    not_pending: "Сессия подтверждения истекла. Войдите заново.",
+    too_many_attempts: "Слишком много попыток. Попробуйте позже.",
+    already_verified: "Email уже подтверждён."
+  };
+
+  function showVerifyCard(email) {
+    loginCard.hidden = true;
+    verifyCard.hidden = false;
+    verifyEmailLabel.textContent = email || "";
+    verifyError.style.display = "none";
+    verifyInfo.style.display = "none";
+    verifyCodeInput.value = "";
+    verifyCodeInput.focus();
+  }
+
+  function showVerifyError(msg) {
+    verifyError.textContent = msg;
+    verifyError.style.display = "block";
+    verifyInfo.style.display = "none";
+  }
+
+  function showVerifyInfo(msg) {
+    verifyInfo.textContent = msg;
+    verifyInfo.style.display = "block";
+    verifyError.style.display = "none";
+  }
+
+  verifySubmitBtn.addEventListener("click", function () {
+    var code = verifyCodeInput.value.trim();
+    if (!code) {
+      showVerifyError("Введите код из письма.");
+      return;
+    }
+
+    verifySubmitBtn.disabled = true;
+    verifySubmitBtn.textContent = t("account_wait_btn");
+
+    var formData = new FormData();
+    formData.append("code", code);
+
+    fetch("api/verify-email.php", { method: "POST", body: formData })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.ok) {
+          window.location.href = "account-dashboard.html";
+        } else {
+          showVerifyError(verifyErrorMessages[data.error] || "Что-то пошло не так. Попробуйте ещё раз.");
+        }
+      })
+      .catch(function () {
+        showVerifyError(t("err_server_unreachable"));
+      })
+      .finally(function () {
+        verifySubmitBtn.disabled = false;
+        verifySubmitBtn.textContent = "Подтвердить";
+      });
+  });
+
+  resendBtn.addEventListener("click", function () {
+    resendBtn.disabled = true;
+    resendBtn.textContent = "Отправка...";
+
+    fetch("api/resend-code.php", { method: "POST" })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.ok) {
+          showVerifyInfo("Новый код отправлен на почту.");
+        } else {
+          showVerifyError(verifyErrorMessages[data.error] || "Не получилось отправить код. Попробуйте позже.");
+        }
+      })
+      .catch(function () {
+        showVerifyError(t("err_server_unreachable"));
+      })
+      .finally(function () {
+        resendBtn.disabled = false;
+        resendBtn.textContent = "Отправить код ещё раз";
+      });
+  });
+
+  verifyBackBtn.addEventListener("click", function () {
+    verifyCard.hidden = true;
+    loginCard.hidden = false;
   });
 </script>
 </body>

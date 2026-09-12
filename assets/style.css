@@ -241,6 +241,35 @@ img {
   font-size: 14px;
 }
 
+.press-depth {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-start;
+  padding-bottom: 3px;
+  border-radius: 999px;
+}
+
+.press-depth > .btn {
+  position: relative;
+  z-index: 1;
+  transform: translateY(0) perspective(300px) rotateX(0deg) rotateY(0deg);
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.press-depth.is-pressed > .btn {
+  transition: transform 0.12s cubic-bezier(0.4, 0, 0.6, 1);
+  transform: translateY(3px) perspective(300px) rotateX(var(--press-rx, 0deg)) rotateY(var(--press-ry, 0deg));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .press-depth > .btn {
+    transition: none !important;
+  }
+  .press-depth.is-pressed > .btn {
+    transform: translateY(3px) !important;
+  }
+}
+
 .menu-toggle {
   display: none;
   background: none;
@@ -1685,6 +1714,41 @@ table.price-table tr:last-child td {
 
 body.modal-open {
   overflow: hidden;
+}
+
+.modal-checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.modal-checkbox-row input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  accent-color: var(--accent);
+}
+
+.modal-checkbox-row a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.prohibited-list {
+  margin: 0 0 16px;
+  padding-left: 20px;
+}
+
+.prohibited-list li {
+  margin-bottom: 8px;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 @media (max-width: 480px) {

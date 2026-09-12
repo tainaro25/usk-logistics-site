@@ -44,7 +44,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
-<link rel="stylesheet" href="../assets/style.css?v=17">
+<link rel="stylesheet" href="../assets/style.css?v=18">
 </head>
 <body>
 
@@ -258,6 +258,10 @@
         <label for="modal-phone">Phone number</label>
         <input type="text" id="modal-phone" value="+1 ">
       </div>
+      <label class="modal-checkbox-row">
+        <input type="checkbox" id="modal-prohibited-check">
+        <span>I have reviewed the <a href="#" data-open-prohibited-modal>list of items prohibited from shipping</a> and confirm that the item I'm ordering is not on this list.</span>
+      </label>
       <button type="button" class="btn btn-primary" style="width: 100%;" id="modal-submit">Send Request</button>
     </div>
     <div id="modal-success" hidden style="text-align: center;">
@@ -268,6 +272,26 @@
   </div>
 </div>
 
-<script src="../assets/script.js?v=17"></script>
+<div class="modal-overlay" id="prohibited-modal-overlay" hidden>
+  <div class="modal-card">
+    <button type="button" class="modal-close" id="prohibited-modal-close" aria-label="Close">✕</button>
+    <h2 style="font-size: 20px; margin: 0 0 16px;">Items Prohibited from Shipping</h2>
+    <ul class="prohibited-list">
+      <li>Weapons, ammunition and their parts</li>
+      <li>Medications and pharmaceutical products (prescription or containing psychoactive substances)</li>
+      <li>Jewelry, precious metals and gemstones</li>
+      <li>Dual-use goods (military and special-purpose items)</li>
+      <li>Drones and unmanned aerial vehicles</li>
+      <li>Cash and securities</li>
+      <li>Explosive, flammable and toxic substances</li>
+      <li>Live animals and plants</li>
+      <li>Counterfeit and fake branded goods</li>
+      <li>Tobacco products and alcohol (on some routes)</li>
+    </ul>
+    <p style="font-size: 13px; color: var(--muted); margin: 0;">The exact list may vary by route and customs requirements - please confirm the current list with your manager before placing an order.</p>
+  </div>
+</div>
+
+<script src="../assets/script.js?v=18"></script>
 </body>
 </html>
