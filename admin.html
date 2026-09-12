@@ -98,7 +98,7 @@
 <script>
   var ORDER_STATUSES_ADMIN = ["на рассмотрении", "выкуплен", "на складе", "в пути", "доставлено"];
   var ORDER_STATUSES_CUSTOMER = ["сформировано", "на складе", "в пути", "прибыл", "доставлено"];
-  var BUYOUT_STATUSES = ["новая", "в обработке", "одобрена", "отклонена"];
+  var BUYOUT_STATUSES = ["в обработке", "одобрена", "отклонена"];
 
   var statusClass = {
     "на рассмотрении": "status-transit",
@@ -108,10 +108,9 @@
     "в пути": "status-transit",
     "прибыл": "status-arrived",
     "доставлено": "status-delivered",
-    "в обработке": "status-white",
+    "в обработке": "status-transit",
     "одобрена": "status-approved",
-    "отклонена": "status-rejected",
-    "новая": "status-transit"
+    "отклонена": "status-rejected"
   };
 
   function formatDate(isoString) {

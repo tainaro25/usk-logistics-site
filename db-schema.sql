@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS buyout_requests (
   name VARCHAR(255) NOT NULL,
   phone VARCHAR(32) NOT NULL,
   product_link VARCHAR(500),
-  status ENUM('новая', 'в обработке', 'одобрена', 'отклонена') NOT NULL DEFAULT 'новая',
+  status ENUM('в обработке', 'одобрена', 'отклонена') NOT NULL DEFAULT 'в обработке',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
