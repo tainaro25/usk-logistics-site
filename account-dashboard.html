@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=21">
+<link rel="stylesheet" href="assets/style.css?v=22">
 </head>
 <body>
 
@@ -64,7 +64,7 @@
               <div id="add-track-form" hidden style="margin-top: 16px; max-width: 420px;">
                 <p style="color: var(--muted); font-size: 13px; margin: 0 0 16px;" data-i18n="account_add_track_hint">Если вы уже сами оформили покупку и знаете трек-номер - добавьте его сюда, чтобы отслеживать в личном кабинете.</p>
                 <div class="calc-input-row">
-                  <label for="own-track-number" data-i18n="account_track_number_label">Трек-номер</label>
+                  <label for="own-track-number" data-i18n="account_track_number_label">Трек-номер (обязательно)</label>
                   <input type="text" id="own-track-number" placeholder="Например, KZ4471829563US">
                 </div>
                 <div class="calc-input-row">
@@ -145,7 +145,7 @@
   </div>
 </footer>
 
-<script src="assets/i18n.js?v=20"></script>
+<script src="assets/i18n.js?v=22"></script>
 <script>
   function t(key) {
     var lang = (window.USK_I18N && window.USK_I18N.currentLang) || "ru";
@@ -211,6 +211,20 @@
     return d.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" });
   }
 
+  function formatDateTime(isoString) {
+    var d = new Date(isoString.replace(" ", "T"));
+    var lang = (window.USK_I18N && window.USK_I18N.currentLang) || "ru";
+    var locale = lang === "kk" ? "kk-KZ" : "ru-RU";
+    return d.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" }) +
+      ", " + d.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
+  }
+
+  function truncateForDisplay(str, maxLen) {
+    if (!str) return "";
+    if (str.length <= maxLen) return str;
+    return str.slice(0, maxLen) + "...";
+  }
+
   function esc(value) {
     var div = document.createElement("div");
     div.textContent = value === null || value === undefined ? "" : String(value);
@@ -223,11 +237,13 @@
   }
 
   var CUSTOMER_STEPS = ["сформировано", "на складе", "в пути", "прибыл", "доставлено"];
+  var ADMIN_STEPS = ["на рассмотрении", "выкуплен", "на складе", "в пути", "доставлено"];
 
-  function buildTracker(currentStatus) {
-    var idx = CUSTOMER_STEPS.indexOf(currentStatus);
+  function buildTracker(currentStatus, steps) {
+    var STEPS = steps || CUSTOMER_STEPS;
+    var idx = STEPS.indexOf(currentStatus);
     if (idx === -1) idx = 0;
-    var html = CUSTOMER_STEPS.map(function (status, i) {
+    var html = STEPS.map(function (status, i) {
       var stateClass = i < idx ? "done" : (i === idx ? "current" : "");
       var dotClass = "tracker-dot" + (i === idx ? " pulse" : "");
       var stepHtml = '<div class="tracker-step ' + stateClass + '">' +
@@ -235,7 +251,7 @@
         '<div class="tracker-label">' + esc(statusLabel(status)) + '</div>' +
         '<div class="tracker-tooltip">' + esc(trackerInfo(status)) + '</div>' +
       '</div>';
-      if (i < CUSTOMER_STEPS.length - 1) {
+      if (i < STEPS.length - 1) {
         var lineClass = "tracker-line" + (i < idx ? " done" : "");
         stepHtml += '<div class="' + lineClass + '"></div>';
       }
@@ -246,18 +262,20 @@
 
   function orderCardHtml(o) {
     var isCustomerOrder = o.source === "customer";
+    var steps = isCustomerOrder ? CUSTOMER_STEPS : ADMIN_STEPS;
+    var statusChanged = o.updated_at && o.created_at && o.updated_at !== o.created_at;
     return '' +
       '<div class="order-card">' +
         '<div class="order-card-header">' +
-          '<h3>' + esc(t("account_order_number_prefix")) + o.id + (o.description ? " · " + esc(o.description) : "") + '</h3>' +
-          (isCustomerOrder ? "" : '<span class="status-badge ' + (statusClass[o.status] || "status-transit") + '">' + esc(statusLabel(o.status)) + '</span>') +
+          '<h3>' + esc(t("account_order_number_prefix")) + o.seq + (o.description ? " · " + esc(o.description) : "") + '</h3>' +
         '</div>' +
-        (isCustomerOrder ? buildTracker(o.status) : "") +
+        buildTracker(o.status, steps) +
         '<div class="order-card-details">' +
           '<div class="detail-item"><span class="detail-label">' + esc(t("account_track_number_label")) + '</span><span class="detail-value">' + esc(o.track_number) +
             ' <button type="button" class="copy-btn" data-copy="' + esc(o.track_number) + '" title="' + esc(t("account_copy_title")) + '">⧉</button></span></div>' +
           (isCustomerOrder ? "" : '<div class="detail-item"><span class="detail-label">' + esc(t("account_origin_field_label")) + '</span><span class="detail-value">' + esc(o.origin ? originLabel(o.origin) : "-") + '</span></div>') +
           '<div class="detail-item"><span class="detail-label">' + esc(t("account_created_field_label")) + '</span><span class="detail-value">' + formatDate(o.created_at) + '</span></div>' +
+          (statusChanged ? '<div class="detail-item"><span class="detail-label">' + esc(t("account_status_updated_label")) + '</span><span class="detail-value">' + formatDateTime(o.updated_at) + '</span></div>' : "") +
         '</div>' +
       '</div>';
   }
@@ -307,10 +325,18 @@
       return;
     }
     box.innerHTML = buyouts.map(function (b) {
-      return '<div class="order-row"><div class="order-info"><strong>' + esc(b.product_link || t("account_buyout_no_link")) +
-        '</strong><span>' + esc(t("account_buyout_sent_prefix")) + formatDate(b.created_at) +
+      var linkHtml = b.product_link
+        ? '<div style="display:flex; align-items:center; gap:6px; min-width:0; margin-bottom:4px;">' +
+            '<strong class="link-text" style="margin:0;" title="' + esc(b.product_link) + '">' + esc(truncateForDisplay(b.product_link, 40)) + '</strong>' +
+            '<button type="button" class="copy-btn" data-copy="' + esc(b.product_link) + '" title="' + esc(t("account_copy_title")) + '">⧉</button>' +
+          '</div>'
+        : '<strong>' + esc(t("account_buyout_no_link")) + '</strong>';
+      return '<div class="order-row"><div class="order-info" style="min-width:0;">' + linkHtml +
+        '<span>' + esc(t("account_buyout_sent_prefix")) + formatDate(b.created_at) +
         '</span></div><span class="status-badge ' + (statusClass[b.status] || "status-transit") + '">' + esc(statusLabel(b.status)) + "</span></div>";
     }).join("");
+
+    attachCopyHandlers(box);
   }
 
   window.addEventListener("usklangchange", function () {

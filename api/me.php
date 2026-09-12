@@ -40,14 +40,17 @@ if (!$user) {
 }
 
 $orders = [];
-$stmt = $conn->prepare('SELECT id, track_number, description, origin, status, source, created_at FROM orders WHERE user_id = ? ORDER BY created_at DESC');
+$stmt = $conn->prepare('SELECT id, track_number, description, origin, status, source, created_at, updated_at FROM orders WHERE user_id = ? ORDER BY created_at ASC');
 $stmt->bind_param('i', $userId);
 $stmt->execute();
 $result = $stmt->get_result();
+$seq = 1;
 while ($row = $result->fetch_assoc()) {
+    $row['seq'] = $seq++;
     $orders[] = $row;
 }
 $stmt->close();
+$orders = array_reverse($orders);
 
 $buyouts = [];
 $stmt = $conn->prepare('SELECT product_link, status, created_at FROM buyout_requests WHERE user_id = ? ORDER BY created_at DESC');

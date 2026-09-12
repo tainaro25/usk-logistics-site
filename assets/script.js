@@ -223,6 +223,45 @@ document.addEventListener("DOMContentLoaded", () => {
     return fallback;
   }
 
+  function formatPhoneInput(value) {
+    let digits = value.replace(/\D/g, "");
+    if (digits.startsWith("8")) digits = "7" + digits.slice(1);
+    if (!digits.startsWith("7")) digits = "7" + digits;
+    digits = digits.slice(0, 11);
+    const rest = digits.slice(1);
+    let out = "+7";
+    if (rest.length > 0) out += " " + rest.slice(0, 3);
+    if (rest.length > 3) out += " " + rest.slice(3, 6);
+    if (rest.length > 6) out += " " + rest.slice(6, 8);
+    if (rest.length > 8) out += " " + rest.slice(8, 10);
+    return out;
+  }
+
+  function wirePhoneFormatting(input) {
+    if (!input) return;
+    input.addEventListener("input", () => {
+      const formatted = formatPhoneInput(input.value);
+      input.value = formatted;
+      input.setSelectionRange(formatted.length, formatted.length);
+    });
+  }
+
+  function showProhibitedWarning(row) {
+    if (!row) return;
+    let warning = row.nextElementSibling;
+    if (!warning || !warning.classList.contains("prohibited-warning")) {
+      warning = document.createElement("div");
+      warning.className = "prohibited-warning";
+      row.insertAdjacentElement("afterend", warning);
+    }
+    warning.textContent = i18nText("modal_checkbox_error", "Please confirm that you've reviewed the list of prohibited items.");
+    warning.classList.add("show");
+    clearTimeout(warning._hideTimer);
+    warning._hideTimer = setTimeout(() => {
+      warning.classList.remove("show");
+    }, 4000);
+  }
+
   const prohibitedOverlay = document.getElementById("prohibited-modal-overlay");
   if (prohibitedOverlay) {
     const closeProhibited = () => {
@@ -259,6 +298,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const linkInput = document.getElementById("modal-link");
     const phoneInput = document.getElementById("modal-phone");
     const prohibitedCheck = document.getElementById("modal-prohibited-check");
+    const prohibitedRow = document.querySelector(".modal-checkbox-row");
+
+    wirePhoneFormatting(phoneInput);
+
+    if (prohibitedCheck) {
+      prohibitedCheck.addEventListener("change", () => {
+        if (prohibitedCheck.checked && prohibitedRow) {
+          const warning = prohibitedRow.nextElementSibling;
+          if (warning && warning.classList.contains("prohibited-warning")) {
+            warning.classList.remove("show");
+          }
+        }
+      });
+    }
 
     const openModal = (e) => {
       if (e) e.preventDefault();
@@ -294,7 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (prohibitedCheck && !prohibitedCheck.checked) {
-          alert(i18nText("modal_checkbox_error", "Please confirm that you've reviewed the list of prohibited items."));
+          showProhibitedWarning(prohibitedRow);
           return;
         }
 

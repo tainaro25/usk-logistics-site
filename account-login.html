@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=21">
+<link rel="stylesheet" href="assets/style.css?v=22">
 </head>
 <body>
 
@@ -114,7 +114,7 @@
   </div>
 </footer>
 
-<script src="assets/i18n.js?v=20"></script>
+<script src="assets/i18n.js?v=22"></script>
 <script>
   function t(key) {
     var lang = (window.USK_I18N && window.USK_I18N.currentLang) || "ru";
@@ -130,6 +130,27 @@
   var errorEl = document.getElementById("auth-error");
   var isRegister = false;
   var isSubmitting = false;
+
+  function formatPhoneInput(value) {
+    var digits = value.replace(/\D/g, "");
+    if (digits.charAt(0) === "8") digits = "7" + digits.slice(1);
+    if (digits.charAt(0) !== "7") digits = "7" + digits;
+    digits = digits.slice(0, 11);
+    var rest = digits.slice(1);
+    var out = "+7";
+    if (rest.length > 0) out += " " + rest.slice(0, 3);
+    if (rest.length > 3) out += " " + rest.slice(3, 6);
+    if (rest.length > 6) out += " " + rest.slice(6, 8);
+    if (rest.length > 8) out += " " + rest.slice(8, 10);
+    return out;
+  }
+
+  var registerPhoneInput = document.getElementById("register-phone");
+  registerPhoneInput.addEventListener("input", function () {
+    var formatted = formatPhoneInput(registerPhoneInput.value);
+    registerPhoneInput.value = formatted;
+    registerPhoneInput.setSelectionRange(formatted.length, formatted.length);
+  });
 
   function showError(msg) {
     errorEl.textContent = msg;

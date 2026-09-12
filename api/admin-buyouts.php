@@ -16,7 +16,7 @@ require_admin($conn);
 
 $buyouts = [];
 $result = $conn->query(
-    'SELECT b.id, b.user_id, b.name, b.phone, b.product_link, b.status, b.created_at, u.email AS user_email ' .
+    'SELECT b.id, b.user_id, b.name, b.phone, b.product_link, b.status, b.created_at, u.email AS user_email, u.name AS user_name ' .
     'FROM buyout_requests b LEFT JOIN users u ON b.user_id = u.id ORDER BY b.created_at DESC'
 );
 while ($row = $result->fetch_assoc()) {

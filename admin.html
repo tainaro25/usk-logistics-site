@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=10">
+<link rel="stylesheet" href="assets/style.css?v=22">
 </head>
 <body>
 
@@ -108,15 +108,44 @@
     "в пути": "status-transit",
     "прибыл": "status-arrived",
     "доставлено": "status-delivered",
-    "в обработке": "status-transit",
-    "одобрена": "status-warehouse",
-    "отклонена": "status-delivered",
+    "в обработке": "status-white",
+    "одобрена": "status-approved",
+    "отклонена": "status-rejected",
     "новая": "status-transit"
   };
 
   function formatDate(isoString) {
     var d = new Date(isoString.replace(" ", "T"));
     return d.toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
+  }
+
+  function formatDateTime(isoString) {
+    var d = new Date(isoString.replace(" ", "T"));
+    var day = String(d.getDate()).padStart(2, "0");
+    var month = String(d.getMonth() + 1).padStart(2, "0");
+    var hours = String(d.getHours()).padStart(2, "0");
+    var minutes = String(d.getMinutes()).padStart(2, "0");
+    return day + "." + month + "." + d.getFullYear() + ", " + hours + ":" + minutes;
+  }
+
+  function truncateForDisplay(str, maxLen) {
+    if (!str) return "";
+    if (str.length <= maxLen) return str;
+    return str.slice(0, maxLen) + "...";
+  }
+
+  function attachCopyHandlers(box) {
+    box.querySelectorAll(".copy-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var text = btn.dataset.copy;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(function () {
+            btn.textContent = "✓";
+            setTimeout(function () { btn.textContent = "⧉"; }, 1500);
+          });
+        }
+      });
+    });
   }
 
   function esc(value) {
@@ -313,6 +342,14 @@
           return;
         }
         box.innerHTML = data.buyouts.map(function (b) {
+          var accountInfo = b.user_id
+            ? formatUserId(b.user_id) + " · " + esc(b.user_name || "") + " (" + esc(b.user_email || "") + ")"
+            : "Гость (без аккаунта)";
+          var link = b.product_link || "";
+          var linkHtml = link
+            ? '<span class="link-text" title="' + esc(link) + '">' + esc(truncateForDisplay(link, 32)) + '</span>' +
+              '<button type="button" class="copy-btn" data-copy="' + esc(link) + '" title="Скопировать">⧉</button>'
+            : "-";
           return '' +
             '<div class="order-card">' +
               '<div class="order-card-header">' +
@@ -321,9 +358,9 @@
               '</div>' +
               '<div class="order-card-details">' +
                 '<div class="detail-item"><span class="detail-label">Телефон</span><span class="detail-value">' + esc(b.phone) + '</span></div>' +
-                '<div class="detail-item"><span class="detail-label">Ссылка на товар</span><span class="detail-value">' + esc(b.product_link || "-") + '</span></div>' +
-                '<div class="detail-item"><span class="detail-label">Аккаунт</span><span class="detail-value">' + esc(b.user_email || "гость (без аккаунта)") + '</span></div>' +
-                '<div class="detail-item"><span class="detail-label">Дата</span><span class="detail-value">' + formatDate(b.created_at) + '</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Ссылка на товар</span><span class="detail-value">' + linkHtml + '</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Аккаунт</span><span class="detail-value">' + accountInfo + '</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Дата и время</span><span class="detail-value">' + formatDateTime(b.created_at) + '</span></div>' +
               '</div>' +
               '<div class="calc-input-row" style="margin: 16px 0 0;">' +
                 '<label>Сменить статус</label>' +
@@ -335,6 +372,8 @@
               '</div>' +
             '</div>';
         }).join("");
+
+        attachCopyHandlers(box);
 
         box.querySelectorAll(".save-buyout-status").forEach(function (btn) {
           btn.addEventListener("click", function () {
