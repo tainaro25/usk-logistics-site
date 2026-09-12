@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Личный кабинет — USK Logistics</title>
+<title>Личный кабинет - USK Logistics</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=9">
+<link rel="stylesheet" href="assets/style.css?v=15">
 </head>
 <body>
 
@@ -57,7 +57,7 @@
             <div style="margin-bottom: 28px;">
               <button type="button" class="btn btn-outline btn-sm" id="add-track-toggle">+ Добавить свой трек-номер</button>
               <div id="add-track-form" hidden style="margin-top: 16px; max-width: 420px;">
-                <p style="color: var(--muted); font-size: 13px; margin: 0 0 16px;">Если вы уже сами оформили покупку и знаете трек-номер — добавьте его сюда, чтобы отслеживать в личном кабинете.</p>
+                <p style="color: var(--muted); font-size: 13px; margin: 0 0 16px;">Если вы уже сами оформили покупку и знаете трек-номер - добавьте его сюда, чтобы отслеживать в личном кабинете.</p>
                 <div class="calc-input-row">
                   <label for="own-track-number">Трек-номер</label>
                   <input type="text" id="own-track-number" placeholder="Например, KZ4471829563US">
@@ -117,7 +117,7 @@
 
           <div class="tab-content" id="tab-buyout" hidden>
             <h1>История заявок</h1>
-            <p style="color: var(--muted); font-size: 14px; margin: -12px 0 20px;">Все запросы, которые вы отправляли через сайт. Как только заявка подтверждается — по ней заводится настоящий заказ в разделе «Мои заказы».</p>
+            <p style="color: var(--muted); font-size: 14px; margin: -12px 0 20px;">Все запросы, которые вы отправляли через сайт. Как только заявка подтверждается - по ней заводится настоящий заказ в разделе «Мои заказы».</p>
             <div id="buyouts-list"></div>
           </div>
         </div>
@@ -181,7 +181,7 @@
   var CUSTOMER_STEPS = ["сформировано", "на складе", "в пути", "прибыл", "доставлено"];
 
   var CUSTOMER_STEP_INFO = {
-    "сформировано": "Заказ принят в работу — мы уже знаем о нём и готовимся к его получению.",
+    "сформировано": "Заказ принят в работу - мы уже знаем о нём и готовимся к его получению.",
     "на складе": "Товар прибыл на наш зарубежный склад.",
     "в пути": "Посылка вылетела из страны заказа и уже в пути в Казахстан.",
     "прибыл": "Товар уже у нас в Казахстане и готовится к выдаче.",
@@ -220,7 +220,7 @@
         '<div class="order-card-details">' +
           '<div class="detail-item"><span class="detail-label">Трек-номер</span><span class="detail-value">' + o.track_number +
             ' <button type="button" class="copy-btn" data-copy="' + o.track_number + '" title="Скопировать">⧉</button></span></div>' +
-          (isCustomerOrder ? "" : '<div class="detail-item"><span class="detail-label">Откуда</span><span class="detail-value">' + (o.origin || "—") + '</span></div>') +
+          (isCustomerOrder ? "" : '<div class="detail-item"><span class="detail-label">Откуда</span><span class="detail-value">' + (o.origin || "-") + '</span></div>') +
           '<div class="detail-item"><span class="detail-label">Дата создания</span><span class="detail-value">' + formatDate(o.created_at) + '</span></div>' +
         '</div>' +
       '</div>';
@@ -249,7 +249,7 @@
 
     currentBox.innerHTML = current.length
       ? current.map(orderCardHtml).join("")
-      : '<p style="color: var(--muted); font-size: 14px;">Активных заказов пока нет. Оформите заявку на выкуп или добавьте свой трек-номер выше — и он появится здесь.</p>';
+      : '<p style="color: var(--muted); font-size: 14px;">Активных заказов пока нет. Оформите заявку на выкуп или добавьте свой трек-номер выше - и он появится здесь.</p>';
 
     completedBox.innerHTML = completed.length
       ? completed.map(orderCardHtml).join("")

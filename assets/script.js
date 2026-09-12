@@ -17,6 +17,17 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(() => {});
   }
 
+  document.querySelectorAll(".faq-question").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const item = btn.closest(".faq-item");
+      const wasOpen = item.classList.contains("open");
+      document.querySelectorAll(".faq-item.open").forEach((openItem) => {
+        if (openItem !== item) openItem.classList.remove("open");
+      });
+      item.classList.toggle("open", !wasOpen);
+    });
+  });
+
   const toggle = document.querySelector(".menu-toggle");
   if (toggle) {
     toggle.addEventListener("click", () => {

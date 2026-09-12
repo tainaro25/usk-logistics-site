@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Админ-панель — USK Logistics</title>
+<title>Админ-панель - USK Logistics</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -158,7 +158,7 @@
               '<div class="order-card-details">' +
                 '<div class="detail-item"><span class="detail-label">Трек-номер</span><span class="detail-value">' + o.track_number + '</span></div>' +
                 '<div class="detail-item"><span class="detail-label">Клиент</span><span class="detail-value">#' + o.user_id + ' · ' + o.user_name + ' (' + o.user_email + ')</span></div>' +
-                '<div class="detail-item"><span class="detail-label">Откуда</span><span class="detail-value">' + (o.origin || "—") + '</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Откуда</span><span class="detail-value">' + (o.origin || "-") + '</span></div>' +
                 '<div class="detail-item"><span class="detail-label">Добавлен</span><span class="detail-value">' + (o.source === "customer" ? "самим клиентом" : "администратором") + '</span></div>' +
                 '<div class="detail-item"><span class="detail-label">Дата</span><span class="detail-value">' + formatDate(o.created_at) + '</span></div>' +
               '</div>' +
@@ -305,7 +305,7 @@
               '</div>' +
               '<div class="order-card-details">' +
                 '<div class="detail-item"><span class="detail-label">Телефон</span><span class="detail-value">' + b.phone + '</span></div>' +
-                '<div class="detail-item"><span class="detail-label">Ссылка на товар</span><span class="detail-value">' + (b.product_link || "—") + '</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Ссылка на товар</span><span class="detail-value">' + (b.product_link || "-") + '</span></div>' +
                 '<div class="detail-item"><span class="detail-label">Аккаунт</span><span class="detail-value">' + (b.user_email || "гость (без аккаунта)") + '</span></div>' +
                 '<div class="detail-item"><span class="detail-label">Дата</span><span class="detail-value">' + formatDate(b.created_at) + '</span></div>' +
               '</div>' +
@@ -377,7 +377,7 @@
               '</div>' +
               '<div class="order-card-details">' +
                 '<div class="detail-item"><span class="detail-label">Email</span><span class="detail-value">' + u.email + '</span></div>' +
-                '<div class="detail-item"><span class="detail-label">Телефон</span><span class="detail-value">' + (u.phone || "—") + '</span></div>' +
+                '<div class="detail-item"><span class="detail-label">Телефон</span><span class="detail-value">' + (u.phone || "-") + '</span></div>' +
               '</div>' +
             '</div>';
         }).join("");
