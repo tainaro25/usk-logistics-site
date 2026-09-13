@@ -95,11 +95,17 @@ if (is_array($historyData)) {
         }
         $histValue = trim((string) $histValue);
         $historyHandled[$histStatus] = true;
+
+        // Always clear out any existing row(s) for this order+status first, so a save
+        // can never leave more than one row behind regardless of whether the DB has
+        // the uniq_order_status key - stale duplicates are what caused dates to look
+        // like they "reset" to an older value after editing.
+        $stmt = $conn->prepare('DELETE FROM order_status_history WHERE order_id = ? AND status = ?');
+        $stmt->bind_param('is', $orderId, $histStatus);
+        $stmt->execute();
+        $stmt->close();
+
         if ($histValue === '') {
-            $stmt = $conn->prepare('DELETE FROM order_status_history WHERE order_id = ? AND status = ?');
-            $stmt->bind_param('is', $orderId, $histStatus);
-            $stmt->execute();
-            $stmt->close();
             continue;
         }
         $ts = strtotime($histValue);
@@ -107,7 +113,7 @@ if (is_array($historyData)) {
             continue;
         }
         $histDateTime = date('Y-m-d H:i:s', $ts);
-        $stmt = $conn->prepare('INSERT INTO order_status_history (order_id, status, changed_at) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE changed_at = VALUES(changed_at)');
+        $stmt = $conn->prepare('INSERT INTO order_status_history (order_id, status, changed_at) VALUES (?, ?, ?)');
         $stmt->bind_param('iss', $orderId, $histStatus, $histDateTime);
         $stmt->execute();
         $stmt->close();
@@ -115,7 +121,12 @@ if (is_array($historyData)) {
 }
 
 if ($status !== $oldStatus && empty($historyHandled[$status])) {
-    $stmt = $conn->prepare('INSERT INTO order_status_history (order_id, status) VALUES (?, ?) ON DUPLICATE KEY UPDATE changed_at = changed_at');
+    $stmt = $conn->prepare('DELETE FROM order_status_history WHERE order_id = ? AND status = ?');
+    $stmt->bind_param('is', $orderId, $status);
+    $stmt->execute();
+    $stmt->close();
+
+    $stmt = $conn->prepare('INSERT INTO order_status_history (order_id, status) VALUES (?, ?)');
     $stmt->bind_param('is', $orderId, $status);
     $stmt->execute();
     $stmt->close();

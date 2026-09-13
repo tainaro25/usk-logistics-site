@@ -57,12 +57,14 @@ $statusHistoryByOrder = [];
 if ($orderIds) {
     $placeholders = implode(',', array_fill(0, count($orderIds), '?'));
     $types = str_repeat('i', count($orderIds));
-    $stmt = $conn->prepare("SELECT order_id, status, changed_at FROM order_status_history WHERE order_id IN ($placeholders) ORDER BY changed_at ASC");
+    $stmt = $conn->prepare("SELECT order_id, status, changed_at FROM order_status_history WHERE order_id IN ($placeholders) ORDER BY id DESC");
     $stmt->bind_param($types, ...$orderIds);
     $stmt->execute();
     $result = $stmt->get_result();
     while ($row = $result->fetch_assoc()) {
-        $statusHistoryByOrder[$row['order_id']][$row['status']] = $row['changed_at'];
+        if (!isset($statusHistoryByOrder[$row['order_id']][$row['status']])) {
+            $statusHistoryByOrder[$row['order_id']][$row['status']] = $row['changed_at'];
+        }
     }
     $stmt->close();
 }
