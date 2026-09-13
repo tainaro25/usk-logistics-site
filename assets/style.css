@@ -215,6 +215,7 @@ img {
   align-items: center;
   gap: 2px;
   flex-shrink: 0;
+  margin-left: 20px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 999px;
