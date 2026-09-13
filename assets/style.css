@@ -132,7 +132,9 @@ img {
   font-weight: 700;
   font-size: 20px;
   letter-spacing: -0.02em;
-  margin-right: 40px;
+  margin-right: 24px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .logo span {
@@ -175,7 +177,8 @@ img {
 .nav {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 28px;
+  flex-shrink: 0;
 }
 
 .nav a {
@@ -183,6 +186,7 @@ img {
   color: var(--text);
   font-weight: 500;
   opacity: 0.75;
+  white-space: nowrap;
   transition: opacity 0.15s ease;
 }
 
@@ -195,6 +199,7 @@ img {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .account-icon-btn {
@@ -209,13 +214,12 @@ img {
   display: flex;
   align-items: center;
   gap: 2px;
-  background: rgba(var(--bg-rgb), 0.5);
-  backdrop-filter: saturate(180%) blur(10px);
-  -webkit-backdrop-filter: saturate(180%) blur(10px);
-  border: 1px solid rgba(var(--bg-rgb), 0.7);
+  flex-shrink: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 999px;
   padding: 3px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(var(--bg-rgb), 0.6);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .lang-btn {
