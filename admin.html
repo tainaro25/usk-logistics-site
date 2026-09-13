@@ -124,6 +124,17 @@
     return isoString.slice(0, 10);
   }
 
+  function toDateTimeInputValue(isoString) {
+    if (!isoString) return "";
+    return isoString.replace(" ", "T").slice(0, 16);
+  }
+
+  function nowForDateTimeInput() {
+    var d = new Date();
+    var pad = function (n) { return String(n).padStart(2, "0"); };
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + "T" + pad(d.getHours()) + ":" + pad(d.getMinutes());
+  }
+
   function formatDateTime(isoString) {
     var d = new Date(isoString.replace(" ", "T"));
     var day = String(d.getDate()).padStart(2, "0");
@@ -186,6 +197,17 @@
     });
   });
 
+  var ORIGIN_RATES = { "США": 12, "Европа": 12, "Китай": 6, "Китай Экспресс": 12 };
+
+  function calcPayment(origin, weight) {
+    var rate = ORIGIN_RATES[origin];
+    var w = parseFloat(weight);
+    if (!rate || isNaN(w) || w <= 0) return null;
+    return (w * rate).toFixed(2);
+  }
+
+  var orderHistoryState = {};
+
   function loadOrders() {
     fetch("api/admin-orders.php")
       .then(function (r) { return r.json(); })
@@ -198,6 +220,12 @@
         }
         box.innerHTML = data.orders.map(function (o) {
           var statusList = o.source === "customer" ? ORDER_STATUSES_CUSTOMER : ORDER_STATUSES_ADMIN;
+          var history = o.status_history || {};
+          orderHistoryState[o.id] = {};
+          statusList.forEach(function (s) {
+            orderHistoryState[o.id][s] = toDateTimeInputValue(history[s]);
+          });
+          var currentDateValue = orderHistoryState[o.id][o.status] || "";
           return '' +
             '<div class="order-card">' +
               '<div class="order-card-header">' +
@@ -216,6 +244,8 @@
                 '<div class="calc-input-row"><label>Вес (кг)</label><input type="number" step="0.01" min="0" class="edit-weight" data-order-id="' + o.id + '" value="' + (o.weight !== null && o.weight !== undefined ? esc(o.weight) : "") + '"></div>' +
                 '<div class="calc-input-row"><label>Сумма платежа ($)</label><input type="number" step="0.01" min="0" class="edit-payment" data-order-id="' + o.id + '" value="' + (o.payment_amount !== null && o.payment_amount !== undefined ? esc(o.payment_amount) : "") + '"></div>' +
                 '<div class="calc-input-row"><label>Статус</label><select class="edit-status" data-order-id="' + o.id + '">' + selectOptions(statusList, o.status) + '</select></div>' +
+                '<div class="calc-input-row"><label>Дата для статуса</label><select class="date-status-picker" data-order-id="' + o.id + '">' + selectOptions(statusList, o.status) + '</select></div>' +
+                '<div class="calc-input-row"><label>Дата/время</label><input type="datetime-local" class="date-status-value" data-order-id="' + o.id + '" value="' + currentDateValue + '"></div>' +
               '</div>' +
               '<div style="display:flex; gap:10px; margin-top:12px;">' +
                 '<button type="button" class="btn btn-primary btn-sm save-order-btn" data-order-id="' + o.id + '">Сохранить</button>' +
@@ -223,6 +253,56 @@
               '</div>' +
             '</div>';
         }).join("");
+
+        box.querySelectorAll(".date-status-picker").forEach(function (picker) {
+          picker.addEventListener("change", function () {
+            var orderId = picker.dataset.orderId;
+            var valueInput = box.querySelector('.date-status-value[data-order-id="' + orderId + '"]');
+            valueInput.value = orderHistoryState[orderId][picker.value] || "";
+          });
+        });
+
+        box.querySelectorAll(".date-status-value").forEach(function (input) {
+          input.addEventListener("change", function () {
+            var orderId = input.dataset.orderId;
+            var picker = box.querySelector('.date-status-picker[data-order-id="' + orderId + '"]');
+            orderHistoryState[orderId][picker.value] = input.value;
+          });
+        });
+
+        box.querySelectorAll(".edit-status").forEach(function (select) {
+          select.addEventListener("change", function () {
+            var orderId = select.dataset.orderId;
+            var newStatus = select.value;
+            if (!orderHistoryState[orderId][newStatus]) {
+              orderHistoryState[orderId][newStatus] = nowForDateTimeInput();
+            }
+            var picker = box.querySelector('.date-status-picker[data-order-id="' + orderId + '"]');
+            var valueInput = box.querySelector('.date-status-value[data-order-id="' + orderId + '"]');
+            picker.value = newStatus;
+            valueInput.value = orderHistoryState[orderId][newStatus];
+          });
+        });
+
+        box.querySelectorAll(".edit-weight").forEach(function (input) {
+          input.addEventListener("input", function () {
+            var orderId = input.dataset.orderId;
+            var originSelect = box.querySelector('.edit-origin[data-order-id="' + orderId + '"]');
+            var paymentInput = box.querySelector('.edit-payment[data-order-id="' + orderId + '"]');
+            var val = calcPayment(originSelect.value, input.value);
+            if (val !== null) paymentInput.value = val;
+          });
+        });
+
+        box.querySelectorAll(".edit-origin").forEach(function (select) {
+          select.addEventListener("change", function () {
+            var orderId = select.dataset.orderId;
+            var weightInput = box.querySelector('.edit-weight[data-order-id="' + orderId + '"]');
+            var paymentInput = box.querySelector('.edit-payment[data-order-id="' + orderId + '"]');
+            var val = calcPayment(select.value, weightInput.value);
+            if (val !== null) paymentInput.value = val;
+          });
+        });
 
         box.querySelectorAll(".save-order-btn").forEach(function (btn) {
           btn.addEventListener("click", function () {
@@ -235,6 +315,11 @@
             var payment = box.querySelector('.edit-payment[data-order-id="' + orderId + '"]').value.trim();
             var status = box.querySelector('.edit-status[data-order-id="' + orderId + '"]').value;
 
+            var picker = box.querySelector('.date-status-picker[data-order-id="' + orderId + '"]');
+            var valueInput = box.querySelector('.date-status-value[data-order-id="' + orderId + '"]');
+            orderHistoryState[orderId][picker.value] = valueInput.value;
+            var history = orderHistoryState[orderId] || {};
+
             btn.disabled = true;
             btn.textContent = "...";
             var formData = new FormData();
@@ -246,6 +331,7 @@
             formData.append("weight", weight);
             formData.append("payment_amount", payment);
             formData.append("created_at", createdDate);
+            formData.append("history", JSON.stringify(history));
             fetch("api/admin-update-order.php", { method: "POST", headers: csrfHeaders(), body: formData })
               .then(function (r) { return r.json(); })
               .then(function (data) {

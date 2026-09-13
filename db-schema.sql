@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS order_status_history (
   order_id INT NOT NULL,
   status VARCHAR(50) NOT NULL,
   changed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uniq_order_status (order_id, status),
   FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

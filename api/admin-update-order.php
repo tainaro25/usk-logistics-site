@@ -83,8 +83,39 @@ if (!$stmt->execute()) {
 }
 $stmt->close();
 
-if ($status !== $oldStatus) {
-    $stmt = $conn->prepare('INSERT INTO order_status_history (order_id, status) VALUES (?, ?)');
+$validStatuses = ['на рассмотрении', 'выкуплен', 'на складе', 'в пути', 'доставлено', 'сформировано', 'прибыл'];
+
+$historyRaw = $_POST['history'] ?? '';
+$historyData = json_decode($historyRaw, true);
+$historyHandled = [];
+if (is_array($historyData)) {
+    foreach ($historyData as $histStatus => $histValue) {
+        if (!in_array($histStatus, $validStatuses, true)) {
+            continue;
+        }
+        $histValue = trim((string) $histValue);
+        $historyHandled[$histStatus] = true;
+        if ($histValue === '') {
+            $stmt = $conn->prepare('DELETE FROM order_status_history WHERE order_id = ? AND status = ?');
+            $stmt->bind_param('is', $orderId, $histStatus);
+            $stmt->execute();
+            $stmt->close();
+            continue;
+        }
+        $ts = strtotime($histValue);
+        if ($ts === false) {
+            continue;
+        }
+        $histDateTime = date('Y-m-d H:i:s', $ts);
+        $stmt = $conn->prepare('INSERT INTO order_status_history (order_id, status, changed_at) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE changed_at = VALUES(changed_at)');
+        $stmt->bind_param('iss', $orderId, $histStatus, $histDateTime);
+        $stmt->execute();
+        $stmt->close();
+    }
+}
+
+if ($status !== $oldStatus && empty($historyHandled[$status])) {
+    $stmt = $conn->prepare('INSERT INTO order_status_history (order_id, status) VALUES (?, ?) ON DUPLICATE KEY UPDATE changed_at = changed_at');
     $stmt->bind_param('is', $orderId, $status);
     $stmt->execute();
     $stmt->close();
