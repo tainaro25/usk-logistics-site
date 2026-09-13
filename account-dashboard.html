@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=40">
+<link rel="stylesheet" href="assets/style.css?v=41">
 </head>
 <body>
 
@@ -319,9 +319,9 @@
         '<div class="warehouse-field-row">' +
         '<div class="calc-input-row" style="margin-bottom:0;">' +
         "<label>" + esc(row[0]) + ":</label>" +
-        '<input type="text" value="' + esc(row[1]) + '" readonly data-warehouse-value="' + i + '">' +
+        '<input type="text" value="' + esc(row[1]) + '" readonly>' +
         "</div>" +
-        '<button type="button" class="btn btn-outline btn-sm warehouse-copy-btn" data-copy-index="' + i + '">' + esc(t("warehouse_copy_btn")) + "</button>" +
+        '<button type="button" class="icon-copy-btn" data-copy="' + esc(row[1]) + '" data-tooltip="' + esc(t("account_copy_title")) + '" aria-label="' + esc(t("account_copy_title")) + '">' + copyIconsHtml() + "</button>" +
         "</div>";
     });
     html +=
@@ -329,34 +329,7 @@
       '<button type="button" class="btn btn-outline btn-sm" data-open-prohibited-modal>' + esc(t("warehouse_prohibited_btn")) + "</button>";
     container.innerHTML = html;
 
-    container.querySelectorAll(".warehouse-copy-btn").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var idx = btn.dataset.copyIndex;
-        var input = container.querySelector('[data-warehouse-value="' + idx + '"]');
-        var value = input.value;
-        var doCopyFeedback = function () {
-          var original = t("warehouse_copy_btn");
-          btn.textContent = t("warehouse_copied_btn");
-          btn.classList.add("copied");
-          clearTimeout(btn._resetTimer);
-          btn._resetTimer = setTimeout(function () {
-            btn.textContent = original;
-            btn.classList.remove("copied");
-          }, 1500);
-        };
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(value).then(doCopyFeedback).catch(function () {
-            input.select();
-            document.execCommand("copy");
-            doCopyFeedback();
-          });
-        } else {
-          input.select();
-          document.execCommand("copy");
-          doCopyFeedback();
-        }
-      });
-    });
+    attachCopyHandlers(container);
   }
 
   var warehouseToggle = document.getElementById("warehouse-country-toggle");
@@ -475,7 +448,7 @@
             '<h3>' + esc(t("account_order_number_prefix")) + o.seq + (o.description ? " · " + esc(o.description) : "") + '</h3>' +
             '<div class="order-track-line">' +
               '<span>' + esc(t("account_track_display_label")) + ':</span> <strong>' + esc(o.track_number) + '</strong>' +
-              ' <button type="button" class="copy-btn" data-copy="' + esc(o.track_number) + '" title="' + esc(t("account_copy_title")) + '">⧉</button>' +
+              ' <button type="button" class="icon-copy-btn" data-copy="' + esc(o.track_number) + '" data-tooltip="' + esc(t("account_copy_title")) + '" aria-label="' + esc(t("account_copy_title")) + '">' + copyIconsHtml() + '</button>' +
             '</div>' +
           '</div>' +
         '</div>' +
@@ -489,15 +462,45 @@
       '</div>';
   }
 
+  function copyIconsHtml() {
+    return (
+      '<svg class="icon-copy" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>' +
+      '<svg class="icon-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>'
+    );
+  }
+
   function attachCopyHandlers(box) {
-    box.querySelectorAll(".copy-btn").forEach(function (btn) {
+    box.querySelectorAll(".icon-copy-btn").forEach(function (btn) {
       btn.addEventListener("click", function () {
         var text = btn.dataset.copy;
-        if (navigator.clipboard) {
-          navigator.clipboard.writeText(text).then(function () {
-            btn.textContent = "✓";
-            setTimeout(function () { btn.textContent = "⧉"; }, 1500);
+        var originalTooltip = t("account_copy_title");
+        var showCopied = function () {
+          btn.classList.add("copied");
+          btn.dataset.tooltip = t("warehouse_copied_btn");
+          clearTimeout(btn._resetTimer);
+          btn._resetTimer = setTimeout(function () {
+            btn.classList.remove("copied");
+            btn.dataset.tooltip = originalTooltip;
+          }, 1500);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(showCopied).catch(function () {
+            var tmp = document.createElement("textarea");
+            tmp.value = text;
+            document.body.appendChild(tmp);
+            tmp.select();
+            document.execCommand("copy");
+            document.body.removeChild(tmp);
+            showCopied();
           });
+        } else {
+          var tmp = document.createElement("textarea");
+          tmp.value = text;
+          document.body.appendChild(tmp);
+          tmp.select();
+          document.execCommand("copy");
+          document.body.removeChild(tmp);
+          showCopied();
         }
       });
     });
@@ -537,7 +540,7 @@
       var linkHtml = b.product_link
         ? '<div style="display:flex; align-items:center; gap:6px; min-width:0; margin-bottom:4px;">' +
             '<strong class="link-text" style="margin:0;" title="' + esc(b.product_link) + '">' + esc(truncateForDisplay(b.product_link, 40)) + '</strong>' +
-            '<button type="button" class="copy-btn" data-copy="' + esc(b.product_link) + '" title="' + esc(t("account_copy_title")) + '">⧉</button>' +
+            '<button type="button" class="icon-copy-btn" data-copy="' + esc(b.product_link) + '" data-tooltip="' + esc(t("account_copy_title")) + '" aria-label="' + esc(t("account_copy_title")) + '">' + copyIconsHtml() + '</button>' +
           '</div>'
         : '<strong>' + esc(t("account_buyout_no_link")) + '</strong>';
       return '<div class="order-row"><div class="order-info" style="min-width:0;">' + linkHtml +
