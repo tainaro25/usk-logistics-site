@@ -9,8 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=28">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/themes/material_blue.css">
+<link rel="stylesheet" href="assets/style.css?v=29">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/plugins/confirmDate/confirmDate.css">
 </head>
 <body>
@@ -475,7 +475,7 @@
             dateFormat: "d.m.Y H:i",
             allowInput: true,
             defaultDate: parseInternalValue(orderHistoryState[orderId][currentStatus]),
-            plugins: [new confirmDatePlugin({ confirmText: "OK", showAlways: true })]
+            plugins: [new confirmDatePlugin({ confirmText: "Готово", confirmIcon: "", showAlways: true })]
           });
         });
 
