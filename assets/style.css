@@ -437,6 +437,98 @@ img {
   flex-wrap: wrap;
 }
 
+/* Animated hero background (route lines + drifting dot grid) */
+.hero-animated {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-animated > .wrap {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: -60px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero-bg .hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--border) 1.4px, transparent 1.4px);
+  background-size: 26px 26px;
+  animation: heroGridDrift 46s linear infinite;
+}
+
+.hero-bg svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-bg path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  opacity: 0.24;
+  stroke-dasharray: 8 7;
+  animation: heroDashDrift 16s linear infinite;
+}
+
+.hero-bg path:nth-child(2) {
+  animation-duration: 20s;
+  opacity: 0.16;
+}
+
+.hero-bg path:nth-child(3) {
+  animation-duration: 24s;
+  opacity: 0.12;
+}
+
+.hero-bg circle.hero-pulse {
+  fill: var(--accent);
+  r: 3.2;
+  animation: heroTravel 9s linear infinite;
+}
+
+.hero-bg circle.hero-pulse.p2 {
+  animation-duration: 11s;
+  animation-delay: -3s;
+}
+
+.hero-bg circle.hero-pulse.p3 {
+  animation-duration: 13s;
+  animation-delay: -1s;
+}
+
+@keyframes heroGridDrift {
+  to { background-position: 260px 130px; }
+}
+
+@keyframes heroDashDrift {
+  to { stroke-dashoffset: -300; }
+}
+
+@keyframes heroTravel {
+  0% { offset-distance: 0%; opacity: 0; }
+  8% { opacity: 1; }
+  92% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-bg .hero-grid,
+  .hero-bg path,
+  .hero-bg circle.hero-pulse {
+    animation: none;
+  }
+}
+
 /* Routes map */
 .routes-wrap {
   max-width: 860px;

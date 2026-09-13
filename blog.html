@@ -40,7 +40,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-<link rel="stylesheet" href="assets/style.css?v=39">
+<link rel="stylesheet" href="assets/style.css?v=45">
 </head>
 <body>
 
@@ -85,7 +85,18 @@
 </header>
 
 <main>
-  <section class="hero" style="padding: 100px 0 100px; text-align: center;">
+  <section class="hero hero-animated" style="padding: 100px 0 100px; text-align: center;">
+    <div class="hero-bg" aria-hidden="true">
+      <div class="hero-grid"></div>
+      <svg viewBox="0 0 800 320" preserveAspectRatio="none">
+        <path d="M -20 260 C 180 180, 320 300, 500 160 S 780 40, 860 90" />
+        <path d="M -20 60 C 200 140, 340 20, 560 120 S 760 260, 860 200" />
+        <path d="M -20 180 C 160 40, 420 220, 620 60 S 800 160, 860 140" />
+        <circle class="hero-pulse p1" style="offset-path: path('M -20 260 C 180 180, 320 300, 500 160 S 780 40, 860 90')"></circle>
+        <circle class="hero-pulse p2" style="offset-path: path('M -20 60 C 200 140, 340 20, 560 120 S 760 260, 860 200')"></circle>
+        <circle class="hero-pulse p3" style="offset-path: path('M -20 180 C 160 40, 420 220, 620 60 S 800 160, 860 140')"></circle>
+      </svg>
+    </div>
     <div class="wrap" style="max-width: 640px; margin: 0 auto;">
       <span class="eyebrow">Блог</span>
       <h1>Совсем скоро здесь появятся статьи</h1>
