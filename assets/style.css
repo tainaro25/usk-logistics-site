@@ -753,6 +753,41 @@ section.alt {
   color: #fff;
 }
 
+.warehouse-field-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  margin-bottom: 14px;
+}
+
+.warehouse-field-row .calc-input-row {
+  flex: 1;
+  margin-bottom: 0;
+  min-width: 0;
+}
+
+.warehouse-field-row .btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.warehouse-panel input[readonly] {
+  background: var(--surface);
+  color: var(--muted);
+  cursor: default;
+}
+
+.warehouse-hours {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 4px 0 20px;
+}
+
+.warehouse-copy-btn.copied {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
 .calc-input-row {
   margin-bottom: 24px;
 }

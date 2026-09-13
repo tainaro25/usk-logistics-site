@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=39">
+<link rel="stylesheet" href="assets/style.css?v=40">
 </head>
 <body>
 
@@ -56,6 +56,7 @@
             <a href="#" class="tab-link active" data-tab="orders"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg> <span data-i18n="account_nav_orders">Мои заказы</span></a>
             <a href="#" class="tab-link" data-tab="profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> <span data-i18n="account_nav_profile">Личные данные</span></a>
             <a href="#" class="tab-link" data-tab="buyout"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <span data-i18n="account_nav_history">История заявок</span></a>
+            <a href="#" class="tab-link" data-tab="warehouses"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg> <span data-i18n="account_nav_warehouses">Адреса складов</span></a>
             <a href="#" id="logout-link" class="logout"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> <span data-i18n="account_nav_logout">Выйти</span></a>
           </nav>
         </aside>
@@ -156,6 +157,30 @@
             <button type="button" class="btn btn-primary btn-sm" data-open-request-modal style="margin-bottom: 24px;" data-i18n="account_new_request_btn">+ Оставить заявку</button>
             <div id="buyouts-list"></div>
           </div>
+
+          <div class="tab-content" id="tab-warehouses" hidden>
+            <h1 data-i18n="account_nav_warehouses">Адреса складов</h1>
+            <p style="color: var(--muted); font-size: 14px; margin: -12px 0 20px;" data-i18n="account_warehouses_hint">Используйте этот адрес при оформлении заказа в зарубежном интернет-магазине. Имя и фамилию впишите свои.</p>
+
+            <div class="calc-toggle" id="warehouse-country-toggle">
+              <button type="button" class="calc-option active" data-warehouse="us" data-i18n="tariffs_row_us">США</button>
+              <button type="button" class="calc-option" data-warehouse="de" data-i18n="account_warehouse_de">Германия</button>
+              <button type="button" class="calc-option" data-warehouse="cne" data-i18n="tariffs_row_cne">Китай Экспресс</button>
+            </div>
+
+            <div class="profile-form-row" style="margin-top: 20px;">
+              <div class="calc-input-row">
+                <label data-i18n="modal_name_label">Имя</label>
+                <input type="text" id="warehouse-name">
+              </div>
+              <div class="calc-input-row">
+                <label data-i18n="warehouse_surname_label">Фамилия</label>
+                <input type="text" id="warehouse-surname">
+              </div>
+            </div>
+
+            <div id="warehouse-fields"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -218,7 +243,7 @@
   </div>
 </div>
 
-<script src="assets/i18n.js?v=24"></script>
+<script src="assets/i18n.js?v=25"></script>
 <script>
   function t(key) {
     var lang = (window.USK_I18N && window.USK_I18N.currentLang) || "ru";
@@ -258,6 +283,93 @@
       });
     });
   });
+
+  var WAREHOUSE_DATA = {
+    us: {
+      address1: "463 Carson Drive",
+      address2: "55823 TEZREK",
+      city: "Bear",
+      state: "Delaware (DE)",
+      zip: "19701",
+      country: "USA",
+      phone: "+1 3477526954",
+      hours: "09:00 – 17:00 понедельник-пятница, по времени Делавэра"
+    }
+  };
+
+  function renderWarehouseFields(code) {
+    var container = document.getElementById("warehouse-fields");
+    var data = WAREHOUSE_DATA[code];
+    if (!data) {
+      container.innerHTML = '<p style="color: var(--muted);">' + esc(t("warehouse_coming_soon")) + "</p>";
+      return;
+    }
+    var rows = [
+      ["Address 1", data.address1],
+      ["Address 2", data.address2],
+      ["City", data.city],
+      ["State", data.state],
+      ["Zip code", data.zip],
+      ["Country", data.country],
+      ["Phone", data.phone]
+    ];
+    var html = "";
+    rows.forEach(function (row, i) {
+      html +=
+        '<div class="warehouse-field-row">' +
+        '<div class="calc-input-row" style="margin-bottom:0;">' +
+        "<label>" + esc(row[0]) + ":</label>" +
+        '<input type="text" value="' + esc(row[1]) + '" readonly data-warehouse-value="' + i + '">' +
+        "</div>" +
+        '<button type="button" class="btn btn-outline btn-sm warehouse-copy-btn" data-copy-index="' + i + '">' + esc(t("warehouse_copy_btn")) + "</button>" +
+        "</div>";
+    });
+    html +=
+      '<p class="warehouse-hours">' + esc(data.hours) + "</p>" +
+      '<button type="button" class="btn btn-outline btn-sm" data-open-prohibited-modal>' + esc(t("warehouse_prohibited_btn")) + "</button>";
+    container.innerHTML = html;
+
+    container.querySelectorAll(".warehouse-copy-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var idx = btn.dataset.copyIndex;
+        var input = container.querySelector('[data-warehouse-value="' + idx + '"]');
+        var value = input.value;
+        var doCopyFeedback = function () {
+          var original = t("warehouse_copy_btn");
+          btn.textContent = t("warehouse_copied_btn");
+          btn.classList.add("copied");
+          clearTimeout(btn._resetTimer);
+          btn._resetTimer = setTimeout(function () {
+            btn.textContent = original;
+            btn.classList.remove("copied");
+          }, 1500);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(value).then(doCopyFeedback).catch(function () {
+            input.select();
+            document.execCommand("copy");
+            doCopyFeedback();
+          });
+        } else {
+          input.select();
+          document.execCommand("copy");
+          doCopyFeedback();
+        }
+      });
+    });
+  }
+
+  var warehouseToggle = document.getElementById("warehouse-country-toggle");
+  if (warehouseToggle) {
+    warehouseToggle.addEventListener("click", function (e) {
+      var btn = e.target.closest(".calc-option");
+      if (!btn) return;
+      warehouseToggle.querySelectorAll(".calc-option").forEach(function (b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+      renderWarehouseFields(btn.dataset.warehouse);
+    });
+    renderWarehouseFields("us");
+  }
 
   document.querySelector(".menu-toggle").addEventListener("click", function () {
     document.body.classList.toggle("nav-open");
@@ -439,6 +551,8 @@
   window.addEventListener("usklangchange", function () {
     renderOrders(LAST_ORDERS);
     renderBuyouts(LAST_BUYOUTS);
+    var activeWarehouseBtn = document.querySelector("#warehouse-country-toggle .calc-option.active");
+    if (activeWarehouseBtn) renderWarehouseFields(activeWarehouseBtn.dataset.warehouse);
   });
 
   fetch("api/me.php")
@@ -455,6 +569,10 @@
       document.getElementById("profile-phone").value = data.user.phone || "";
       document.getElementById("profile-email").value = data.user.email || "";
       document.getElementById("profile-address").value = data.user.delivery_address || "";
+      var fullName = (data.user.name || "").trim();
+      var nameParts = fullName.split(/\s+/);
+      document.getElementById("warehouse-name").value = nameParts[0] || "";
+      document.getElementById("warehouse-surname").value = nameParts.slice(1).join(" ") || "";
       renderOrders(data.orders);
       renderBuyouts(data.buyouts);
     })
