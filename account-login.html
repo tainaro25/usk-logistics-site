@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=22">
+<link rel="stylesheet" href="assets/style.css?v=26">
 </head>
 <body>
 
@@ -72,7 +72,10 @@
         </div>
         <div class="calc-input-row">
           <label for="login-password" data-i18n="account_password_label">Пароль</label>
-          <input type="password" id="login-password" placeholder="Минимум 6 символов" data-i18n-placeholder="account_password_placeholder">
+          <div class="password-field">
+            <input type="password" id="login-password" placeholder="Минимум 6 символов" data-i18n-placeholder="account_password_placeholder">
+            <button type="button" class="password-toggle-btn" data-target="login-password" aria-label="Показать пароль"></button>
+          </div>
         </div>
 
         <p id="auth-error" style="color: #dc2626; font-size: 14px; margin: 0 0 16px; display: none;"></p>
@@ -144,6 +147,19 @@
     if (rest.length > 8) out += " " + rest.slice(8, 10);
     return out;
   }
+
+  var EYE_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>';
+  var EYE_OFF_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.53 13.53 0 0 0 1 12s4 8 11 8a9.26 9.26 0 0 0 5.39-1.61"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+
+  document.querySelectorAll(".password-toggle-btn").forEach(function (btn) {
+    var input = document.getElementById(btn.dataset.target);
+    btn.innerHTML = EYE_ICON;
+    btn.addEventListener("click", function () {
+      var showing = input.type === "text";
+      input.type = showing ? "password" : "text";
+      btn.innerHTML = showing ? EYE_ICON : EYE_OFF_ICON;
+    });
+  });
 
   var registerPhoneInput = document.getElementById("register-phone");
   registerPhoneInput.addEventListener("input", function () {

@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=25">
+<link rel="stylesheet" href="assets/style.css?v=26">
 </head>
 <body>
 
@@ -118,6 +118,31 @@
             </div>
             <p id="profile-message" style="color: var(--muted); font-size: 14px; margin: 0 0 16px; display: none;"></p>
             <button type="button" class="btn btn-primary" id="profile-save" data-i18n="account_profile_save_btn">Сохранить изменения</button>
+
+            <h2 style="font-size: 18px; margin: 40px 0 16px; padding-top: 24px; border-top: 1px solid var(--border);">Смена пароля</h2>
+            <div class="calc-input-row">
+              <label for="current-password">Текущий пароль</label>
+              <div class="password-field">
+                <input type="password" id="current-password" autocomplete="current-password">
+                <button type="button" class="password-toggle-btn" data-target="current-password" aria-label="Показать пароль"></button>
+              </div>
+            </div>
+            <div class="calc-input-row">
+              <label for="new-password">Новый пароль</label>
+              <div class="password-field">
+                <input type="password" id="new-password" placeholder="Минимум 6 символов" autocomplete="new-password">
+                <button type="button" class="password-toggle-btn" data-target="new-password" aria-label="Показать пароль"></button>
+              </div>
+            </div>
+            <div class="calc-input-row">
+              <label for="new-password-confirm">Повторите новый пароль</label>
+              <div class="password-field">
+                <input type="password" id="new-password-confirm" autocomplete="new-password">
+                <button type="button" class="password-toggle-btn" data-target="new-password-confirm" aria-label="Показать пароль"></button>
+              </div>
+            </div>
+            <p id="password-message" style="color: var(--muted); font-size: 14px; margin: 0 0 16px; display: none;"></p>
+            <button type="button" class="btn btn-primary" id="password-save">Сменить пароль</button>
           </div>
 
           <div class="tab-content" id="tab-buyout" hidden>
@@ -501,6 +526,81 @@
     fetch("api/logout.php").finally(function () {
       window.location.href = "account-login.html";
     });
+  });
+
+  var EYE_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>';
+  var EYE_OFF_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.53 13.53 0 0 0 1 12s4 8 11 8a9.26 9.26 0 0 0 5.39-1.61"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+
+  document.querySelectorAll(".password-toggle-btn").forEach(function (btn) {
+    var input = document.getElementById(btn.dataset.target);
+    btn.innerHTML = EYE_ICON;
+    btn.addEventListener("click", function () {
+      var showing = input.type === "text";
+      input.type = showing ? "password" : "text";
+      btn.innerHTML = showing ? EYE_ICON : EYE_OFF_ICON;
+    });
+  });
+
+  document.getElementById("password-save").addEventListener("click", function () {
+    var btn = this;
+    var msg = document.getElementById("password-message");
+    var currentPassword = document.getElementById("current-password").value;
+    var newPassword = document.getElementById("new-password").value;
+    var newPasswordConfirm = document.getElementById("new-password-confirm").value;
+
+    msg.style.display = "none";
+
+    if (!currentPassword || newPassword.length < 6) {
+      msg.style.color = "#dc2626";
+      msg.textContent = "Укажите текущий пароль и новый (минимум 6 символов).";
+      msg.style.display = "block";
+      return;
+    }
+
+    if (newPassword !== newPasswordConfirm) {
+      msg.style.color = "#dc2626";
+      msg.textContent = "Новый пароль и повтор не совпадают.";
+      msg.style.display = "block";
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Сохранение...";
+
+    var formData = new FormData();
+    formData.append("current_password", currentPassword);
+    formData.append("new_password", newPassword);
+
+    fetch("api/change-password.php", { method: "POST", headers: csrfHeaders(), body: formData })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.ok) {
+          msg.style.color = "#16a34a";
+          msg.textContent = "Пароль изменён.";
+          document.getElementById("current-password").value = "";
+          document.getElementById("new-password").value = "";
+          document.getElementById("new-password-confirm").value = "";
+        } else if (data.error === "wrong_current_password") {
+          msg.style.color = "#dc2626";
+          msg.textContent = "Текущий пароль указан неверно.";
+        } else if (data.error === "too_many_attempts") {
+          msg.style.color = "#dc2626";
+          msg.textContent = "Слишком много попыток. Попробуйте позже.";
+        } else {
+          msg.style.color = "#dc2626";
+          msg.textContent = "Не получилось сменить пароль.";
+        }
+        msg.style.display = "block";
+      })
+      .catch(function () {
+        msg.style.color = "#dc2626";
+        msg.textContent = t("err_server_unreachable");
+        msg.style.display = "block";
+      })
+      .finally(function () {
+        btn.disabled = false;
+        btn.textContent = "Сменить пароль";
+      });
   });
 </script>
 </body>

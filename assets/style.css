@@ -679,6 +679,35 @@ section.alt {
   border-color: var(--accent);
 }
 
+.password-field {
+  position: relative;
+}
+
+.calc-input-row .password-field input {
+  padding-right: 48px;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 8px;
+  margin: 0;
+  cursor: pointer;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.password-toggle-btn:hover {
+  color: var(--text);
+}
+
 .stepper {
   display: flex;
   align-items: stretch;
