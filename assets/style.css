@@ -753,6 +753,20 @@ section.alt {
   color: #fff;
 }
 
+#warehouse-country-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+#warehouse-country-toggle .calc-option {
+  flex: 0 0 auto;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+}
+
 .warehouse-field-row {
   margin-bottom: 14px;
 }

@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=43">
+<link rel="stylesheet" href="assets/style.css?v=44">
 </head>
 <body>
 
@@ -160,23 +160,12 @@
 
           <div class="tab-content" id="tab-warehouses" hidden>
             <h1 data-i18n="account_nav_warehouses">Адреса складов</h1>
-            <p style="color: var(--muted); font-size: 14px; margin: -12px 0 20px;" data-i18n="account_warehouses_hint">Используйте этот адрес при оформлении заказа в зарубежном интернет-магазине. Имя и фамилию впишите свои.</p>
+            <p style="color: var(--muted); font-size: 14px; margin: -12px 0 20px;" data-i18n="account_warehouses_hint">Используйте этот адрес при оформлении заказа в зарубежном интернет-магазине.</p>
 
             <div class="calc-toggle" id="warehouse-country-toggle">
               <button type="button" class="calc-option active" data-warehouse="us" data-i18n="tariffs_row_us">США</button>
               <button type="button" class="calc-option" data-warehouse="de" data-i18n="account_warehouse_de">Германия</button>
               <button type="button" class="calc-option" data-warehouse="cne" data-i18n="tariffs_row_cne">Китай Экспресс</button>
-            </div>
-
-            <div class="profile-form-row" style="margin-top: 20px;">
-              <div class="calc-input-row">
-                <label data-i18n="modal_name_label">Имя</label>
-                <input type="text" id="warehouse-name">
-              </div>
-              <div class="calc-input-row">
-                <label data-i18n="warehouse_surname_label">Фамилия</label>
-                <input type="text" id="warehouse-surname">
-              </div>
             </div>
 
             <div id="warehouse-fields"></div>
@@ -243,7 +232,7 @@
   </div>
 </div>
 
-<script src="assets/i18n.js?v=25"></script>
+<script src="assets/i18n.js?v=26"></script>
 <script>
   function t(key) {
     var lang = (window.USK_I18N && window.USK_I18N.currentLang) || "ru";
@@ -287,11 +276,10 @@
   var WAREHOUSE_DATA = {
     us: {
       address1: "463 Carson Drive",
-      address2: "55823 TEZREK",
+      address2: "55823 USK",
       city: "Bear",
       state: "Delaware (DE)",
       zip: "19701",
-      country: "USA",
       phone: "+1 3477526954",
       hours: "09:00 – 17:00 понедельник-пятница, по времени Делавэра"
     }
@@ -310,7 +298,6 @@
       ["City", data.city],
       ["State", data.state],
       ["Zip code", data.zip],
-      ["Country", data.country],
       ["Phone", data.phone]
     ];
     var html = "";
@@ -572,10 +559,6 @@
       document.getElementById("profile-phone").value = data.user.phone || "";
       document.getElementById("profile-email").value = data.user.email || "";
       document.getElementById("profile-address").value = data.user.delivery_address || "";
-      var fullName = (data.user.name || "").trim();
-      var nameParts = fullName.split(/\s+/);
-      document.getElementById("warehouse-name").value = nameParts[0] || "";
-      document.getElementById("warehouse-surname").value = nameParts.slice(1).join(" ") || "";
       renderOrders(data.orders);
       renderBuyouts(data.buyouts);
     })
@@ -916,7 +899,6 @@
 
   var prohibitedModalOverlay = document.getElementById("prohibited-modal-overlay");
   if (prohibitedModalOverlay) {
-    var prohibitedOpenLinks = document.querySelectorAll("[data-open-prohibited-modal]");
     var prohibitedCloseBtn = document.getElementById("prohibited-modal-close");
 
     var openProhibitedModal = function (e) {
@@ -928,7 +910,9 @@
       prohibitedModalOverlay.hidden = true;
     };
 
-    prohibitedOpenLinks.forEach(function (a) { a.addEventListener("click", openProhibitedModal); });
+    document.addEventListener("click", function (e) {
+      if (e.target.closest("[data-open-prohibited-modal]")) openProhibitedModal(e);
+    });
     if (prohibitedCloseBtn) prohibitedCloseBtn.addEventListener("click", closeProhibitedModal);
 
     prohibitedModalOverlay.addEventListener("click", function (e) {
