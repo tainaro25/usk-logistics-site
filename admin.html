@@ -39,6 +39,10 @@
         <div class="account-panel">
           <div class="tab-content" id="tab-orders">
             <h1>Все заказы</h1>
+            <div class="calc-input-row" style="max-width: 420px;">
+              <label for="orders-search">Поиск</label>
+              <input type="text" id="orders-search" placeholder="Трек-номер, товар, имя, email или ID клиента...">
+            </div>
             <div id="admin-orders-list"></div>
           </div>
 
@@ -219,18 +223,47 @@
   }
 
   var orderHistoryState = {};
+  var allOrders = [];
 
   function loadOrders() {
     fetch("api/admin-orders.php")
       .then(function (r) { return r.json(); })
       .then(function (data) {
         if (!data.ok) return;
+        allOrders = data.orders;
+        applyOrdersFilter();
+      });
+  }
+
+  function applyOrdersFilter() {
+    var query = document.getElementById("orders-search").value.trim().toLowerCase();
+    if (!query) {
+      renderOrdersList(allOrders);
+      return;
+    }
+    var filtered = allOrders.filter(function (o) {
+      var haystack = [
+        o.track_number,
+        o.description,
+        o.user_name,
+        o.user_email,
+        formatUserId(o.user_id),
+        String(o.user_id)
+      ].filter(Boolean).join(" ").toLowerCase();
+      return haystack.indexOf(query) !== -1;
+    });
+    renderOrdersList(filtered);
+  }
+
+  document.getElementById("orders-search").addEventListener("input", applyOrdersFilter);
+
+  function renderOrdersList(orders) {
         var box = document.getElementById("admin-orders-list");
-        if (!data.orders.length) {
-          box.innerHTML = '<p style="color: var(--muted); font-size: 14px;">Заказов пока нет.</p>';
+        if (!orders.length) {
+          box.innerHTML = '<p style="color: var(--muted); font-size: 14px;">Заказов не найдено.</p>';
           return;
         }
-        box.innerHTML = data.orders.map(function (o) {
+        box.innerHTML = orders.map(function (o) {
           var statusList = o.source === "customer" ? ORDER_STATUSES_CUSTOMER : ORDER_STATUSES_ADMIN;
           var history = o.status_history || {};
           orderHistoryState[o.id] = {};
@@ -378,7 +411,6 @@
               });
           });
         });
-      });
   }
 
   var allUsers = [];
