@@ -1951,11 +1951,14 @@ body.modal-open {
 }
 
 .flatpickr-calendar.has-time-slots {
-  display: grid;
   grid-template-columns: auto 92px;
   grid-template-rows: auto 1fr auto;
   grid-template-areas: "months months" "days times" "confirm confirm";
   width: auto !important;
+}
+
+.flatpickr-calendar.has-time-slots.open {
+  display: grid;
 }
 
 .flatpickr-calendar.has-time-slots .flatpickr-months {

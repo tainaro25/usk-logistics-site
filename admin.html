@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/plugins/confirmDate/confirmDate.css">
-<link rel="stylesheet" href="assets/style.css?v=33">
+<link rel="stylesheet" href="assets/style.css?v=34">
 </head>
 <body>
 
@@ -258,6 +258,20 @@
     var day = String(d.getDate()).padStart(2, "0");
     var month = String(d.getMonth() + 1).padStart(2, "0");
     return day + "." + month + "." + d.getFullYear();
+  }
+
+  function positionBelowInput(fp, customPositionElement) {
+    var positionElement = customPositionElement || fp._positionElement;
+    var calendarHeight = fp.calendarContainer.offsetHeight;
+    var inputBounds = positionElement.getBoundingClientRect();
+    var distanceFromBottom = window.innerHeight - inputBounds.bottom;
+    var showOnTop = distanceFromBottom < calendarHeight && inputBounds.top > calendarHeight;
+    var top = window.pageYOffset + inputBounds.top + (!showOnTop ? positionElement.offsetHeight + 2 : -calendarHeight - 2);
+    fp.calendarContainer.classList.toggle("arrowTop", !showOnTop);
+    fp.calendarContainer.classList.toggle("arrowBottom", showOnTop);
+    fp.calendarContainer.style.top = top + "px";
+    fp.calendarContainer.style.left = (window.pageXOffset + inputBounds.left) + "px";
+    fp.calendarContainer.style.right = "auto";
   }
 
   function timeSlotsPlugin(pluginConfig) {
@@ -562,6 +576,7 @@
             dateFormat: "d.m.Y H:i",
             allowInput: true,
             animate: true,
+            position: positionBelowInput,
             locale: RU_CALENDAR_LOCALE,
             defaultDate: parseInternalValue(orderHistoryState[orderId][currentStatus]),
             plugins: [
