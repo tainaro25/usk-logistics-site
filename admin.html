@@ -9,9 +9,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=29">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/plugins/confirmDate/confirmDate.css">
+<link rel="stylesheet" href="assets/style.css?v=30">
 </head>
 <body>
 
@@ -252,13 +252,26 @@
     return day + "." + month + "." + d.getFullYear();
   }
 
+  var RU_CALENDAR_LOCALE = {
+    weekdays: {
+      shorthand: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
+      longhand: ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"]
+    },
+    months: {
+      shorthand: ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"],
+      longhand: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
+    },
+    firstDayOfWeek: 1,
+    rangeSeparator: " - "
+  };
+
   var reportsRangeStart = null;
   var reportsRangeEnd = null;
 
   var reportsFlatpickr = flatpickr("#reports-range", {
     mode: "range",
     dateFormat: "d.m.Y",
-    locale: { rangeSeparator: " - " },
+    locale: RU_CALENDAR_LOCALE,
     onChange: function (selectedDates) {
       if (selectedDates.length === 2) {
         reportsRangeStart = selectedDates[0];
@@ -474,6 +487,7 @@
             time_24hr: true,
             dateFormat: "d.m.Y H:i",
             allowInput: true,
+            locale: RU_CALENDAR_LOCALE,
             defaultDate: parseInternalValue(orderHistoryState[orderId][currentStatus]),
             plugins: [new confirmDatePlugin({ confirmText: "Готово", confirmIcon: "", showAlways: true })]
           });
