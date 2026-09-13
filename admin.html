@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/plugins/confirmDate/confirmDate.css">
-<link rel="stylesheet" href="assets/style.css?v=30">
+<link rel="stylesheet" href="assets/style.css?v=31">
 </head>
 <body>
 
@@ -272,6 +272,7 @@
     mode: "range",
     dateFormat: "d.m.Y",
     locale: RU_CALENDAR_LOCALE,
+    animate: true,
     onChange: function (selectedDates) {
       if (selectedDates.length === 2) {
         reportsRangeStart = selectedDates[0];
@@ -487,6 +488,7 @@
             time_24hr: true,
             dateFormat: "d.m.Y H:i",
             allowInput: true,
+            animate: true,
             locale: RU_CALENDAR_LOCALE,
             defaultDate: parseInternalValue(orderHistoryState[orderId][currentStatus]),
             plugins: [new confirmDatePlugin({ confirmText: "Готово", confirmIcon: "", showAlways: true })]
