@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=24">
+<link rel="stylesheet" href="assets/style.css?v=25">
 </head>
 <body>
 
@@ -244,8 +244,7 @@
                 '<div class="calc-input-row"><label>Вес (кг)</label><input type="number" step="0.01" min="0" class="edit-weight" data-order-id="' + o.id + '" value="' + (o.weight !== null && o.weight !== undefined ? esc(o.weight) : "") + '"></div>' +
                 '<div class="calc-input-row"><label>Сумма платежа ($)</label><input type="number" step="0.01" min="0" class="edit-payment" data-order-id="' + o.id + '" value="' + (o.payment_amount !== null && o.payment_amount !== undefined ? esc(o.payment_amount) : "") + '"></div>' +
                 '<div class="calc-input-row"><label>Статус</label><select class="edit-status" data-order-id="' + o.id + '">' + selectOptions(statusList, o.status) + '</select></div>' +
-                '<div class="calc-input-row"><label>Дата для статуса</label><select class="date-status-picker" data-order-id="' + o.id + '">' + selectOptions(statusList, o.status) + '</select></div>' +
-                '<div class="calc-input-row"><label>Дата/время</label><input type="datetime-local" class="date-status-value" data-order-id="' + o.id + '" value="' + currentDateValue + '"></div>' +
+                '<div class="calc-input-row"><label>Когда наступил статус</label><input type="datetime-local" class="edit-status-when" data-order-id="' + o.id + '" value="' + currentDateValue + '"></div>' +
               '</div>' +
               '<div style="display:flex; gap:10px; margin-top:12px;">' +
                 '<button type="button" class="btn btn-primary btn-sm save-order-btn" data-order-id="' + o.id + '">Сохранить</button>' +
@@ -254,19 +253,11 @@
             '</div>';
         }).join("");
 
-        box.querySelectorAll(".date-status-picker").forEach(function (picker) {
-          picker.addEventListener("change", function () {
-            var orderId = picker.dataset.orderId;
-            var valueInput = box.querySelector('.date-status-value[data-order-id="' + orderId + '"]');
-            valueInput.value = orderHistoryState[orderId][picker.value] || "";
-          });
-        });
-
-        box.querySelectorAll(".date-status-value").forEach(function (input) {
+        box.querySelectorAll(".edit-status-when").forEach(function (input) {
           input.addEventListener("change", function () {
             var orderId = input.dataset.orderId;
-            var picker = box.querySelector('.date-status-picker[data-order-id="' + orderId + '"]');
-            orderHistoryState[orderId][picker.value] = input.value;
+            var select = box.querySelector('.edit-status[data-order-id="' + orderId + '"]');
+            orderHistoryState[orderId][select.value] = input.value;
           });
         });
 
@@ -277,10 +268,8 @@
             if (!orderHistoryState[orderId][newStatus]) {
               orderHistoryState[orderId][newStatus] = nowForDateTimeInput();
             }
-            var picker = box.querySelector('.date-status-picker[data-order-id="' + orderId + '"]');
-            var valueInput = box.querySelector('.date-status-value[data-order-id="' + orderId + '"]');
-            picker.value = newStatus;
-            valueInput.value = orderHistoryState[orderId][newStatus];
+            var whenInput = box.querySelector('.edit-status-when[data-order-id="' + orderId + '"]');
+            whenInput.value = orderHistoryState[orderId][newStatus];
           });
         });
 
@@ -315,9 +304,8 @@
             var payment = box.querySelector('.edit-payment[data-order-id="' + orderId + '"]').value.trim();
             var status = box.querySelector('.edit-status[data-order-id="' + orderId + '"]').value;
 
-            var picker = box.querySelector('.date-status-picker[data-order-id="' + orderId + '"]');
-            var valueInput = box.querySelector('.date-status-value[data-order-id="' + orderId + '"]');
-            orderHistoryState[orderId][picker.value] = valueInput.value;
+            var whenInput = box.querySelector('.edit-status-when[data-order-id="' + orderId + '"]');
+            orderHistoryState[orderId][status] = whenInput.value;
             var history = orderHistoryState[orderId] || {};
 
             btn.disabled = true;

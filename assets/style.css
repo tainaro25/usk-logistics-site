@@ -1639,6 +1639,18 @@ table.price-table tr:last-child td {
   margin: 0;
 }
 
+.admin-edit-grid .calc-input-row label {
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.admin-edit-grid .calc-input-row input,
+.admin-edit-grid .calc-input-row select {
+  padding: 8px 10px;
+  font-size: 14px;
+  border-radius: 8px;
+}
+
 .detail-item {
   display: flex;
   flex-direction: column;
