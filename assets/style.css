@@ -7,6 +7,7 @@
   --border: #e8e8e8;
   --accent: #2563eb;
   --accent-dark: #1d4ed8;
+  --accent-2: #06b6d4;
   --wa: #25d366;
   --tg: #26a5e4;
   --surface: #f7f7f8;
@@ -23,6 +24,7 @@
   --border: #2c2d33;
   --accent: #3b82f6;
   --accent-dark: #60a5fa;
+  --accent-2: #22d3ee;
   --surface: #1f2024;
 }
 
@@ -463,6 +465,59 @@ img {
   animation: heroGridDrift 46s linear infinite;
 }
 
+.hero-bg .hero-aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.hero-bg .hero-aurora span {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.3;
+}
+
+.hero-bg .hero-aurora span:nth-child(1) {
+  background: var(--accent);
+  top: -40px;
+  left: 8%;
+  animation: heroAurora1 18s ease-in-out infinite;
+}
+
+.hero-bg .hero-aurora span:nth-child(2) {
+  background: var(--accent-2);
+  bottom: -100px;
+  left: 42%;
+  width: 340px;
+  height: 340px;
+  animation: heroAurora2 22s ease-in-out infinite;
+}
+
+.hero-bg .hero-aurora span:nth-child(3) {
+  background: var(--accent-dark);
+  top: 0;
+  right: 4%;
+  animation: heroAurora3 26s ease-in-out infinite;
+}
+
+@keyframes heroAurora1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, 30px) scale(1.15); }
+}
+
+@keyframes heroAurora2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-30px, -20px) scale(1.1); }
+}
+
+@keyframes heroAurora3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-40px, 25px) scale(0.9); }
+}
+
 .hero-bg svg {
   position: absolute;
   inset: 0;
@@ -523,6 +578,7 @@ img {
 
 @media (prefers-reduced-motion: reduce) {
   .hero-bg .hero-grid,
+  .hero-bg .hero-aurora span,
   .hero-bg path,
   .hero-bg circle.hero-pulse {
     animation: none;
