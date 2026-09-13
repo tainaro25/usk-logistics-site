@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=41">
+<link rel="stylesheet" href="assets/style.css?v=42">
 </head>
 <body>
 
@@ -317,11 +317,11 @@
     rows.forEach(function (row, i) {
       html +=
         '<div class="warehouse-field-row">' +
-        '<div class="calc-input-row" style="margin-bottom:0;">' +
         "<label>" + esc(row[0]) + ":</label>" +
+        '<div class="warehouse-field-input-row">' +
         '<input type="text" value="' + esc(row[1]) + '" readonly>' +
-        "</div>" +
         '<button type="button" class="icon-copy-btn" data-copy="' + esc(row[1]) + '" data-tooltip="' + esc(t("account_copy_title")) + '" aria-label="' + esc(t("account_copy_title")) + '">' + copyIconsHtml() + "</button>" +
+        "</div>" +
         "</div>";
     });
     html +=

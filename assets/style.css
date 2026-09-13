@@ -754,21 +754,26 @@ section.alt {
 }
 
 .warehouse-field-row {
-  display: flex;
-  gap: 10px;
-  align-items: flex-end;
   margin-bottom: 14px;
 }
 
-.warehouse-field-row .calc-input-row {
-  flex: 1;
-  margin-bottom: 0;
-  min-width: 0;
+.warehouse-field-row > label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 8px;
 }
 
-.warehouse-field-row .btn {
-  flex-shrink: 0;
-  white-space: nowrap;
+.warehouse-field-input-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.warehouse-field-input-row input {
+  flex: 1;
+  min-width: 0;
 }
 
 .warehouse-panel input[readonly] {
