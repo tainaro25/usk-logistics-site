@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css?v=25">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
 </head>
 <body>
 
@@ -95,6 +96,7 @@
   </section>
 </main>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
 <script>
   var ORDER_STATUSES_ADMIN = ["на рассмотрении", "выкуплен", "на складе", "в пути", "доставлено"];
   var ORDER_STATUSES_CUSTOMER = ["сформировано", "на складе", "в пути", "прибыл", "доставлено"];
@@ -129,10 +131,20 @@
     return isoString.replace(" ", "T").slice(0, 16);
   }
 
-  function nowForDateTimeInput() {
-    var d = new Date();
+  function dateToInternalValue(date) {
+    if (!date) return "";
     var pad = function (n) { return String(n).padStart(2, "0"); };
-    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + "T" + pad(d.getHours()) + ":" + pad(d.getMinutes());
+    return date.getFullYear() + "-" + pad(date.getMonth() + 1) + "-" + pad(date.getDate()) + "T" + pad(date.getHours()) + ":" + pad(date.getMinutes());
+  }
+
+  function nowForDateTimeInput() {
+    return dateToInternalValue(new Date());
+  }
+
+  function parseInternalValue(v) {
+    if (!v) return null;
+    var d = new Date(v.replace(" ", "T"));
+    return isNaN(d.getTime()) ? null : d;
   }
 
   function formatDateTime(isoString) {
@@ -225,7 +237,6 @@
           statusList.forEach(function (s) {
             orderHistoryState[o.id][s] = toDateTimeInputValue(history[s]);
           });
-          var currentDateValue = orderHistoryState[o.id][o.status] || "";
           return '' +
             '<div class="order-card">' +
               '<div class="order-card-header">' +
@@ -243,8 +254,8 @@
                 '<div class="calc-input-row"><label>Дата создания</label><input type="date" class="edit-created" data-order-id="' + o.id + '" value="' + toDateInputValue(o.created_at) + '"></div>' +
                 '<div class="calc-input-row"><label>Вес (кг)</label><input type="number" step="0.01" min="0" class="edit-weight" data-order-id="' + o.id + '" value="' + (o.weight !== null && o.weight !== undefined ? esc(o.weight) : "") + '"></div>' +
                 '<div class="calc-input-row"><label>Сумма платежа ($)</label><input type="number" step="0.01" min="0" class="edit-payment" data-order-id="' + o.id + '" value="' + (o.payment_amount !== null && o.payment_amount !== undefined ? esc(o.payment_amount) : "") + '"></div>' +
-                '<div class="calc-input-row"><label>Статус</label><select class="edit-status" data-order-id="' + o.id + '">' + selectOptions(statusList, o.status) + '</select></div>' +
-                '<div class="calc-input-row"><label>Когда наступил статус</label><input type="datetime-local" class="edit-status-when" data-order-id="' + o.id + '" value="' + currentDateValue + '"></div>' +
+                '<div class="calc-input-row"><label>Статус</label><select class="edit-status" data-order-id="' + o.id + '" data-prev-status="' + esc(o.status) + '">' + selectOptions(statusList, o.status) + '</select></div>' +
+                '<div class="calc-input-row"><label>Когда наступил статус</label><div style="display:flex; gap:8px;"><input type="text" class="edit-status-when" data-order-id="' + o.id + '" placeholder="дд.мм.гггг чч:мм" style="flex:1;" autocomplete="off"><button type="button" class="btn btn-outline btn-sm set-now-btn" data-order-id="' + o.id + '" style="flex-shrink:0;">Сейчас</button></div></div>' +
               '</div>' +
               '<div style="display:flex; gap:10px; margin-top:12px;">' +
                 '<button type="button" class="btn btn-primary btn-sm save-order-btn" data-order-id="' + o.id + '">Сохранить</button>' +
@@ -254,22 +265,40 @@
         }).join("");
 
         box.querySelectorAll(".edit-status-when").forEach(function (input) {
-          input.addEventListener("change", function () {
-            var orderId = input.dataset.orderId;
-            var select = box.querySelector('.edit-status[data-order-id="' + orderId + '"]');
-            orderHistoryState[orderId][select.value] = input.value;
+          var orderId = input.dataset.orderId;
+          var currentStatus = box.querySelector('.edit-status[data-order-id="' + orderId + '"]').value;
+          flatpickr(input, {
+            enableTime: true,
+            time_24hr: true,
+            dateFormat: "d.m.Y H:i",
+            allowInput: true,
+            defaultDate: parseInternalValue(orderHistoryState[orderId][currentStatus])
           });
         });
 
         box.querySelectorAll(".edit-status").forEach(function (select) {
           select.addEventListener("change", function () {
             var orderId = select.dataset.orderId;
+            var oldStatus = select.dataset.prevStatus;
             var newStatus = select.value;
-            if (!orderHistoryState[orderId][newStatus]) {
-              orderHistoryState[orderId][newStatus] = nowForDateTimeInput();
-            }
             var whenInput = box.querySelector('.edit-status-when[data-order-id="' + orderId + '"]');
-            whenInput.value = orderHistoryState[orderId][newStatus];
+            var fp = whenInput._flatpickr;
+            if (fp) {
+              var currentDate = fp.selectedDates[0] || null;
+              orderHistoryState[orderId][oldStatus] = currentDate ? dateToInternalValue(currentDate) : "";
+              var stored = orderHistoryState[orderId][newStatus];
+              fp.setDate(stored ? parseInternalValue(stored) : null, false);
+            }
+            select.dataset.prevStatus = newStatus;
+          });
+        });
+
+        box.querySelectorAll(".set-now-btn").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var orderId = btn.dataset.orderId;
+            var whenInput = box.querySelector('.edit-status-when[data-order-id="' + orderId + '"]');
+            var fp = whenInput._flatpickr;
+            if (fp) fp.setDate(new Date(), true);
           });
         });
 
@@ -305,7 +334,9 @@
             var status = box.querySelector('.edit-status[data-order-id="' + orderId + '"]').value;
 
             var whenInput = box.querySelector('.edit-status-when[data-order-id="' + orderId + '"]');
-            orderHistoryState[orderId][status] = whenInput.value;
+            var fp = whenInput._flatpickr;
+            var currentDate = fp ? (fp.selectedDates[0] || null) : null;
+            orderHistoryState[orderId][status] = currentDate ? dateToInternalValue(currentDate) : "";
             var history = orderHistoryState[orderId] || {};
 
             btn.disabled = true;

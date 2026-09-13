@@ -237,7 +237,7 @@
     var month = String(d.getMonth() + 1).padStart(2, "0");
     var hours = String(d.getHours()).padStart(2, "0");
     var minutes = String(d.getMinutes()).padStart(2, "0");
-    return day + "." + month + ", " + hours + ":" + minutes;
+    return day + "." + month + "." + d.getFullYear() + ", " + hours + ":" + minutes;
   }
 
   function esc(value) {
