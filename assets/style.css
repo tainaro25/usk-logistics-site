@@ -774,6 +774,19 @@ section.alt {
 .warehouse-field-input-row input {
   flex: 1;
   min-width: 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  font-size: 17px;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--card-bg);
+  transition: border-color 0.15s ease;
+}
+
+.warehouse-field-input-row input:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 
 .warehouse-panel input[readonly] {
