@@ -108,7 +108,10 @@
               <label for="reports-range">Период</label>
               <input type="text" id="reports-range" placeholder="Выберите даты..." readonly>
             </div>
-            <button type="button" class="btn btn-outline btn-sm" id="reports-reset-btn" style="margin-bottom: 24px;">Сбросить период</button>
+            <div style="display: flex; gap: 10px; margin-bottom: 24px;">
+              <button type="button" class="btn btn-outline btn-sm" id="reports-reset-btn">Сбросить период</button>
+              <button type="button" class="btn btn-primary btn-sm" id="reports-export-btn">⬇ Экспорт в Excel</button>
+            </div>
             <div id="reports-summary" class="report-summary"></div>
             <div id="reports-table"></div>
           </div>
@@ -119,6 +122,7 @@
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/plugins/confirmDate/confirmDate.js"></script>
 <script>
   var ORDER_STATUSES_ADMIN = ["на рассмотрении", "выкуплен", "на складе", "в пути", "доставлено"];
@@ -271,6 +275,59 @@
     renderReports();
   });
 
+  document.getElementById("reports-export-btn").addEventListener("click", function () {
+    if (!reportsLastFiltered.length) {
+      alert("Нет заказов для экспорта - выберите период с заказами.");
+      return;
+    }
+
+    var rows = reportsLastFiltered.slice().sort(function (a, b) {
+      return new Date(a.created_at.replace(" ", "T")) - new Date(b.created_at.replace(" ", "T"));
+    });
+
+    var totalWeight = 0;
+    var totalPayment = 0;
+    var sheetData = [["ID клиента", "Клиент", "Email", "Трек-номер", "Товар", "Вес (кг)", "Сумма ($)", "Статус", "Дата создания"]];
+    rows.forEach(function (o) {
+      var weight = (o.weight !== null && o.weight !== undefined && o.weight !== "") ? parseFloat(o.weight) : "";
+      var payment = (o.payment_amount !== null && o.payment_amount !== undefined && o.payment_amount !== "") ? parseFloat(o.payment_amount) : "";
+      if (weight !== "") totalWeight += weight;
+      if (payment !== "") totalPayment += payment;
+      sheetData.push([
+        formatUserId(o.user_id),
+        o.user_name,
+        o.user_email,
+        o.track_number,
+        o.description || "",
+        weight,
+        payment,
+        o.status,
+        formatDateOnly(o.created_at)
+      ]);
+    });
+    sheetData.push([]);
+    sheetData.push(["", "", "", "", "Итого:", totalWeight.toFixed(2), totalPayment.toFixed(2), "", ""]);
+
+    var worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+    worksheet["!cols"] = [
+      { wch: 10 }, { wch: 22 }, { wch: 24 }, { wch: 20 }, { wch: 24 },
+      { wch: 10 }, { wch: 10 }, { wch: 14 }, { wch: 14 }
+    ];
+
+    var workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Отчёт");
+
+    var filename = "Отчёт по заказам";
+    if (reportsRangeStart && reportsRangeEnd) {
+      filename += " " + formatDateOnly(reportsRangeStart.toISOString()) + " - " + formatDateOnly(reportsRangeEnd.toISOString());
+    }
+    filename += ".xlsx";
+
+    XLSX.writeFile(workbook, filename);
+  });
+
+  var reportsLastFiltered = [];
+
   function renderReports() {
     var summaryBox = document.getElementById("reports-summary");
     var tableBox = document.getElementById("reports-table");
@@ -284,6 +341,7 @@
         return t >= startTime && t <= endTime;
       });
     }
+    reportsLastFiltered = filtered;
 
     var totalWeight = 0;
     var totalPayment = 0;
