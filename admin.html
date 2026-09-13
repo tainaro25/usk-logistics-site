@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=22">
+<link rel="stylesheet" href="assets/style.css?v=24">
 </head>
 <body>
 
@@ -99,6 +99,7 @@
   var ORDER_STATUSES_ADMIN = ["на рассмотрении", "выкуплен", "на складе", "в пути", "доставлено"];
   var ORDER_STATUSES_CUSTOMER = ["сформировано", "на складе", "в пути", "прибыл", "доставлено"];
   var BUYOUT_STATUSES = ["в обработке", "одобрена", "отклонена"];
+  var ORIGIN_OPTIONS = ["США", "Европа", "Китай", "Китай Экспресс"];
 
   var statusClass = {
     "на рассмотрении": "status-transit",
@@ -116,6 +117,11 @@
   function formatDate(isoString) {
     var d = new Date(isoString.replace(" ", "T"));
     return d.toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
+  }
+
+  function toDateInputValue(isoString) {
+    if (!isoString) return "";
+    return isoString.slice(0, 10);
   }
 
   function formatDateTime(isoString) {
@@ -195,40 +201,55 @@
           return '' +
             '<div class="order-card">' +
               '<div class="order-card-header">' +
-                '<h3>Заказ №' + o.id + (o.description ? " · " + esc(o.description) : "") + '</h3>' +
+                '<h3>Заказ №' + o.id + '</h3>' +
                 '<span class="status-badge ' + (statusClass[o.status] || "status-transit") + '">' + esc(o.status) + '</span>' +
               '</div>' +
-              '<div class="order-card-details">' +
-                '<div class="detail-item"><span class="detail-label">Трек-номер</span><span class="detail-value">' + esc(o.track_number) + '</span></div>' +
+              '<div class="order-card-details" style="margin-bottom: 16px;">' +
                 '<div class="detail-item"><span class="detail-label">Клиент</span><span class="detail-value">' + formatUserId(o.user_id) + ' · ' + esc(o.user_name) + ' (' + esc(o.user_email) + ')</span></div>' +
-                '<div class="detail-item"><span class="detail-label">Откуда</span><span class="detail-value">' + esc(o.origin || "-") + '</span></div>' +
                 '<div class="detail-item"><span class="detail-label">Добавлен</span><span class="detail-value">' + (o.source === "customer" ? "самим клиентом" : "администратором") + '</span></div>' +
-                '<div class="detail-item"><span class="detail-label">Дата</span><span class="detail-value">' + formatDate(o.created_at) + '</span></div>' +
               '</div>' +
-              '<div class="calc-input-row" style="margin: 16px 0 0;">' +
-                '<label>Сменить статус</label>' +
-                '<div style="display:flex; gap:10px;">' +
-                  '<select class="order-status-select" data-order-id="' + o.id + '" style="flex:1; padding:10px 12px; border-radius:10px; border:1px solid var(--border);">' + selectOptions(statusList, o.status) + '</select>' +
-                  '<button type="button" class="btn btn-outline btn-sm save-order-status" data-order-id="' + o.id + '">Сохранить</button>' +
-                  '<button type="button" class="btn btn-outline btn-sm delete-order-btn" data-order-id="' + o.id + '" style="color:#dc2626; border-color:#dc2626;">Удалить</button>' +
-                '</div>' +
+              '<div class="admin-edit-grid">' +
+                '<div class="calc-input-row"><label>Трек-номер</label><input type="text" class="edit-track" data-order-id="' + o.id + '" value="' + esc(o.track_number) + '"></div>' +
+                '<div class="calc-input-row"><label>Товар</label><input type="text" class="edit-desc" data-order-id="' + o.id + '" value="' + esc(o.description || "") + '"></div>' +
+                '<div class="calc-input-row"><label>Откуда</label><select class="edit-origin" data-order-id="' + o.id + '">' + selectOptions(ORIGIN_OPTIONS, o.origin) + '</select></div>' +
+                '<div class="calc-input-row"><label>Дата создания</label><input type="date" class="edit-created" data-order-id="' + o.id + '" value="' + toDateInputValue(o.created_at) + '"></div>' +
+                '<div class="calc-input-row"><label>Вес (кг)</label><input type="number" step="0.01" min="0" class="edit-weight" data-order-id="' + o.id + '" value="' + (o.weight !== null && o.weight !== undefined ? esc(o.weight) : "") + '"></div>' +
+                '<div class="calc-input-row"><label>Сумма платежа ($)</label><input type="number" step="0.01" min="0" class="edit-payment" data-order-id="' + o.id + '" value="' + (o.payment_amount !== null && o.payment_amount !== undefined ? esc(o.payment_amount) : "") + '"></div>' +
+                '<div class="calc-input-row"><label>Статус</label><select class="edit-status" data-order-id="' + o.id + '">' + selectOptions(statusList, o.status) + '</select></div>' +
+              '</div>' +
+              '<div style="display:flex; gap:10px; margin-top:12px;">' +
+                '<button type="button" class="btn btn-primary btn-sm save-order-btn" data-order-id="' + o.id + '">Сохранить</button>' +
+                '<button type="button" class="btn btn-outline btn-sm delete-order-btn" data-order-id="' + o.id + '" style="color:#dc2626; border-color:#dc2626;">Удалить</button>' +
               '</div>' +
             '</div>';
         }).join("");
 
-        box.querySelectorAll(".save-order-status").forEach(function (btn) {
+        box.querySelectorAll(".save-order-btn").forEach(function (btn) {
           btn.addEventListener("click", function () {
             var orderId = btn.dataset.orderId;
-            var select = box.querySelector('.order-status-select[data-order-id="' + orderId + '"]');
+            var track = box.querySelector('.edit-track[data-order-id="' + orderId + '"]').value.trim();
+            var desc = box.querySelector('.edit-desc[data-order-id="' + orderId + '"]').value.trim();
+            var origin = box.querySelector('.edit-origin[data-order-id="' + orderId + '"]').value;
+            var createdDate = box.querySelector('.edit-created[data-order-id="' + orderId + '"]').value;
+            var weight = box.querySelector('.edit-weight[data-order-id="' + orderId + '"]').value.trim();
+            var payment = box.querySelector('.edit-payment[data-order-id="' + orderId + '"]').value.trim();
+            var status = box.querySelector('.edit-status[data-order-id="' + orderId + '"]').value;
+
             btn.disabled = true;
             btn.textContent = "...";
             var formData = new FormData();
             formData.append("order_id", orderId);
-            formData.append("status", select.value);
+            formData.append("track_number", track);
+            formData.append("description", desc);
+            formData.append("origin", origin);
+            formData.append("status", status);
+            formData.append("weight", weight);
+            formData.append("payment_amount", payment);
+            formData.append("created_at", createdDate);
             fetch("api/admin-update-order.php", { method: "POST", headers: csrfHeaders(), body: formData })
               .then(function (r) { return r.json(); })
               .then(function (data) {
-                btn.textContent = data.ok ? "Сохранено" : "Ошибка";
+                btn.textContent = data.ok ? "Сохранено" : (data.error === "track_number_taken" ? "Трек занят" : "Ошибка");
                 if (data.ok) loadOrders();
               })
               .finally(function () {

@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS orders (
   description VARCHAR(500),
   origin VARCHAR(50),
   status ENUM('на рассмотрении', 'выкуплен', 'на складе', 'в пути', 'доставлено') NOT NULL DEFAULT 'на рассмотрении',
+  weight DECIMAL(6,2) NULL,
+  payment_amount DECIMAL(10,2) NULL,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE

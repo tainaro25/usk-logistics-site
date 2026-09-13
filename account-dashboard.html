@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=23">
+<link rel="stylesheet" href="assets/style.css?v=24">
 </head>
 <body>
 
@@ -145,7 +145,7 @@
   </div>
 </footer>
 
-<script src="assets/i18n.js?v=22"></script>
+<script src="assets/i18n.js?v=23"></script>
 <script>
   function t(key) {
     var lang = (window.USK_I18N && window.USK_I18N.currentLang) || "ru";
@@ -224,6 +224,13 @@
     return str.slice(0, maxLen) + "...";
   }
 
+  function formatDateShort(isoString) {
+    var d = new Date(isoString.replace(" ", "T"));
+    var day = String(d.getDate()).padStart(2, "0");
+    var month = String(d.getMonth() + 1).padStart(2, "0");
+    return day + "." + month + "." + d.getFullYear();
+  }
+
   function formatShortDateTime(isoString) {
     var d = new Date(isoString.replace(" ", "T"));
     var day = String(d.getDate()).padStart(2, "0");
@@ -274,17 +281,25 @@
   function orderCardHtml(o) {
     var isCustomerOrder = o.source === "customer";
     var steps = isCustomerOrder ? CUSTOMER_STEPS : ADMIN_STEPS;
+    var hasWeight = o.weight !== null && o.weight !== undefined && o.weight !== "";
+    var hasPayment = o.payment_amount !== null && o.payment_amount !== undefined && o.payment_amount !== "";
     return '' +
       '<div class="order-card">' +
         '<div class="order-card-header">' +
-          '<h3>' + esc(t("account_order_number_prefix")) + o.seq + (o.description ? " · " + esc(o.description) : "") + '</h3>' +
+          '<div>' +
+            '<h3>' + esc(t("account_order_number_prefix")) + o.seq + (o.description ? " · " + esc(o.description) : "") + '</h3>' +
+            '<div class="order-track-line">' +
+              '<span>' + esc(t("account_track_display_label")) + ':</span> <strong>' + esc(o.track_number) + '</strong>' +
+              ' <button type="button" class="copy-btn" data-copy="' + esc(o.track_number) + '" title="' + esc(t("account_copy_title")) + '">⧉</button>' +
+            '</div>' +
+          '</div>' +
         '</div>' +
         buildTracker(o.status, steps, o.status_history) +
         '<div class="order-card-details">' +
-          '<div class="detail-item"><span class="detail-label">' + esc(t("account_track_number_label")) + '</span><span class="detail-value">' + esc(o.track_number) +
-            ' <button type="button" class="copy-btn" data-copy="' + esc(o.track_number) + '" title="' + esc(t("account_copy_title")) + '">⧉</button></span></div>' +
-          (isCustomerOrder ? "" : '<div class="detail-item"><span class="detail-label">' + esc(t("account_origin_field_label")) + '</span><span class="detail-value">' + esc(o.origin ? originLabel(o.origin) : "-") + '</span></div>') +
-          '<div class="detail-item"><span class="detail-label">' + esc(t("account_created_field_label")) + '</span><span class="detail-value">' + formatDate(o.created_at) + '</span></div>' +
+          '<div class="detail-item"><span class="detail-label">' + esc(t("account_origin_field_label")) + '</span><span class="detail-value">' + esc(o.origin ? originLabel(o.origin) : "-") + '</span></div>' +
+          '<div class="detail-item"><span class="detail-label">' + esc(t("account_created_field_label")) + '</span><span class="detail-value">' + formatDateShort(o.created_at) + '</span></div>' +
+          (hasWeight ? '<div class="detail-item"><span class="detail-label">' + esc(t("account_weight_label")) + '</span><span class="detail-value">' + esc(o.weight) + ' кг</span></div>' : "") +
+          (hasPayment ? '<div class="detail-item"><span class="detail-label">' + esc(t("account_payment_label")) + '</span><span class="detail-value">$' + esc(o.payment_amount) + '</span></div>' : "") +
         '</div>' +
       '</div>';
   }

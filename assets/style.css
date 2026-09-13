@@ -659,7 +659,8 @@ section.alt {
   text-overflow: ellipsis;
 }
 
-.calc-input-row input {
+.calc-input-row input,
+.calc-input-row select {
   width: 100%;
   padding: 14px 16px;
   border-radius: 12px;
@@ -667,11 +668,13 @@ section.alt {
   font-size: 17px;
   font-family: inherit;
   color: var(--text);
+  background: #fff;
   transition: border-color 0.15s ease;
   scroll-margin-top: 96px;
 }
 
-.calc-input-row input:focus {
+.calc-input-row input:focus,
+.calc-input-row select:focus {
   outline: none;
   border-color: var(--accent);
 }
@@ -1605,10 +1608,35 @@ table.price-table tr:last-child td {
   font-size: 17px;
 }
 
+.order-track-line {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.order-track-line strong {
+  color: var(--text);
+}
+
 .order-card-details {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px 20px;
+}
+
+.admin-edit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.admin-edit-grid .calc-input-row {
+  margin: 0;
 }
 
 .detail-item {
