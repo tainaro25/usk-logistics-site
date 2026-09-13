@@ -275,13 +275,25 @@
 
   var WAREHOUSE_DATA = {
     us: {
-      address1: "463 Carson Drive",
-      address2: "55823 USK",
-      city: "Bear",
-      state: "Delaware (DE)",
-      zip: "19701",
-      phone: "+1 3477526954",
+      fields: [
+        ["Address 1", "463 Carson Drive"],
+        ["Address 2", "55823 USK"],
+        ["City", "Bear"],
+        ["State", "Delaware (DE)"],
+        ["Zip code", "19701"],
+        ["Phone", "+1 3477526954"]
+      ],
       hours: "09:00 – 17:00 понедельник-пятница, по времени Делавэра"
+    },
+    cne: {
+      fields: [
+        ["收货人 (Получатель)", "叶迅 AE8957"],
+        ["手机号 (Телефон)", "13130149876"],
+        ["市 (Город)", "广州市"],
+        ["省 (Провинция)", "广东省"],
+        ["区 (Район)", "白云区"],
+        ["详细地址 (Подробный адрес)", "松洲街高桥路三街25号枚桂新港云仓52栋"]
+      ]
     }
   };
 
@@ -292,14 +304,7 @@
       container.innerHTML = '<p style="color: var(--muted);">' + esc(t("warehouse_coming_soon")) + "</p>";
       return;
     }
-    var rows = [
-      ["Address 1", data.address1],
-      ["Address 2", data.address2],
-      ["City", data.city],
-      ["State", data.state],
-      ["Zip code", data.zip],
-      ["Phone", data.phone]
-    ];
+    var rows = data.fields;
     var html = "";
     rows.forEach(function (row, i) {
       html +=
@@ -312,7 +317,7 @@
         "</div>";
     });
     html +=
-      '<p class="warehouse-hours">' + esc(data.hours) + "</p>" +
+      (data.hours ? '<p class="warehouse-hours">' + esc(data.hours) + "</p>" : "") +
       '<button type="button" class="btn btn-outline btn-sm" data-open-prohibited-modal>' + esc(t("warehouse_prohibited_btn")) + "</button>";
     container.innerHTML = html;
 
