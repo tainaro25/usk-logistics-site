@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=25">
+<link rel="stylesheet" href="assets/style.css?v=27">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
 </head>
 <body>
@@ -33,6 +33,7 @@
             <a href="#" class="tab-link" data-tab="create"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Создать заказ</a>
             <a href="#" class="tab-link" data-tab="requests"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Заявки</a>
             <a href="#" class="tab-link" data-tab="users"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Пользователи</a>
+            <a href="#" class="tab-link" data-tab="reports"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Отчёты по датам</a>
           </nav>
         </aside>
 
@@ -93,6 +94,18 @@
           <div class="tab-content" id="tab-users" hidden>
             <h1>Пользователи</h1>
             <div id="admin-users-list"></div>
+          </div>
+
+          <div class="tab-content" id="tab-reports" hidden>
+            <h1>Отчёты по датам</h1>
+            <p style="color: var(--muted); font-size: 14px; margin: -8px 0 20px;">Выберите период по дате создания заказа - ниже появится список и итоги.</p>
+            <div class="calc-input-row" style="max-width: 320px;">
+              <label for="reports-range">Период</label>
+              <input type="text" id="reports-range" placeholder="Выберите даты..." readonly>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" id="reports-reset-btn" style="margin-bottom: 24px;">Сбросить период</button>
+            <div id="reports-summary" class="report-summary"></div>
+            <div id="reports-table"></div>
           </div>
         </div>
       </div>
@@ -222,6 +235,85 @@
     return (w * rate).toFixed(2);
   }
 
+  function formatDateOnly(isoString) {
+    var d = new Date(isoString.replace(" ", "T"));
+    var day = String(d.getDate()).padStart(2, "0");
+    var month = String(d.getMonth() + 1).padStart(2, "0");
+    return day + "." + month + "." + d.getFullYear();
+  }
+
+  var reportsRangeStart = null;
+  var reportsRangeEnd = null;
+
+  var reportsFlatpickr = flatpickr("#reports-range", {
+    mode: "range",
+    dateFormat: "d.m.Y",
+    locale: { rangeSeparator: " - " },
+    onChange: function (selectedDates) {
+      if (selectedDates.length === 2) {
+        reportsRangeStart = selectedDates[0];
+        reportsRangeEnd = selectedDates[1];
+        renderReports();
+      }
+    }
+  });
+
+  document.getElementById("reports-reset-btn").addEventListener("click", function () {
+    reportsFlatpickr.clear();
+    reportsRangeStart = null;
+    reportsRangeEnd = null;
+    renderReports();
+  });
+
+  function renderReports() {
+    var summaryBox = document.getElementById("reports-summary");
+    var tableBox = document.getElementById("reports-table");
+
+    var filtered = allOrders;
+    if (reportsRangeStart && reportsRangeEnd) {
+      var startTime = new Date(reportsRangeStart.getFullYear(), reportsRangeStart.getMonth(), reportsRangeStart.getDate(), 0, 0, 0).getTime();
+      var endTime = new Date(reportsRangeEnd.getFullYear(), reportsRangeEnd.getMonth(), reportsRangeEnd.getDate(), 23, 59, 59).getTime();
+      filtered = allOrders.filter(function (o) {
+        var t = new Date(o.created_at.replace(" ", "T")).getTime();
+        return t >= startTime && t <= endTime;
+      });
+    }
+
+    var totalWeight = 0;
+    var totalPayment = 0;
+    filtered.forEach(function (o) {
+      if (o.weight !== null && o.weight !== undefined && o.weight !== "") totalWeight += parseFloat(o.weight);
+      if (o.payment_amount !== null && o.payment_amount !== undefined && o.payment_amount !== "") totalPayment += parseFloat(o.payment_amount);
+    });
+
+    summaryBox.innerHTML =
+      '<div class="report-stat"><span class="report-stat-label">Заказов</span><span class="report-stat-value">' + filtered.length + '</span></div>' +
+      '<div class="report-stat"><span class="report-stat-label">Общий вес</span><span class="report-stat-value">' + totalWeight.toFixed(2) + ' кг</span></div>' +
+      '<div class="report-stat"><span class="report-stat-label">Общая сумма</span><span class="report-stat-value">$' + totalPayment.toFixed(2) + '</span></div>';
+
+    if (!filtered.length) {
+      tableBox.innerHTML = '<p style="color: var(--muted); font-size: 14px;">' + (reportsRangeStart ? "Заказов за этот период нет." : "Выберите период выше, чтобы увидеть заказы.") + '</p>';
+      return;
+    }
+
+    var rows = filtered.slice().sort(function (a, b) {
+      return new Date(b.created_at.replace(" ", "T")) - new Date(a.created_at.replace(" ", "T"));
+    }).map(function (o) {
+      return '<tr>' +
+        '<td>' + formatUserId(o.user_id) + ' · ' + esc(o.user_name) + '</td>' +
+        '<td>' + esc(o.track_number) + '</td>' +
+        '<td>' + (o.weight !== null && o.weight !== undefined && o.weight !== "" ? esc(o.weight) + ' кг' : '-') + '</td>' +
+        '<td>' + (o.payment_amount !== null && o.payment_amount !== undefined && o.payment_amount !== "" ? '$' + esc(o.payment_amount) : '-') + '</td>' +
+        '<td>' + esc(o.status) + '</td>' +
+        '<td>' + formatDateOnly(o.created_at) + '</td>' +
+      '</tr>';
+    }).join("");
+
+    tableBox.innerHTML = '<div class="report-table"><table><thead><tr>' +
+      '<th>Клиент</th><th>Трек-номер</th><th>Вес</th><th>Сумма</th><th>Статус</th><th>Дата создания</th>' +
+      '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+  }
+
   var orderHistoryState = {};
   var allOrders = [];
 
@@ -232,6 +324,7 @@
         if (!data.ok) return;
         allOrders = data.orders;
         applyOrdersFilter();
+        renderReports();
       });
   }
 

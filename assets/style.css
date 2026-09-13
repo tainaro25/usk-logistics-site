@@ -1680,6 +1680,67 @@ table.price-table tr:last-child td {
   border-radius: 8px;
 }
 
+.report-summary {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.report-stat {
+  background: #f8f9fb;
+  border-radius: 12px;
+  padding: 14px 20px;
+  min-width: 140px;
+}
+
+.report-stat-label {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.report-stat-value {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.report-table {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.report-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.report-table th,
+.report-table td {
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.report-table th {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  background: #f8f9fb;
+}
+
+.report-table tr:last-child td {
+  border-bottom: none;
+}
+
 .detail-item {
   display: flex;
   flex-direction: column;
