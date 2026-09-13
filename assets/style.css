@@ -2052,19 +2052,39 @@ span.flatpickr-weekday {
 
 .flatpickr-time {
   border-top: 1px solid var(--border);
-  height: 44px;
+  height: 56px;
+  padding: 8px 40px;
+}
+
+.flatpickr-time .numInputWrapper {
+  border-radius: 10px;
+  transition: background-color 0.15s ease;
+}
+
+.flatpickr-time .numInputWrapper:hover {
+  background: var(--surface);
 }
 
 .flatpickr-time input,
 .flatpickr-time .flatpickr-time-separator,
 .flatpickr-time .flatpickr-am-pm {
   color: var(--text);
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.flatpickr-time .flatpickr-time-separator {
+  color: var(--muted);
+  align-self: center;
 }
 
 .flatpickr-time input:hover,
 .flatpickr-time .flatpickr-am-pm:hover {
-  background: var(--surface);
+  background: transparent;
+}
+
+.flatpickr-time .numInputWrapper span {
+  display: none;
 }
 
 .numInputWrapper span.arrowUp:after {
