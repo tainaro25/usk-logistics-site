@@ -1950,6 +1950,59 @@ body.modal-open {
   overflow: hidden;
 }
 
+.flatpickr-calendar.has-time-slots {
+  display: grid;
+  grid-template-columns: auto 92px;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: "months months" "days times" "confirm confirm";
+  width: auto !important;
+}
+
+.flatpickr-calendar.has-time-slots .flatpickr-months {
+  grid-area: months;
+}
+
+.flatpickr-calendar.has-time-slots .flatpickr-innerContainer {
+  grid-area: days;
+}
+
+.flatpickr-calendar.has-time-slots .flatpickr-time {
+  display: none;
+}
+
+.flatpickr-calendar.has-time-slots .flatpickr-confirm {
+  grid-area: confirm;
+}
+
+.flatpickr-time-slots {
+  grid-area: times;
+  border-left: 1px solid var(--border);
+  overflow-y: auto;
+  max-height: 260px;
+  padding: 8px 6px;
+}
+
+.flatpickr-time-slot {
+  padding: 8px 6px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  color: var(--text);
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.flatpickr-time-slot:hover {
+  background: var(--surface);
+}
+
+.flatpickr-time-slot.selected {
+  background: var(--text);
+  color: #fff;
+  font-weight: 700;
+}
+
 .flatpickr-calendar.arrowTop:before,
 .flatpickr-calendar.arrowTop:after {
   display: none;

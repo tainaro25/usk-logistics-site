@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/plugins/confirmDate/confirmDate.css">
-<link rel="stylesheet" href="assets/style.css?v=32">
+<link rel="stylesheet" href="assets/style.css?v=33">
 </head>
 <body>
 
@@ -250,6 +250,71 @@
     var day = String(d.getDate()).padStart(2, "0");
     var month = String(d.getMonth() + 1).padStart(2, "0");
     return day + "." + month + "." + d.getFullYear();
+  }
+
+  function timeSlotsPlugin(pluginConfig) {
+    var config = Object.assign({ interval: 30 }, pluginConfig);
+    function pad(n) { return String(n).padStart(2, "0"); }
+    return function (fp) {
+      var container;
+
+      function buildSlotsHtml() {
+        var html = "";
+        for (var t = 0; t < 24 * 60; t += config.interval) {
+          var h = Math.floor(t / 60), m = t % 60;
+          html += '<div class="flatpickr-time-slot" data-h="' + h + '" data-m="' + m + '">' + pad(h) + ":" + pad(m) + '</div>';
+        }
+        return html;
+      }
+
+      function currentMinutes() {
+        var d = fp.selectedDates[0];
+        return d ? d.getHours() * 60 + d.getMinutes() : null;
+      }
+
+      function updateSelectedVisual() {
+        if (!container) return;
+        var cur = currentMinutes();
+        container.querySelectorAll(".flatpickr-time-slot").forEach(function (el) {
+          var mins = (+el.dataset.h) * 60 + (+el.dataset.m);
+          el.classList.toggle("selected", cur !== null && mins === cur);
+        });
+      }
+
+      function scrollToSelected() {
+        if (!container) return;
+        var el = container.querySelector(".flatpickr-time-slot.selected");
+        if (el) el.scrollIntoView({ block: "center" });
+      }
+
+      return {
+        onReady: function () {
+          fp.calendarContainer.classList.add("has-time-slots");
+          container = fp._createElement("div", "flatpickr-time-slots");
+          container.innerHTML = buildSlotsHtml();
+          fp.calendarContainer.appendChild(container);
+
+          container.addEventListener("click", function (e) {
+            var slot = e.target.closest(".flatpickr-time-slot");
+            if (!slot) return;
+            var base = fp.selectedDates[0] ? new Date(fp.selectedDates[0].getTime()) : new Date();
+            base.setHours(+slot.dataset.h, +slot.dataset.m, 0, 0);
+            fp.setDate(base, true);
+            updateSelectedVisual();
+            scrollToSelected();
+          });
+
+          updateSelectedVisual();
+          setTimeout(scrollToSelected, 0);
+        },
+        onChange: function () {
+          updateSelectedVisual();
+        },
+        onOpen: function () {
+          scrollToSelected();
+        }
+      };
+    };
   }
 
   var RU_CALENDAR_LOCALE = {
@@ -491,7 +556,10 @@
             animate: true,
             locale: RU_CALENDAR_LOCALE,
             defaultDate: parseInternalValue(orderHistoryState[orderId][currentStatus]),
-            plugins: [new confirmDatePlugin({ confirmText: "Готово", confirmIcon: "", showAlways: true })]
+            plugins: [
+              timeSlotsPlugin({ interval: 30 }),
+              new confirmDatePlugin({ confirmText: "Готово", confirmIcon: "", showAlways: true })
+            ]
           });
         });
 
