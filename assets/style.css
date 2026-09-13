@@ -708,6 +708,10 @@ section.alt {
   color: var(--text);
 }
 
+.password-toggle-btn[hidden] {
+  display: none;
+}
+
 .stepper {
   display: flex;
   align-items: stretch;

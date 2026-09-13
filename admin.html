@@ -9,8 +9,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=27">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+<link rel="stylesheet" href="assets/style.css?v=28">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/themes/material_blue.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/plugins/confirmDate/confirmDate.css">
 </head>
 <body>
 
@@ -42,8 +43,12 @@
             <h1>Все заказы</h1>
             <div class="calc-input-row" style="max-width: 420px;">
               <label for="orders-search">Поиск</label>
-              <input type="text" id="orders-search" placeholder="Трек-номер, товар, имя, email или ID клиента...">
+              <div class="password-field">
+                <input type="text" id="orders-search" placeholder="Трек-номер, товар, имя, email или ID клиента...">
+                <button type="button" class="password-toggle-btn" id="orders-search-clear" aria-label="Очистить поиск" hidden>✕</button>
+              </div>
             </div>
+            <p id="orders-search-hint" style="color: #b45309; font-size: 13px; margin: -12px 0 16px; display: none;"></p>
             <div id="admin-orders-list"></div>
           </div>
 
@@ -114,6 +119,7 @@
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/plugins/confirmDate/confirmDate.js"></script>
 <script>
   var ORDER_STATUSES_ADMIN = ["на рассмотрении", "выкуплен", "на складе", "в пути", "доставлено"];
   var ORDER_STATUSES_CUSTOMER = ["сформировано", "на складе", "в пути", "прибыл", "доставлено"];
@@ -329,8 +335,14 @@
   }
 
   function applyOrdersFilter() {
-    var query = document.getElementById("orders-search").value.trim().toLowerCase();
+    var searchInput = document.getElementById("orders-search");
+    var clearBtn = document.getElementById("orders-search-clear");
+    var hint = document.getElementById("orders-search-hint");
+    var query = searchInput.value.trim().toLowerCase();
+    clearBtn.hidden = !query;
+
     if (!query) {
+      hint.style.display = "none";
       renderOrdersList(allOrders);
       return;
     }
@@ -345,10 +357,16 @@
       ].filter(Boolean).join(" ").toLowerCase();
       return haystack.indexOf(query) !== -1;
     });
+    hint.textContent = "Показаны только заказы по запросу \"" + searchInput.value.trim() + "\" (" + filtered.length + " из " + allOrders.length + "). Если нужного заказа нет - очистите поиск.";
+    hint.style.display = "block";
     renderOrdersList(filtered);
   }
 
   document.getElementById("orders-search").addEventListener("input", applyOrdersFilter);
+  document.getElementById("orders-search-clear").addEventListener("click", function () {
+    document.getElementById("orders-search").value = "";
+    applyOrdersFilter();
+  });
 
   function renderOrdersList(orders) {
         var box = document.getElementById("admin-orders-list");
@@ -398,7 +416,8 @@
             time_24hr: true,
             dateFormat: "d.m.Y H:i",
             allowInput: true,
-            defaultDate: parseInternalValue(orderHistoryState[orderId][currentStatus])
+            defaultDate: parseInternalValue(orderHistoryState[orderId][currentStatus]),
+            plugins: [new confirmDatePlugin({ confirmText: "OK", showAlways: true })]
           });
         });
 
