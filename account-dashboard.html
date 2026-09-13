@@ -153,6 +153,7 @@
           <div class="tab-content" id="tab-buyout" hidden>
             <h1 data-i18n="account_nav_history">История заявок</h1>
             <p style="color: var(--muted); font-size: 14px; margin: -12px 0 20px;" data-i18n="account_history_hint">Все запросы, которые вы отправляли через сайт. Как только заявка подтверждается - по ней заводится настоящий заказ в разделе «Мои заказы».</p>
+            <button type="button" class="btn btn-primary btn-sm" data-open-request-modal style="margin-bottom: 24px;" data-i18n="account_new_request_btn">+ Оставить заявку</button>
             <div id="buyouts-list"></div>
           </div>
         </div>
@@ -174,6 +175,48 @@
     <div class="copyright" data-i18n="footer_copyright">© 2026 USK Logistics. Все права защищены.</div>
   </div>
 </footer>
+
+<div class="modal-overlay" id="request-modal-overlay" hidden>
+  <div class="modal-card">
+    <button type="button" class="modal-close" id="request-modal-close" aria-label="Закрыть" data-i18n-aria="modal_close_aria">✕</button>
+    <div id="modal-intro">
+      <span class="eyebrow" data-i18n="modal_eyebrow">Выкуп товара</span>
+      <h2 style="font-size: 24px; margin: 10px 0 6px;" data-i18n="modal_h2">Оставьте заявку</h2>
+      <p style="color: var(--muted); font-size: 14px; margin: 0 0 20px;" data-i18n="modal_p">Заполните форму - менеджер свяжется и поможет с выкупом.</p>
+      <div class="calc-input-row">
+        <label for="modal-name" data-i18n="modal_name_label">Имя</label>
+        <input type="text" id="modal-name" placeholder="Как к вам обращаться" data-i18n-placeholder="modal_name_placeholder">
+      </div>
+      <div class="calc-input-row">
+        <label for="modal-link" data-i18n="modal_link_label">Ссылка на товар</label>
+        <input type="text" id="modal-link" placeholder="https://...">
+      </div>
+      <div class="calc-input-row">
+        <label for="modal-phone" data-i18n="modal_phone_label">Номер телефона</label>
+        <input type="text" id="modal-phone" value="+7 ">
+      </div>
+      <label class="modal-checkbox-row">
+        <input type="checkbox" id="modal-prohibited-check">
+        <span data-i18n="modal_checkbox_label">Я ознакомился(-ась) со <a href="#" data-open-prohibited-modal>списком товаров, запрещённых к перевозке</a>, и подтверждаю, что заказываемый товар в этот список не входит.</span>
+      </label>
+      <button type="button" class="btn btn-primary" style="width: 100%;" id="modal-submit" data-i18n="modal_submit_btn">Отправить заявку</button>
+    </div>
+    <div id="modal-success" hidden style="text-align: center;">
+      <div style="font-size: 40px; margin-bottom: 12px;">✅</div>
+      <h2 style="margin: 0 0 8px;" data-i18n="modal_success_h2">Заявка отправлена</h2>
+      <p style="margin: 0; color: var(--muted);" data-i18n="modal_success_p">Менеджер свяжется с вами в ближайшее время.</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="prohibited-modal-overlay" hidden>
+  <div class="modal-card">
+    <button type="button" class="modal-close" id="prohibited-modal-close" aria-label="Закрыть" data-i18n-aria="modal_close_aria">✕</button>
+    <h2 style="font-size: 20px; margin: 0 0 16px;" data-i18n="prohibited_modal_title">Список товаров, запрещённых к перевозке</h2>
+    <div data-i18n="prohibited_list_html"><ul class="prohibited-list"><li>Оружие, боеприпасы и их части</li><li>Лекарства и медицинские препараты (рецептурные и содержащие психоактивные вещества)</li><li>Драгоценности, драгоценные металлы и камни</li><li>Товары двойного назначения (военного и специального назначения)</li><li>Дроны и беспилотные летательные аппараты</li><li>Наличные деньги и ценные бумаги</li><li>Взрывчатые, легковоспламеняющиеся и токсичные вещества</li><li>Живые животные и растения</li><li>Контрафактная и поддельная продукция</li><li>Табачные изделия и алкоголь (на отдельных направлениях)</li></ul></div>
+    <p style="font-size: 13px; color: var(--muted); margin: 0;" data-i18n="prohibited_note">Точный перечень может отличаться в зависимости от направления и требований таможни - актуальный список уточняйте у менеджера перед оформлением заказа.</p>
+  </div>
+</div>
 
 <script src="assets/i18n.js?v=24"></script>
 <script>
@@ -607,6 +650,174 @@
         btn.textContent = "Сменить пароль";
       });
   });
+
+  function formatPhoneInput(value) {
+    var digits = value.replace(/\D/g, "");
+    if (digits.charAt(0) === "8") digits = "7" + digits.slice(1);
+    if (digits.charAt(0) !== "7") digits = "7" + digits;
+    digits = digits.slice(0, 11);
+    var rest = digits.slice(1);
+    var out = "+7";
+    if (rest.length > 0) out += " " + rest.slice(0, 3);
+    if (rest.length > 3) out += " " + rest.slice(3, 6);
+    if (rest.length > 6) out += " " + rest.slice(6, 8);
+    if (rest.length > 8) out += " " + rest.slice(8, 10);
+    return out;
+  }
+
+  function wirePhoneFormatting(input) {
+    input.addEventListener("input", function () {
+      var formatted = formatPhoneInput(input.value);
+      input.value = formatted;
+      input.setSelectionRange(formatted.length, formatted.length);
+    });
+  }
+
+  function showProhibitedWarning(row) {
+    if (!row) return;
+    var warning = row.nextElementSibling;
+    if (!warning || !warning.classList.contains("prohibited-warning")) {
+      warning = document.createElement("div");
+      warning.className = "prohibited-warning";
+      row.insertAdjacentElement("afterend", warning);
+    }
+    warning.textContent = t("modal_checkbox_error");
+    warning.classList.add("show");
+    clearTimeout(warning._hideTimer);
+    warning._hideTimer = setTimeout(function () {
+      warning.classList.remove("show");
+    }, 4000);
+  }
+
+  var requestModalOverlay = document.getElementById("request-modal-overlay");
+  if (requestModalOverlay) {
+    var requestOpenBtns = document.querySelectorAll("[data-open-request-modal]");
+    var requestCloseBtn = document.getElementById("request-modal-close");
+    var requestSubmitBtn = document.getElementById("modal-submit");
+    var modalIntro = document.getElementById("modal-intro");
+    var modalSuccess = document.getElementById("modal-success");
+    var modalNameInput = document.getElementById("modal-name");
+    var modalLinkInput = document.getElementById("modal-link");
+    var modalPhoneInput = document.getElementById("modal-phone");
+    var modalProhibitedCheck = document.getElementById("modal-prohibited-check");
+    var modalProhibitedRow = document.querySelector(".modal-checkbox-row");
+
+    wirePhoneFormatting(modalPhoneInput);
+
+    if (modalProhibitedCheck) {
+      modalProhibitedCheck.addEventListener("change", function () {
+        if (modalProhibitedCheck.checked && modalProhibitedRow) {
+          var warning = modalProhibitedRow.nextElementSibling;
+          if (warning && warning.classList.contains("prohibited-warning")) {
+            warning.classList.remove("show");
+          }
+        }
+      });
+    }
+
+    var openRequestModal = function (e) {
+      if (e) e.preventDefault();
+      if (modalNameInput && !modalNameInput.value.trim()) {
+        var profileName = document.getElementById("profile-name").value.trim();
+        if (profileName) modalNameInput.value = profileName;
+      }
+      if (modalPhoneInput && modalPhoneInput.value.trim() === "+7") {
+        var profilePhone = document.getElementById("profile-phone").value.trim();
+        if (profilePhone) modalPhoneInput.value = profilePhone;
+      }
+      requestModalOverlay.hidden = false;
+      document.body.classList.add("modal-open");
+    };
+
+    var closeRequestModal = function () {
+      requestModalOverlay.hidden = true;
+      document.body.classList.remove("modal-open");
+    };
+
+    requestOpenBtns.forEach(function (btn) { btn.addEventListener("click", openRequestModal); });
+    if (requestCloseBtn) requestCloseBtn.addEventListener("click", closeRequestModal);
+
+    requestModalOverlay.addEventListener("click", function (e) {
+      if (e.target === requestModalOverlay) closeRequestModal();
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !requestModalOverlay.hidden) closeRequestModal();
+    });
+
+    if (requestSubmitBtn) {
+      requestSubmitBtn.addEventListener("click", function () {
+        var name = modalNameInput.value.trim();
+        var link = modalLinkInput.value.trim();
+        var phone = modalPhoneInput.value.trim();
+
+        if (!name || phone.replace(/\D/g, "").length < 10) {
+          alert(t("modal_err_fill_name_phone"));
+          return;
+        }
+
+        if (modalProhibitedCheck && !modalProhibitedCheck.checked) {
+          showProhibitedWarning(modalProhibitedRow);
+          return;
+        }
+
+        requestSubmitBtn.disabled = true;
+        requestSubmitBtn.textContent = t("modal_sending_btn");
+
+        var formData = new FormData();
+        formData.append("name", name);
+        formData.append("link", link);
+        formData.append("phone", phone);
+
+        fetch("send-request.php", { method: "POST", body: formData })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            if (data.ok) {
+              modalIntro.hidden = true;
+              modalSuccess.hidden = false;
+              fetch("api/me.php").then(function (r) { return r.json(); }).then(function (d) {
+                if (d.ok) renderBuyouts(d.buyouts);
+              });
+            } else {
+              alert(t("modal_err_submit_fail"));
+            }
+          })
+          .catch(function () {
+            alert(t("modal_err_submit_fail"));
+          })
+          .finally(function () {
+            requestSubmitBtn.disabled = false;
+            requestSubmitBtn.textContent = t("modal_submit_btn");
+          });
+      });
+    }
+  }
+
+  var prohibitedModalOverlay = document.getElementById("prohibited-modal-overlay");
+  if (prohibitedModalOverlay) {
+    var prohibitedOpenLinks = document.querySelectorAll("[data-open-prohibited-modal]");
+    var prohibitedCloseBtn = document.getElementById("prohibited-modal-close");
+
+    var openProhibitedModal = function (e) {
+      if (e) e.preventDefault();
+      prohibitedModalOverlay.hidden = false;
+    };
+
+    var closeProhibitedModal = function () {
+      prohibitedModalOverlay.hidden = true;
+    };
+
+    prohibitedOpenLinks.forEach(function (a) { a.addEventListener("click", openProhibitedModal); });
+    if (prohibitedCloseBtn) prohibitedCloseBtn.addEventListener("click", closeProhibitedModal);
+
+    prohibitedModalOverlay.addEventListener("click", function (e) {
+      if (e.target === prohibitedModalOverlay) closeProhibitedModal();
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !prohibitedModalOverlay.hidden) closeProhibitedModal();
+    });
+  }
 </script>
 </body>
 </html>
