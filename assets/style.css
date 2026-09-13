@@ -1,5 +1,7 @@
 :root {
   --bg: #ffffff;
+  --bg-rgb: 255, 255, 255;
+  --card-bg: #ffffff;
   --text: #111111;
   --muted: #6b6b6b;
   --border: #e8e8e8;
@@ -10,6 +12,70 @@
   --surface: #f7f7f8;
   --radius: 16px;
   --max-width: 1120px;
+}
+
+:root[data-theme="dark"] {
+  --bg: #101114;
+  --bg-rgb: 16, 17, 20;
+  --card-bg: #1a1b1f;
+  --text: #f2f2f3;
+  --muted: #9b9ca3;
+  --border: #2c2d33;
+  --accent: #3b82f6;
+  --accent-dark: #60a5fa;
+  --surface: #1f2024;
+}
+
+:root[data-theme="dark"] img:not([src$=".svg"]) {
+  opacity: 0.92;
+}
+
+:root[data-theme="dark"] .status-transit {
+  background: rgba(59, 130, 246, 0.18);
+  color: #93c5fd;
+}
+
+:root[data-theme="dark"] .status-warehouse {
+  background: rgba(217, 119, 6, 0.18);
+  color: #fbbf24;
+}
+
+:root[data-theme="dark"] .status-delivered,
+:root[data-theme="dark"] .status-approved {
+  background: rgba(34, 197, 94, 0.18);
+  color: #86efac;
+}
+
+:root[data-theme="dark"] .status-arrived {
+  background: rgba(234, 88, 12, 0.18);
+  color: #fdba74;
+}
+
+:root[data-theme="dark"] .status-pending {
+  background: rgba(148, 163, 184, 0.18);
+  color: #cbd5e1;
+}
+
+:root[data-theme="dark"] .status-rejected {
+  background: rgba(239, 68, 68, 0.18);
+  color: #fca5a5;
+}
+
+:root[data-theme="dark"] .status-white {
+  color: #d6d3d1;
+}
+
+:root[data-theme="dark"] .auth-badge {
+  background: rgba(217, 119, 6, 0.18);
+  color: #fbbf24;
+  border-color: rgba(217, 119, 6, 0.35);
+}
+
+:root[data-theme="dark"] .volume-alert,
+:root[data-theme="dark"] .prohibited-warning {
+  background: rgba(239, 68, 68, 0.14);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
 }
 
 * {
@@ -50,7 +116,7 @@ img {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(var(--bg-rgb), 0.85);
   backdrop-filter: saturate(180%) blur(12px);
   border-bottom: 1px solid var(--border);
 }
@@ -142,13 +208,13 @@ img {
   display: flex;
   align-items: center;
   gap: 2px;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(var(--bg-rgb), 0.5);
   backdrop-filter: saturate(180%) blur(10px);
   -webkit-backdrop-filter: saturate(180%) blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(var(--bg-rgb), 0.7);
   border-radius: 999px;
   padding: 3px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(var(--bg-rgb), 0.6);
 }
 
 .lang-btn {
@@ -178,6 +244,43 @@ img {
   text-decoration: none;
   display: inline-flex;
   align-items: center;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  margin-left: 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card-bg);
+  color: var(--muted);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.theme-toggle:hover {
+  color: var(--text);
+  background: var(--surface);
+}
+
+.theme-toggle .theme-icon-moon {
+  display: block;
+}
+
+.theme-toggle .theme-icon-sun {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle .theme-icon-moon {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle .theme-icon-sun {
+  display: block;
 }
 
 .btn {
@@ -426,11 +529,11 @@ section {
 
 section.alt {
   position: relative;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(var(--bg-rgb), 0.4);
   backdrop-filter: blur(8px) saturate(140%);
   -webkit-backdrop-filter: blur(8px) saturate(140%);
-  border-top: 1px solid rgba(255, 255, 255, 0.6);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+  border-top: 1px solid rgba(var(--bg-rgb), 0.6);
+  border-bottom: 1px solid rgba(var(--bg-rgb), 0.6);
 }
 
 .section-head {
@@ -464,7 +567,7 @@ section.alt {
 }
 
 .step-card {
-  background: #fff;
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 32px 28px;
@@ -526,7 +629,7 @@ section.alt {
 }
 
 .price-card {
-  background: #fff;
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 40px 32px;
@@ -597,7 +700,7 @@ section.alt {
 .calc-card {
   max-width: 520px;
   margin: 0 auto;
-  background: #fff;
+  background: var(--card-bg);
   border: 2px solid var(--border);
   border-radius: var(--radius);
   padding: 36px 32px;
@@ -668,7 +771,7 @@ section.alt {
   font-size: 17px;
   font-family: inherit;
   color: var(--text);
-  background: #fff;
+  background: var(--card-bg);
   transition: border-color 0.15s ease;
   scroll-margin-top: 96px;
 }
@@ -753,7 +856,7 @@ section.alt {
 }
 
 .step-btn:hover {
-  background: #fff;
+  background: var(--card-bg);
   border-color: var(--accent);
   color: var(--accent);
 }
@@ -844,7 +947,7 @@ section.alt {
 table.price-table {
   width: 100%;
   border-collapse: collapse;
-  background: #fff;
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
@@ -1009,7 +1112,7 @@ table.price-table tr:last-child td {
 }
 
 .contact-card {
-  background: #fff;
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 40px 28px;
@@ -1182,7 +1285,7 @@ table.price-table tr:last-child td {
     top: 72px;
     left: 0;
     right: 0;
-    background: #fff;
+    background: var(--card-bg);
     border-bottom: 1px solid var(--border);
     padding: 20px 24px 28px;
     gap: 18px;
@@ -1223,7 +1326,7 @@ table.price-table tr:last-child td {
 
 .btn-google {
   width: 100%;
-  background: #fff;
+  background: var(--card-bg);
   border: 1px solid var(--border);
   color: var(--text);
 }
@@ -1262,7 +1365,7 @@ table.price-table tr:last-child td {
   left: 0;
   right: 0;
   z-index: 20;
-  background: #fff;
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 12px;
   margin-top: 4px;
@@ -1299,7 +1402,7 @@ table.price-table tr:last-child td {
 }
 
 .account-sidebar {
-  background: #fff;
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 16px;
@@ -1335,7 +1438,7 @@ table.price-table tr:last-child td {
 }
 
 .account-panel {
-  background: #fff;
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 32px;
@@ -1406,7 +1509,7 @@ table.price-table tr:last-child td {
 }
 
 .status-white {
-  background: #fff;
+  background: var(--card-bg);
   color: #44403c;
   border: 1px solid var(--border);
 }
@@ -1847,7 +1950,7 @@ table.price-table tr:last-child td {
 
 .modal-card {
   position: relative;
-  background: #fff;
+  background: var(--card-bg);
   border-radius: var(--radius);
   padding: 36px 32px;
   max-width: 440px;
@@ -1865,7 +1968,7 @@ table.price-table tr:last-child td {
   height: 32px;
   border-radius: 50%;
   border: 1px solid var(--border);
-  background: #fff;
+  background: var(--card-bg);
   cursor: pointer;
   font-size: 15px;
   line-height: 1;
@@ -1942,7 +2045,7 @@ body.modal-open {
 }
 
 .flatpickr-calendar {
-  background: #fff;
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);

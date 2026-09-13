@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script>try{if(localStorage.getItem("usk_theme")==="dark")document.documentElement.setAttribute("data-theme","dark");}catch(e){}</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Заявка на выкуп — USK Logistics (макет)</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css?v=35">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a href="index.html" class="logo">USK <span>Logistics</span></a>
+    <nav class="nav">
+      <a href="index.html">Главная</a>
+      <a href="about.html">О нас</a>
+      <a href="tariffs.html">Тарифы</a>
+      <a href="offer.html">Оферта</a>
+    </nav>
+    <div class="lang-switch" role="group" aria-label="Тіл / Язык">
+      <button type="button" class="lang-btn" data-lang="kk">ҚАЗ</button>
+      <button type="button" class="lang-btn active" data-lang="ru">РУС</button>
+      <a href="en/index.html" class="lang-btn lang-link">ENG</a>
+    </div>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Тёмная тема" title="Тёмная тема">
+      <svg class="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+      <svg class="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+    <div class="header-cta">
+      <a href="account-login.html" class="btn btn-outline btn-sm">Личный кабинет</a>
+      <a href="contact.html" class="btn btn-outline btn-sm">Связаться</a>
+    </div>
+    <button class="menu-toggle" aria-label="Меню">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="hero" style="padding: 56px 0 40px;">
+    <div class="wrap" style="max-width: 520px;">
+      <span class="auth-badge">⚠ Макет — при отправке заявка нигде не сохраняется</span>
+
+      <div class="calc-card" style="margin: 0;" id="form-card">
+        <span class="eyebrow">Выкуп товара</span>
+        <h1 style="font-size: 26px; margin: 8px 0 8px;">Оставьте заявку на выкуп</h1>
+        <p style="color: var(--muted); font-size: 14px; margin: 0 0 24px;">Пришлите ссылку на товар и контакты — менеджер свяжется и рассчитает стоимость.</p>
+        <div class="calc-input-row">
+          <label for="req-name">Имя</label>
+          <input type="text" id="req-name" placeholder="Как к вам обращаться">
+        </div>
+
+        <div class="calc-input-row">
+          <label for="req-link">Ссылка на товар</label>
+          <input type="text" id="req-link" placeholder="https://...">
+        </div>
+        <div class="calc-input-row">
+          <label for="req-phone">Номер телефона</label>
+          <input type="text" id="req-phone" placeholder="+7 ___ ___ __ __">
+        </div>
+        <div class="calc-input-row">
+          <label for="req-email">Email</label>
+          <input type="text" id="req-email" placeholder="you@example.com">
+        </div>
+        <div class="calc-input-row">
+          <label for="req-track">Трек-номер (если уже был выдан)</label>
+          <input type="text" id="req-track" placeholder="Например, USK-10423">
+        </div>
+
+        <button type="button" class="btn btn-primary" style="width: 100%;" id="req-submit">Отправить заявку</button>
+        <p style="color: var(--muted); font-size: 13px; margin: 14px 0 0; text-align: center;">Заявка придёт нам в Telegram и появится у вас в разделе «Заявки на выкуп»</p>
+      </div>
+
+      <div class="calc-card" style="margin: 0; text-align: center;" id="success-card" hidden>
+        <div style="font-size: 40px; margin-bottom: 12px;">✅</div>
+        <h1 style="font-size: 22px; margin: 0 0 8px;">Заявка отправлена</h1>
+        <p style="color: var(--muted); font-size: 14px; margin: 0 0 20px;">Менеджер свяжется с вами в ближайшее время. Статус можно будет отслеживать в личном кабинете.</p>
+        <a href="account-dashboard.html" class="btn btn-outline" style="width: 100%;">Перейти в личный кабинет</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="logo">USK <span>Logistics</span></div>
+    <div class="footer-links">
+      <a href="about.html">О нас</a>
+      <a href="tariffs.html">Тарифы</a>
+      <a href="offer.html">Оферта</a>
+      <a href="contact.html">Связаться</a>
+    </div>
+    <div class="copyright">© 2026 USK Logistics. Все права защищены.</div>
+  </div>
+</footer>
+
+<script>
+  var themeToggle = document.getElementById("theme-toggle");
+  if (themeToggle) {
+    themeToggle.addEventListener("click", function () {
+      var isDark = document.documentElement.getAttribute("data-theme") === "dark";
+      var next = isDark ? "light" : "dark";
+      if (next === "dark") {
+        document.documentElement.setAttribute("data-theme", "dark");
+      } else {
+        document.documentElement.removeAttribute("data-theme");
+      }
+      try {
+        localStorage.setItem("usk_theme", next);
+      } catch (e) {}
+    });
+  }
+
+  document.getElementById("req-submit").addEventListener("click", function () {
+    var submitBtn = document.getElementById("req-submit");
+    var name = document.getElementById("req-name").value.trim();
+    var link = document.getElementById("req-link").value.trim();
+    var phone = document.getElementById("req-phone").value.trim();
+    var email = document.getElementById("req-email").value.trim();
+    var track = document.getElementById("req-track").value.trim();
+
+    if (!name || !phone) {
+      alert("Заполните, пожалуйста, имя и телефон.");
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Отправка...";
+
+    var formData = new FormData();
+    formData.append("name", name);
+    formData.append("link", link);
+    formData.append("phone", phone);
+    formData.append("email", email);
+    formData.append("track", track);
+
+    fetch("send-request.php", { method: "POST", body: formData })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.ok) {
+          document.getElementById("form-card").hidden = true;
+          document.getElementById("success-card").hidden = false;
+        } else {
+          alert("Не получилось отправить заявку. Попробуйте написать нам в WhatsApp или Telegram.");
+        }
+      })
+      .catch(function () {
+        alert("Не получилось отправить заявку. Попробуйте написать нам в WhatsApp или Telegram.");
+      })
+      .finally(function () {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Отправить заявку";
+      });
+  });
+
+  document.querySelector(".menu-toggle").addEventListener("click", function () {
+    document.body.classList.toggle("nav-open");
+  });
+</script>
+</body>
+</html>
