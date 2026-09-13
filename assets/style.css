@@ -32,6 +32,10 @@
   opacity: 0.92;
 }
 
+:root[data-theme="dark"] .prose p {
+  color: #d4d4d8;
+}
+
 :root[data-theme="dark"] .status-transit {
   background: rgba(59, 130, 246, 0.18);
   color: #93c5fd;
