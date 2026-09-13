@@ -489,10 +489,10 @@ img {
 
 .hero-bg .hero-aurora span:nth-child(2) {
   background: var(--accent-2);
-  bottom: -100px;
-  left: 42%;
-  width: 340px;
-  height: 340px;
+  top: 30px;
+  left: 40%;
+  width: 300px;
+  height: 300px;
   animation: heroAurora2 22s ease-in-out infinite;
 }
 
