@@ -258,7 +258,7 @@ img {
   width: 34px;
   height: 34px;
   flex-shrink: 0;
-  margin-left: 8px;
+  margin: 0 12px;
   border: 1px solid var(--border);
   border-radius: 999px;
   background: var(--card-bg);
