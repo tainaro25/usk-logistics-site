@@ -893,6 +893,10 @@ section.alt {
   white-space: nowrap;
 }
 
+.calc-toggle-badged .calc-option {
+  justify-content: flex-start;
+}
+
 .calc-option .flag-badge.sm {
   margin: 0;
   pointer-events: none;
