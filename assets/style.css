@@ -888,6 +888,11 @@ section.alt {
   transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
+.calc-option-compact span:last-child {
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
 .calc-option .flag-badge.sm {
   margin: 0;
   pointer-events: none;
