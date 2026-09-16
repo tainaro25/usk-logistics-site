@@ -32,7 +32,9 @@
   opacity: 0.92;
 }
 
-:root[data-theme="dark"] .prose p {
+:root[data-theme="dark"] .prose p,
+:root[data-theme="dark"] .prose ul,
+:root[data-theme="dark"] .prose ol {
   color: #d4d4d8;
 }
 
@@ -1357,6 +1359,27 @@ table.price-table tr:last-child td {
   margin: 0 0 18px;
 }
 
+.prose ul,
+.prose ol {
+  color: #333;
+  font-size: 16px;
+  margin: 0 0 18px;
+  padding-left: 22px;
+}
+
+.prose li {
+  margin-bottom: 10px;
+  line-height: 1.55;
+}
+
+.prose li:last-child {
+  margin-bottom: 0;
+}
+
+.prose strong {
+  color: var(--text);
+}
+
 .prose .updated {
   color: var(--muted);
   font-size: 14px;
@@ -1410,6 +1433,10 @@ table.price-table tr:last-child td {
 
 .news-cover.holiday {
   background: linear-gradient(135deg, #f97316, var(--accent-dark));
+}
+
+.news-cover.burgundy {
+  background: linear-gradient(135deg, #8a3546, #3d1420);
 }
 
 .news-cover.post {
