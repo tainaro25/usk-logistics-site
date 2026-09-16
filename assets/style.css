@@ -1416,11 +1416,17 @@ table.price-table tr:last-child td {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
   background: linear-gradient(135deg, var(--accent), var(--accent-dark));
   flex-shrink: 0;
 }
 
 .news-cover svg {
+  width: 110px;
+  height: 110px;
+}
+
+.news-cover.icon-only svg {
   width: 56px;
   height: 56px;
   stroke: #fff;
@@ -1446,6 +1452,11 @@ table.price-table tr:last-child td {
 }
 
 .news-cover.post svg {
+  width: 160px;
+  height: 160px;
+}
+
+.news-cover.post.icon-only svg {
   width: 80px;
   height: 80px;
 }
