@@ -674,15 +674,6 @@ img {
     padding-bottom: 10px;
     row-gap: 8px;
   }
-
-  .lang-switch {
-    order: 3;
-    margin-left: auto;
-  }
-
-  .header-cta {
-    order: 4;
-  }
 }
 
 /* Sections */
@@ -1709,6 +1700,10 @@ table.price-table tr:last-child td {
 }
 
 /* Responsive */
+.nav-mobile-controls {
+  display: none;
+}
+
 @media (max-width: 860px) {
   .nav {
     display: none;
@@ -1724,6 +1719,21 @@ table.price-table tr:last-child td {
 
   .nav-mobile-only {
     display: inline;
+  }
+
+  .site-header .wrap > .lang-switch,
+  .site-header .wrap > .theme-toggle {
+    display: none;
+  }
+
+  .nav-mobile-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 4px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
   }
 
   .steps,

@@ -630,8 +630,7 @@
       });
     });
 
-    var themeToggle = document.getElementById("theme-toggle");
-    if (themeToggle) {
+    document.querySelectorAll(".theme-toggle").forEach(function (themeToggle) {
       themeToggle.addEventListener("click", function () {
         var isDark = document.documentElement.getAttribute("data-theme") === "dark";
         var next = isDark ? "light" : "dark";
@@ -644,6 +643,6 @@
           localStorage.setItem("usk_theme", next);
         } catch (e) {}
       });
-    }
+    });
   });
 })();
