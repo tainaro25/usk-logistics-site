@@ -25,8 +25,8 @@
 <!-- /Yandex.Metrika counter -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Магазины США - USK Logistics</title>
-<meta name="description" content="Официальные сайты брендов США: Nike, Adidas, Puma, Apple. Выберите товар и отправьте ссылку - USK Logistics выкупит и доставит его в Казахстан.">
+<title>Магазины мира - USK Logistics</title>
+<meta name="description" content="Каталог зарубежных магазинов: США, Европа, Китай, Корея. Выберите товар на официальном сайте и отправьте ссылку - USK Logistics выкупит и доставит его в Казахстан.">
 <link rel="canonical" href="https://usklogistics.kz/shops.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="USK Logistics">
@@ -100,45 +100,24 @@
   <section style="padding: 64px 0 24px;">
     <div class="wrap">
       <span class="eyebrow">Магазины</span>
-      <h1 style="font-size: clamp(28px, 4vw, 44px); margin: 10px 0 12px;">Магазины США</h1>
-      <p class="lead" style="margin: 0 0 8px; max-width: 640px;">Выберите бренд, найдите товар на его официальном сайте и пришлите нам ссылку - мы выкупим и доставим его в Казахстан.</p>
+      <h1 style="font-size: clamp(28px, 4vw, 44px); margin: 10px 0 12px;">Магазины мира</h1>
+      <p class="lead" style="margin: 0 0 8px; max-width: 640px;">Выберите магазин, найдите товар на его официальном сайте и пришлите нам ссылку - мы выкупим и доставим его в Казахстан.</p>
     </div>
   </section>
 
   <section style="padding-top: 8px;">
     <div class="wrap">
       <div class="shops-controls">
-        <input type="search" id="shops-search" class="shops-search" placeholder="Поиск бренда, например Nike" autocomplete="off">
-        <div class="shops-cats" id="shops-cats">
-          <button type="button" class="shops-cat active" data-cat="all">Все</button>
-          <button type="button" class="shops-cat" data-cat="clothes">Одежда и обувь</button>
-          <button type="button" class="shops-cat" data-cat="electronics">Электроника</button>
+        <div class="shops-row">
+          <input type="search" id="shops-search" class="shops-search" placeholder="Поиск магазина, например Nike" autocomplete="off">
+          <select id="shops-cat" class="shops-select" aria-label="Категория"><option value="">Все категории</option></select>
         </div>
+        <div class="shops-cats" id="shops-countries" role="group" aria-label="Страна"></div>
+        <div class="shops-count" id="shops-count" aria-live="polite"></div>
       </div>
 
-      <div class="shops-grid" id="shops-grid">
-        <a class="shop-card" data-cat="clothes" data-name="nike найк" href="https://www.nike.com/" target="_blank" rel="noopener">
-          <span class="shop-logo" style="background:#111;">N</span>
-          <span class="shop-name">Nike</span>
-          <span class="shop-meta">Одежда и обувь · nike.com</span>
-        </a>
-        <a class="shop-card" data-cat="clothes" data-name="adidas адидас" href="https://www.adidas.com/us" target="_blank" rel="noopener">
-          <span class="shop-logo" style="background:#1d1d1f;">A</span>
-          <span class="shop-name">Adidas</span>
-          <span class="shop-meta">Одежда и обувь · adidas.com</span>
-        </a>
-        <a class="shop-card" data-cat="clothes" data-name="puma пума" href="https://us.puma.com/" target="_blank" rel="noopener">
-          <span class="shop-logo" style="background:#c8102e;">P</span>
-          <span class="shop-name">Puma</span>
-          <span class="shop-meta">Одежда и обувь · us.puma.com</span>
-        </a>
-        <a class="shop-card" data-cat="electronics" data-name="apple эпл айфон iphone" href="https://www.apple.com/" target="_blank" rel="noopener">
-          <span class="shop-logo" style="background:#6e6e73;">A</span>
-          <span class="shop-name">Apple</span>
-          <span class="shop-meta">Электроника · apple.com</span>
-        </a>
-      </div>
-      <p class="shops-empty" id="shops-empty" hidden>Такого бренда пока нет в списке. Пришлите ссылку на любой магазин - выкупим и оттуда.</p>
+      <div class="shops-grid" id="shops-grid"></div>
+      <p class="shops-empty" id="shops-empty" hidden>Такого магазина пока нет в списке. Пришлите ссылку на любой магазин - выкупим и оттуда.</p>
     </div>
   </section>
 </main>
@@ -212,69 +191,99 @@
 <script src="assets/i18n.js?v=27"></script>
 <style>
   .shops-controls { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
-  .shops-search { width: 100%; max-width: 480px; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); font: inherit; font-size: 16px; }
-  .shops-search:focus { outline: none; border-color: var(--accent); }
+  .shops-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .shops-search { flex: 1 1 280px; max-width: 480px; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); font: inherit; font-size: 16px; }
+  .shops-select { flex: 0 1 240px; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); font: inherit; font-size: 16px; cursor: pointer; }
+  .shops-search:focus, .shops-select:focus { outline: none; border-color: var(--accent); }
   .shops-cats { display: flex; flex-wrap: wrap; gap: 8px; }
   .shops-cat { padding: 8px 16px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
   .shops-cat.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .shops-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
-  .shop-card { display: flex; flex-direction: column; gap: 6px; padding: 20px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card-bg); color: var(--text); text-decoration: none; transition: border-color .15s, transform .15s; }
+  .shops-count { font-size: 13px; color: var(--muted); }
+  .shops-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+  .shop-card { display: flex; flex-direction: column; gap: 10px; padding: 20px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card-bg); color: var(--text); text-decoration: none; transition: border-color .15s, transform .15s; }
   .shop-card:hover { border-color: var(--accent); transform: translateY(-2px); }
-  .shop-card[hidden] { display: none; }
-  .shop-logo { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 22px; margin-bottom: 6px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.18); }
-  .shop-name { font-weight: 700; font-size: 17px; }
-  .shop-meta { font-size: 13px; color: var(--muted); }
+  .shop-top { display: flex; align-items: center; gap: 12px; }
+  .shop-logo { width: 48px; height: 48px; flex-shrink: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid var(--border); overflow: hidden; color: #fff; font-weight: 800; font-size: 20px; }
+  .shop-logo img { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
+  .shop-name { font-weight: 700; font-size: 16px; line-height: 1.25; overflow-wrap: anywhere; }
+  .shop-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .shop-tag { font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: var(--surface); color: var(--muted); }
+  .shop-tag.country { background: rgba(37, 99, 235, 0.1); color: var(--accent); }
   .shops-empty { color: var(--muted); margin-top: 16px; }
   .shop-return-note { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; font-size: 14px; margin: 0 0 16px; }
-  @media (max-width: 480px) { .shops-grid { grid-template-columns: 1fr 1fr; gap: 10px; } .shop-card { padding: 14px; } }
+  @media (max-width: 480px) { .shops-grid { grid-template-columns: 1fr; gap: 10px; } .shop-card { padding: 16px; } .shops-select { flex: 1 1 100%; } }
 </style>
 <script>
 (function () {
-  var search = document.getElementById("shops-search");
-  var cats = document.getElementById("shops-cats");
-  var cards = document.querySelectorAll(".shop-card");
-  var empty = document.getElementById("shops-empty");
-  var activeCat = "all";
+  var COUNTRIES = [["usa", "США"], ["eu", "Европа"], ["de", "Германия"], ["cn", "Китай"], ["kr", "Корея"], ["jp", "Япония"]];
+  var COUNTRY_NAME = {}; COUNTRIES.forEach(function (c) { COUNTRY_NAME[c[0]] = c[1]; });
+  var COLORS = ["#2563eb", "#0891b2", "#7c3aed", "#db2777", "#ea580c", "#059669", "#475569", "#b45309"];
 
-  function filter() {
-    var q = search.value.trim().toLowerCase();
-    var shown = 0;
-    cards.forEach(function (c) {
-      var ok = (activeCat === "all" || c.dataset.cat === activeCat) &&
-        (!q || c.dataset.name.indexOf(q) !== -1 || c.querySelector(".shop-name").textContent.toLowerCase().indexOf(q) !== -1);
-      c.hidden = !ok;
-      if (ok) shown++;
+  var grid = document.getElementById("shops-grid");
+  var search = document.getElementById("shops-search");
+  var catSel = document.getElementById("shops-cat");
+  var cBox = document.getElementById("shops-countries");
+  var count = document.getElementById("shops-count");
+  var empty = document.getElementById("shops-empty");
+  var shops = [], country = "all", pendingBrand = null;
+
+  function esc(s) { var d = document.createElement("div"); d.textContent = s; return d.innerHTML.replace(/"/g, "&quot;"); }
+  function colorFor(n) { var h = 0; for (var i = 0; i < n.length; i++) h = (h * 31 + n.charCodeAt(i)) >>> 0; return COLORS[h % COLORS.length]; }
+  function plural(n) { var a = n % 10, b = n % 100; return (a === 1 && b !== 11) ? "магазин" : (a >= 2 && a <= 4 && (b < 12 || b > 14)) ? "магазина" : "магазинов"; }
+
+  function render() {
+    var q = search.value.trim().toLowerCase(), cat = catSel.value, html = "", n = 0;
+    shops.forEach(function (s) {
+      if (country !== "all" && s.c !== country) return;
+      if (cat && s.t.indexOf(cat) === -1) return;
+      if (q && s.n.toLowerCase().indexOf(q) === -1) return;
+      n++;
+      var logo = s.l
+        ? '<img src="assets/shops/' + s.l + '" alt="" loading="lazy" width="48" height="48">'
+        : esc(s.n.charAt(0).toUpperCase());
+      var style = s.l ? "" : ' style="background:' + colorFor(s.n) + ';"';
+      var tags = '<span class="shop-tag country">' + esc(COUNTRY_NAME[s.c] || s.c) + "</span>";
+      s.t.slice(0, 3).forEach(function (t) { tags += '<span class="shop-tag">' + esc(t) + "</span>"; });
+      html += '<a class="shop-card" href="' + esc(s.u) + '" target="_blank" rel="noopener" data-name="' + esc(s.n) + '">' +
+        '<div class="shop-top"><span class="shop-logo"' + style + ">" + logo + '</span><span class="shop-name">' + esc(s.n) + "</span></div>" +
+        '<div class="shop-tags">' + tags + "</div></a>";
     });
-    empty.hidden = shown > 0;
+    grid.innerHTML = html;
+    count.textContent = "Найдено: " + n + " " + plural(n);
+    empty.hidden = n > 0;
   }
 
-  search.addEventListener("input", filter);
-  cats.addEventListener("click", function (e) {
-    var b = e.target.closest(".shops-cat");
-    if (!b) return;
-    cats.querySelectorAll(".shops-cat").forEach(function (x) { x.classList.remove("active"); });
-    b.classList.add("active");
-    activeCat = b.dataset.cat;
-    filter();
+  function buildFilters() {
+    var cats = {};
+    shops.forEach(function (s) { s.t.forEach(function (t) { cats[t] = (cats[t] || 0) + 1; }); });
+    Object.keys(cats).sort(function (a, b) { return cats[b] - cats[a]; }).forEach(function (t) {
+      var o = document.createElement("option"); o.value = t; o.textContent = t + " (" + cats[t] + ")"; catSel.appendChild(o);
+    });
+    var present = {}; shops.forEach(function (s) { present[s.c] = 1; });
+    var b = '<button type="button" class="shops-cat active" data-c="all">Все страны</button>';
+    COUNTRIES.forEach(function (c) { if (present[c[0]]) b += '<button type="button" class="shops-cat" data-c="' + c[0] + '">' + c[1] + "</button>"; });
+    cBox.innerHTML = b;
+  }
+
+  search.addEventListener("input", render);
+  catSel.addEventListener("change", render);
+  cBox.addEventListener("click", function (e) {
+    var b = e.target.closest(".shops-cat"); if (!b) return;
+    cBox.querySelectorAll(".shops-cat").forEach(function (x) { x.classList.remove("active"); });
+    b.classList.add("active"); country = b.dataset.c; render();
   });
 
-  var pendingBrand = null;
-  cards.forEach(function (c) {
-    c.addEventListener("click", function () {
-      pendingBrand = c.querySelector(".shop-name").textContent;
-    });
+  grid.addEventListener("click", function (e) {
+    var c = e.target.closest(".shop-card"); if (c) pendingBrand = c.dataset.name;
   });
 
   function offerRequest() {
     if (!pendingBrand || document.visibilityState !== "visible") return;
-    var brand = pendingBrand;
-    pendingBrand = null;
+    var brand = pendingBrand; pendingBrand = null;
     var intro = document.getElementById("modal-intro");
     var note = document.getElementById("shop-return-note");
     if (!note) {
-      note = document.createElement("p");
-      note.id = "shop-return-note";
-      note.className = "shop-return-note";
+      note = document.createElement("p"); note.id = "shop-return-note"; note.className = "shop-return-note";
       intro.insertBefore(note, intro.querySelector(".calc-input-row"));
     }
     note.textContent = "Нашли товар на " + brand + "? Вставьте ссылку на него ниже - мы выкупим и доставим.";
@@ -283,9 +292,12 @@
     var opener = document.querySelector("[data-open-request-modal]");
     if (opener) opener.click();
   }
-
   document.addEventListener("visibilitychange", offerRequest);
   window.addEventListener("focus", offerRequest);
+
+  fetch("assets/shops.json?v=1").then(function (r) { return r.json(); }).then(function (d) {
+    shops = d; buildFilters(); render();
+  }).catch(function () { count.textContent = "Не удалось загрузить список магазинов. Обновите страницу."; });
 })();
 </script>
 <script src="assets/script.js?v=22"></script>
