@@ -105,6 +105,43 @@ h1, h2 { letter-spacing: -0.03em; text-wrap: balance; }
   box-shadow: 0 14px 40px -20px rgba(0, 0, 0, 0.7);
 }
 
+/* the pill must hold logo + 7 links + lang/theme + 3 buttons without anything sticking out */
+.site-header .wrap { max-width: min(1400px, 100%); gap: 14px; }
+.nav { gap: 22px; }
+.header-cta { gap: 8px; }
+
+@media (min-width: 1201px) and (max-width: 1360px) {
+  .site-header .wrap { padding: 0 8px 0 18px; gap: 8px; }
+  .site-header .logo { font-size: 16px; }
+  .nav { gap: 14px; }
+  .nav a { font-size: 14px; }
+  .lang-btn { padding: 6px 8px; font-size: 12px; }
+  .header-cta .btn-sm { padding: 9px 13px; font-size: 13px; white-space: nowrap; }
+  .header-cta .account-icon-btn { padding: 9px 10px; }
+}
+
+/* below 1200px the full bar no longer fits: use the burger menu (style.css @860 rules, widened) */
+@media (min-width: 861px) and (max-width: 1200px) {
+  .site-header { margin: 8px 10px 0; top: 8px; }
+  .site-header .wrap { padding: 0 8px 0 18px; border-radius: 28px; }
+  .nav { display: none; }
+  .menu-toggle { display: block; margin-left: 8px; }
+  .header-cta { margin-left: auto; }
+  .header-cta .press-depth:has(> .btn-outline:not(.account-icon-btn)) { display: none; }
+  .nav-mobile-only { display: inline; }
+  .site-header .wrap > .lang-switch, .site-header .wrap > .theme-toggle { display: none; }
+  .nav-mobile-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 4px; padding-top: 16px; border-top: 1px solid var(--border); }
+  body.nav-open .nav {
+    display: flex; flex-direction: column; position: absolute;
+    top: calc(100% + 8px); left: 0; right: 0; z-index: 50;
+    border: 1px solid var(--border); border-radius: 24px; background: var(--card-bg);
+    box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.8);
+    padding: 20px 24px 28px; gap: 18px; max-height: calc(100vh - 100%); overflow-y: auto;
+    animation: modalIn 0.3s ease both;
+  }
+  .nav a.active::after { display: none; }
+}
+
 .logo { font-size: 18px; letter-spacing: -0.03em; }
 .logo span { background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
