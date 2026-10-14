@@ -5,7 +5,7 @@
    ===================================================================== */
 
 :root {
-  --font-display: "Unbounded", "Golos Text", system-ui, sans-serif;
+  --font-display: "Onest", "Golos Text", system-ui, sans-serif;
   --font-body: "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif;
   --radius: 22px;
   --max-width: 1180px;
@@ -203,8 +203,8 @@ h1, h2 { letter-spacing: -0.03em; text-wrap: balance; }
 
 .hero h1 {
   font-size: clamp(32px, 5.4vw, 64px);
-  font-weight: 700;
-  letter-spacing: -0.04em;
+  font-weight: 600;
+  letter-spacing: -0.035em;
   line-height: 1.06;
   animation: heroIn 1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
@@ -238,7 +238,7 @@ section.alt {
   -webkit-backdrop-filter: none;
 }
 
-.section-head h2 { font-size: clamp(28px, 4vw, 46px); font-weight: 700; }
+.section-head h2 { font-size: clamp(28px, 4vw, 46px); font-weight: 600; }
 .section-head p, .lead { color: var(--muted); }
 
 /* ---------- cards ---------- */
