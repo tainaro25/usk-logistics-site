@@ -428,3 +428,33 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.7; }
   .header-cta .btn-sm { padding: 9px 14px; font-size: 13px; white-space: nowrap; }
   .menu-toggle { margin-left: 6px; flex-shrink: 0; }
 }
+
+/* about: four feature cards were squeezed into the 760px text column - let them use the full container and line up evenly */
+.prose .features {
+  position: relative;
+  left: 50%;
+  width: min(1100px, calc(100vw - 48px));
+  transform: translateX(-50%);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 48px;
+  align-items: stretch;
+}
+.features .feature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 18px 24px;
+  min-width: 0;
+}
+.features .feature-icon { flex-shrink: 0; margin-bottom: 16px; }
+.features .feature-title { min-height: 2.6em; display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.25; text-wrap: balance; }
+.features .feature-desc { text-align: center; line-height: 1.45; text-wrap: balance; }
+@media (max-width: 900px) {
+  .prose .features { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 480px) {
+  .prose .features { gap: 12px; }
+  .features .feature { padding: 22px 12px 20px; }
+  .features .feature-title { font-size: 16px; }
+}
