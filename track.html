@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>try{if(localStorage.getItem("usk_theme")==="dark")document.documentElement.setAttribute("data-theme","dark");}catch(e){}</script>
+<script>try{if(localStorage.getItem("usk_theme")!=="light")document.documentElement.setAttribute("data-theme","dark");}catch(e){}</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Отследить заказ — USK Logistics (макет)</title>
@@ -10,7 +10,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css?v=60">
+<link rel="stylesheet" href="assets/redesign.css?v=2">
 </head>
 <body>
 
@@ -106,5 +108,6 @@
     });
   }
 </script>
+<script src="assets/motion.js?v=1" defer></script>
 </body>
 </html>
